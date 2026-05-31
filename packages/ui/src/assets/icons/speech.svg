@@ -1,0 +1,6 @@
+﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+  <path class="lxt-stroke" d="M5,8a4,4,0,0,0,8,0"></path>
+  <line class="lxt-stroke" x1="6" x2="12" y1="15" y2="15"></line>
+  <line class="lxt-stroke" x1="9" x2="9" y1="12" y2="15"></line>
+  <rect class="lxt-fill" rx="2" ry="2" x="7" y="2"></rect>
+</svg>

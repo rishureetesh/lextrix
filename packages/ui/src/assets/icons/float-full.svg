@@ -1,0 +1,5 @@
+﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+  <path class="lxt-fill" d="M13,16H5a1,1,0,0,1,0-2h8A1,1,0,0,1,13,16Z"/>
+  <path class="lxt-fill" d="M13,4H5A1,1,0,0,1,5,2h8A1,1,0,0,1,13,4Z"/>
+  <rect class="lxt-fill" x="2" y="6" rx="1" ry="1"/>
+</svg>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Lextron E2E Tests</title>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <link href="/lextron.core.css" rel="stylesheet">
+  <link href="/lextron.snow.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="root">
+    <div id="standalone-container">
+      <div id="toolbar-container">
+        <span class="lxt-formats">
+          <select class="lxt-font"></select>
+          <select class="lxt-size"></select>
+        </span>
+        <span class="lxt-formats">
+          <button class="lxt-bold"></button>
+          <button class="lxt-italic"></button>
+          <button class="lxt-underline"></button>
+          <button class="lxt-strike"></button>
+        </span>
+        <span class="lxt-formats">
+          <select class="lxt-color"></select>
+          <select class="lxt-background"></select>
+        </span>
+        <span class="lxt-formats">
+          <button class="lxt-script" value="sub"></button>
+          <button class="lxt-script" value="super"></button>
+        </span>
+        <span class="lxt-formats">
+          <button class="lxt-header" value="1"></button>
+          <button class="lxt-header" value="2"></button>
+          <button class="lxt-blockquote"></button>
+          <button class="lxt-code-block"></button>
+        </span>
+        <span class="lxt-formats">
+          <button class="lxt-list" value="ordered"></button>
+          <button class="lxt-list" value="bullet"></button>
+          <button class="lxt-indent" value="-1"></button>
+          <button class="lxt-indent" value="+1"></button>
+        </span>
+        <span class="lxt-formats">
+          <button class="lxt-direction" value="rtl"></button>
+          <select class="lxt-align"></select>
+        </span>
+        <span class="lxt-formats">
+          <button class="lxt-link"></button>
+          <button class="lxt-image"></button>
+          <button class="lxt-video"></button>
+          <button class="lxt-formula"></button>
+        </span>
+        <span class="lxt-formats">
+          <button class="lxt-clean"></button>
+        </span>
+      </div>
+      <div id="editor" style="height: 350px;">
+      </div>
+      <script>
+        window.lextron = new Lextron(document.getElementById('editor'), {
+          modules: { syntax: true, toolbar: '#toolbar-container' },
+          placeholder: 'Compose an epic...',
+          theme: 'snow',
+        });
+      </script>
+    </div>
+  </div>
+</body>
+
+</html>

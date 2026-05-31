@@ -1,0 +1,28 @@
+﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+  <g class="lxt-fill lxt-transparent">
+    <rect transform="translate(18 -12) rotate(90)" x="14" y="2"></rect>
+    <rect transform="translate(21 -9) rotate(90)" x="14" y="5"></rect>
+    <rect transform="translate(24 -6) rotate(90)" x="14" y="8"></rect>
+    <rect transform="translate(30 0) rotate(90)" x="14" y="14"></rect>
+    <rect transform="translate(27 -3) rotate(90)" x="14" y="11"></rect>
+    <rect transform="translate(6 0) rotate(90)" x="2" y="2"></rect>
+    <rect transform="translate(9 3) rotate(90)" x="2" y="5"></rect>
+    <rect transform="translate(12 6) rotate(90)" x="2" y="8"></rect>
+    <rect transform="translate(18 12) rotate(90)" x="2" y="14"></rect>
+    <rect transform="translate(15 9) rotate(90)" x="2" y="11"></rect>
+  </g>
+  <line class="lxt-stroke-miter" x1="2" x2="16" y1="15" y2="15"></line>
+  <g class="lxt-fill lxt-transparent">
+    <rect x="5" y="2"></rect>
+    <rect x="8" y="2"></rect>
+    <rect x="11" y="2"></rect>
+    <rect x="5" y="14"></rect>
+    <rect x="8" y="14"></rect>
+    <rect x="8" y="11"></rect>
+    <rect x="8" y="8"></rect>
+    <rect x="8" y="5"></rect>
+    <rect transform="translate(15 3) rotate(90)" x="5" y="8"></rect>
+    <rect transform="translate(21 -3) rotate(90)" x="11" y="8"></rect>
+    <rect x="11" y="14"></rect>
+  </g>
+</svg>

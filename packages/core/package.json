@@ -1,0 +1,24 @@
+{
+  "name": "lextron-core",
+  "version": "0.1.0",
+  "description": "Lextron editor core — blots, document model, and editor shell",
+  "type": "module",
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./blots/*": "./src/blots/*",
+    "./core/*": "./src/core/*",
+    "./registry-paths.js": "./src/registry-paths.ts"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1",
+    "lextron-change": "0.1.0",
+    "lextron-dom": "0.1.0",
+    "lodash-es": "^4.18.1"
+  },
+  "devDependencies": {
+    "lextron-modules": "0.1.0"
+  }
+}

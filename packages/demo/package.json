@@ -1,0 +1,18 @@
+{
+  "name": "lextron-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "predev": "npm run build -w lextron --if-present"
+  },
+  "dependencies": {
+    "lextron": "0.1.0"
+  },
+  "devDependencies": {
+    "vite": "^6.4.2"
+  }
+}

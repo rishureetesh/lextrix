@@ -1,0 +1,215 @@
+﻿// Styles necessary for Lextron
+
+LIST_STYLE = decimal lower-alpha lower-roman
+LIST_STYLE_WIDTH = 1.2em
+LIST_STYLE_MARGIN = 0.3em
+LIST_STYLE_OUTER_WIDTH = LIST_STYLE_MARGIN + LIST_STYLE_WIDTH
+MAX_INDENT = 9
+
+resets(arr)
+  unquote('list-' + join(' list-', arr))
+
+.lxt-container
+  box-sizing: border-box
+  font-family: Helvetica, Arial, sans-serif
+  font-size: 13px
+  height: 100%
+  margin: 0px
+  position: relative
+
+.lxt-container.lxt-disabled
+  .lxt-tooltip
+    visibility: hidden
+
+.lxt-container:not(.lxt-disabled)
+  li[data-list=checked],
+  li[data-list=unchecked]
+    > .lxt-ui
+      cursor: pointer
+
+.lxt-clipboard
+  left: -100000px
+  height: 1px
+  overflow-y: hidden
+  position: absolute
+  top: 50%
+  p
+    margin: 0
+    padding: 0
+
+.lxt-editor
+  box-sizing: border-box
+  counter-reset: resets(0..MAX_INDENT)
+  line-height: 1.42
+  height: 100%
+  outline: none
+  overflow-y: auto
+  padding: 12px 15px
+  tab-size: 4
+  -moz-tab-size: 4
+  text-align: left
+  white-space: pre-wrap
+  word-wrap: break-word
+  > *
+    cursor: text
+
+  p, ol, pre, blockquote, h1, h2, h3, h4, h5, h6
+    margin: 0
+    padding: 0
+  p, h1, h2, h3, h4, h5, h6
+    @supports (counter-set: none)
+      counter-set: resets(0..MAX_INDENT)
+    @supports not (counter-set: none)
+      counter-reset: resets(0..MAX_INDENT)
+  table
+    border-collapse: collapse
+  td
+    border: 1px solid #000
+    padding: 2px 5px
+  ol
+    padding-left: 1.5em
+  li
+    list-style-type: none
+    padding-left: LIST_STYLE_OUTER_WIDTH
+    position: relative
+
+    > .lxt-ui:before
+      display: inline-block
+      margin-left: -1*LIST_STYLE_OUTER_WIDTH
+      margin-right: LIST_STYLE_MARGIN
+      text-align: right
+      white-space: nowrap
+      width: LIST_STYLE_WIDTH
+
+  li[data-list=checked],
+  li[data-list=unchecked]
+    > .lxt-ui
+      color: #777
+
+  li[data-list=bullet] > .lxt-ui:before
+    content: '\2022'
+  li[data-list=checked] > .lxt-ui:before
+    content: '\2611'
+  li[data-list=unchecked] > .lxt-ui:before
+    content: '\2610'
+
+  li[data-list]
+    @supports (counter-set: none)
+      counter-set: resets(1..MAX_INDENT)
+    @supports not (counter-set: none)
+      counter-reset: resets(1..MAX_INDENT)
+
+  li[data-list=ordered]
+    counter-increment: list-0
+    > .lxt-ui:before
+      content: unquote('counter(list-0, ' + LIST_STYLE[0] + ')') '. '
+  for num in (1..MAX_INDENT)
+    li[data-list=ordered].lxt-indent-{num}
+      counter-increment: unquote('list-' + num)
+      > .lxt-ui:before
+        content: unquote('counter(list-' + num + ', ' + LIST_STYLE[num%3] + ')') '. '
+    if (num < MAX_INDENT)
+      li[data-list].lxt-indent-{num}
+        @supports (counter-set: none)
+          counter-set: resets((num+1)..MAX_INDENT)
+        @supports not (counter-set: none)
+          counter-reset: resets((num+1)..MAX_INDENT)
+
+  for num in (1..MAX_INDENT)
+    .lxt-indent-{num}:not(.lxt-direction-rtl)
+      padding-left: (3*num)em
+    li.lxt-indent-{num}:not(.lxt-direction-rtl)
+      padding-left: (3*num + LIST_STYLE_OUTER_WIDTH)em
+    .lxt-indent-{num}.lxt-direction-rtl.lxt-align-right
+      padding-right: (3*num)em
+    li.lxt-indent-{num}.lxt-direction-rtl.lxt-align-right
+      padding-right: (3*num + LIST_STYLE_OUTER_WIDTH)em
+
+  li.lxt-direction-rtl
+    padding-right: LIST_STYLE_OUTER_WIDTH
+    > .lxt-ui:before
+      margin-left: LIST_STYLE_MARGIN
+      margin-right: -1*LIST_STYLE_OUTER_WIDTH
+      text-align: left
+
+  table
+    table-layout: fixed
+    width: 100%
+    td
+      outline: none
+
+  .lxt-code-block-container
+    font-family: monospace
+
+  .lxt-video
+    display: block
+    max-width: 100%
+  .lxt-video.lxt-align-center
+    margin: 0 auto
+  .lxt-video.lxt-align-right
+    margin: 0 0 0 auto
+
+  .lxt-bg-black
+    background-color: rgb(15, 23, 42)
+  .lxt-bg-red
+    background-color: rgb(239, 68, 68)
+  .lxt-bg-orange
+    background-color: rgb(249, 115, 22)
+  .lxt-bg-yellow
+    background-color: rgb(234, 179, 8)
+  .lxt-bg-green
+    background-color: rgb(34, 197, 94)
+  .lxt-bg-blue
+    background-color: rgb(59, 130, 246)
+  .lxt-bg-purple
+    background-color: rgb(139, 92, 246)
+
+  .lxt-color-white
+    color: rgb(255, 255, 255)
+  .lxt-color-red
+    color: rgb(239, 68, 68)
+  .lxt-color-orange
+    color: rgb(249, 115, 22)
+  .lxt-color-yellow
+    color: rgb(234, 179, 8)
+  .lxt-color-green
+    color: rgb(34, 197, 94)
+  .lxt-color-blue
+    color: rgb(59, 130, 246)
+  .lxt-color-purple
+    color: rgb(139, 92, 246)
+
+  .lxt-font-serif
+    font-family: Georgia, Times New Roman, serif
+  .lxt-font-monospace
+    font-family: Monaco, Courier New, monospace
+
+  .lxt-size-small
+    font-size: 0.75em
+  .lxt-size-large
+    font-size: 1.5em
+  .lxt-size-huge
+    font-size: 2.5em
+
+  .lxt-direction-rtl
+    direction: rtl
+    text-align: inherit
+
+  .lxt-align-center
+    text-align: center
+  .lxt-align-justify
+    text-align: justify
+  .lxt-align-right
+    text-align: right
+
+  .lxt-ui
+    position: absolute
+
+.lxt-editor.lxt-blank::before
+  color: rgba(0,0,0,0.6)
+  content: attr(data-placeholder)
+  font-style: italic
+  left: 15px
+  pointer-events: none
+  position: absolute
+  right: 15px

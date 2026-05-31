@@ -1,0 +1,34 @@
+themeName = 'dawn'
+activeColor = #7c3aed
+borderColor = #e7e0d8
+backgroundColor = #fffbf7
+inactiveColor = #8b7fb8
+shadowColor = rgba(124, 58, 237, 0.14)
+textColor = #44403c
+accentSoft = #ffedd5
+
+@import './core'
+@import './base'
+@import './dawn/*'
+
+.lxt-dawn
+  a
+    color: activeColor
+
+.lxt-container.lxt-dawn
+  border: 1px solid borderColor
+  background-color: backgroundColor
+
+  .lxt-editor blockquote
+    border-left-color: #fdba74
+    background-color: accentSoft
+
+  .lxt-editor code
+    background-color: #fef3c7
+    color: #78350f
+
+  .lxt-editor.lxt-blank::before
+    color: rgba(68, 64, 60, 0.45)
+
+.lxt-toolbar.lxt-dawn
+  background-color: #fff7ed

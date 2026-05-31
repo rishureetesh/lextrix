@@ -1,0 +1,28 @@
+.lxt-toolbar.lxt-slate
+  border: 1px solid borderColor
+  box-sizing: border-box
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif
+  padding: 8px
+  background-color: toolbarBackground
+
+  .lxt-formats
+    margin-right: 15px
+
+  .lxt-picker-label
+    border: 1px solid transparent
+  .lxt-picker-options
+    border: 1px solid borderColor
+    box-shadow: shadowColor 0 4px 16px
+    background-color: toolbarBackground
+  .lxt-picker.lxt-expanded
+    .lxt-picker-label
+      border-color: borderColor
+    .lxt-picker-options
+      border-color: borderColor
+
+  .lxt-color-picker
+    .lxt-picker-item.lxt-selected, .lxt-picker-item:hover
+      border-color: activeColor
+
+.lxt-toolbar.lxt-slate + .lxt-container.lxt-slate
+  border-top: 0px

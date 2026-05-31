@@ -1,0 +1,38 @@
+themeName = 'slate'
+activeColor = #a5b4fc
+borderColor = #475569
+backgroundColor = #1e293b
+inactiveColor = #7c8db5
+shadowColor = rgba(99, 102, 241, 0.25)
+textColor = #f1f5f9
+editorBackground = #0f172a
+toolbarBackground = #1e293b
+
+@import './core'
+@import './base'
+@import './slate/*'
+
+.lxt-slate
+  a
+    color: activeColor
+
+.lxt-container.lxt-slate
+  background-color: editorBackground
+  border: 1px solid borderColor
+  color: textColor
+
+  .lxt-editor
+    color: textColor
+
+  .lxt-editor blockquote
+    border-left-color: borderColor
+
+  .lxt-editor code
+    background-color: #334155
+    color: #e2e8f0
+
+  .lxt-editor.lxt-blank::before
+    color: rgba(241, 245, 249, 0.45)
+
+.lxt-toolbar.lxt-slate
+  background-color: toolbarBackground

@@ -1,0 +1,56 @@
+tooltipMargin = 8px
+
+.lxt-slate
+  .lxt-tooltip
+    background-color: toolbarBackground
+    border: 1px solid borderColor
+    box-shadow: 0 4px 16px shadowColor
+    color: textColor
+    padding: 5px 12px
+    white-space: nowrap
+    &::before
+      content: "Visit URL:"
+      line-height: 26px
+      margin-right: tooltipMargin
+    input[type=text]
+      display: none
+      border: 1px solid borderColor
+      background-color: editorBackground
+      color: textColor
+      font-size: 13px
+      height: 26px
+      margin: 0px
+      padding: 3px 5px
+      width: 170px
+    a.lxt-preview
+      display: inline-block
+      max-width: 200px
+      overflow-x: hidden
+      text-overflow: ellipsis
+      vertical-align: top
+      color: activeColor
+    a.lxt-action::after
+      border-right: 1px solid borderColor
+      content: 'Edit'
+      margin-left: tooltipMargin*2
+      padding-right: tooltipMargin
+    a.lxt-remove::before
+      content: 'Remove'
+      margin-left: tooltipMargin
+    a
+      line-height: 26px
+  .lxt-tooltip.lxt-editing
+    a.lxt-preview, a.lxt-remove
+      display: none
+    input[type=text]
+      display: inline-block
+    a.lxt-action::after
+      border-right: 0px
+      content: 'Save'
+      padding-right: 0px
+  .lxt-tooltip[data-mode=link]::before
+    content: "Enter link:"
+  .lxt-tooltip[data-mode=formula]::before
+    content: "Enter formula:"
+  .lxt-tooltip[data-mode=video]::before
+    content: "Enter video:"

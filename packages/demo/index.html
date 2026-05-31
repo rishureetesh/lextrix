@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lextron Demo</title>
+    <link id="theme-css" rel="stylesheet" href="/lextron.snow.css" />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0;
+      }
+      label {
+        font-size: 0.875rem;
+        color: #64748b;
+      }
+      select {
+        margin-left: 0.5rem;
+        padding: 0.35rem 0.5rem;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+      }
+      #editor-mount .lxt-container {
+        min-height: 280px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Lextron Demo</h1>
+      <label>
+        Theme
+        <select id="theme-select">
+          <option value="snow" selected>Snow</option>
+          <option value="bubble">Bubble</option>
+          <option value="slate">Slate</option>
+          <option value="dawn">Dawn</option>
+        </select>
+      </label>
+    </header>
+    <div id="editor-mount"></div>
+    <script src="/lextron.js"></script>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
