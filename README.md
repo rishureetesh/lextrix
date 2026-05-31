@@ -71,9 +71,6 @@ npm run dev:bundle     # webpack dev server → http://localhost:8080
 npm test               # unit + change tests
 ```
 
-**UI policy:** Snow/bubble theme chrome is frozen — see
-[UI_STABILITY.md](./UI_STABILITY.md). Slate and dawn extend the same layout.
-
 ## License
 
 MIT — see [LICENSE](./LICENSE). Third-party runtime dependencies in
