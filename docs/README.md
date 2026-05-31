@@ -13,7 +13,7 @@ Guides for integrating Lextron into your application.
 ## Package overview
 
 ```
-lextron              ← publishable bundle (use this in apps)
+@reetesh/lextron     ← publishable bundle (use this in apps)
 ├── lextron-core     ← editor shell
 ├── lextron-change   ← ChangeSet / OT
 ├── lextron-dom      ← blot model

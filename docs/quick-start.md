@@ -7,8 +7,8 @@
 ```
 
 ```javascript
-import Lextron from 'lextron';
-import 'lextron/snow.css';
+import Lextron from '@reetesh/lextron';
+import '@reetesh/lextron/snow.css';
 
 const editor = new Lextron('#editor', {
   theme: 'snow',

@@ -1,7 +1,3 @@
-/**
- * Cross-platform build (Windows, macOS, Linux).
- * Outputs a lean npm publish folder at dist/dist/.
- */
 import { spawnSync } from 'node:child_process';
 import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -16,8 +12,6 @@ const mode = process.argv[2] || 'production';
 
 const require = createRequire(join(packageRoot, 'package.json'));
 const webpackCli = require.resolve('webpack-cli/bin/cli.js');
-
-rmSync(distDir, { recursive: true, force: true });
 
 const webpack = spawnSync(
   process.execPath,
@@ -41,7 +35,6 @@ const sourcePkg = JSON.parse(
   readFileSync(join(packageRoot, 'package.json'), 'utf8'),
 );
 
-/** npm tarball: bundled UMD + CSS only — no workspace deps or dev tooling. */
 const publishPkg = {
   name: sourcePkg.name,
   version: sourcePkg.version,
@@ -95,4 +88,4 @@ for (const file of ['README.md', 'LICENSE', 'NOTICE.md']) {
   cpSync(join(repoRoot, file), join(distDir, file));
 }
 
-console.log(`Build complete (${mode}) → dist/dist/`);
+console.log(`built ${mode} → dist/dist/`);

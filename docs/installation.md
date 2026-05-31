@@ -5,27 +5,27 @@
 Install the published package:
 
 ```bash
-npm install lextron
+npm install @reetesh/lextron
 ```
 
 Import the editor and a theme stylesheet:
 
 ```javascript
-import Lextron from 'lextron';
-import 'lextron/snow.css';
+import Lextron from '@reetesh/lextron';
+import '@reetesh/lextron/snow.css';
 ```
 
 ### Exports
 
 | Import | Purpose |
 |--------|---------|
-| `lextron` | Full editor (UMD default export) |
-| `lextron/core` | Core-only bundle (no formats/themes) |
-| `lextron/lextron.css` | Base editor styles |
-| `lextron/snow.css` | Snow theme |
-| `lextron/bubble.css` | Bubble theme |
-| `lextron/slate.css` | Dark slate theme |
-| `lextron/dawn.css` | Warm dawn theme |
+| `@reetesh/lextron` | Full editor (UMD default export) |
+| `@reetesh/lextron/core` | Core-only bundle (no formats/themes) |
+| `@reetesh/lextron/lextron.css` | Base editor styles |
+| `@reetesh/lextron/snow.css` | Snow theme |
+| `@reetesh/lextron/bubble.css` | Bubble theme |
+| `@reetesh/lextron/slate.css` | Dark slate theme |
+| `@reetesh/lextron/dawn.css` | Warm dawn theme |
 
 ## Script tag (bundle)
 

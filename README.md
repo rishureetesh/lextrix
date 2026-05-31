@@ -1,15 +1,15 @@
 # Lextron
 
-Modular rich text editor — blot-based document model, operational change-sets,
-and plug-and-play workspace packages.
+Rich text editor built around blots and change-sets. Monorepo for the core
+packages; apps install `@reetesh/lextron`.
 
-**Documentation:** [docs/](./docs/README.md) — installation, configuration, API, modules.
+Docs: [docs/](./docs/README.md)
 
 ## Packages
 
 | Package | Description |
 |---------|-------------|
-| `lextron` | Full editor bundle (UMD + CSS) |
+| `@reetesh/lextron` | Full editor bundle (UMD + CSS) |
 | `lextron-change` | Change-set / OT (`ChangeSet`, `ChangeOp`) |
 | `lextron-dom` | Document model (`Dom` facade) |
 | `lextron-core` | Blots, editor shell, selection |
@@ -21,8 +21,8 @@ and plug-and-play workspace packages.
 ## Quick start
 
 ```javascript
-import Lextron from 'lextron';
-import 'lextron/snow.css';
+import Lextron from '@reetesh/lextron';
+import '@reetesh/lextron/snow.css';
 
 const editor = new Lextron('#editor', {
   theme: 'snow',
@@ -55,8 +55,8 @@ registerThemes(Lextron);
 Or use the full bundle:
 
 ```javascript
-import Lextron from 'lextron';
-import 'lextron/snow.css';
+import Lextron from '@reetesh/lextron';
+import '@reetesh/lextron/snow.css';
 
 const editor = new Lextron('#editor', { theme: 'snow' });
 ```
@@ -73,5 +73,4 @@ npm test               # unit + change tests
 
 ## License
 
-MIT — see [LICENSE](./LICENSE). Third-party runtime dependencies in
-[NOTICE.md](./NOTICE.md).
+MIT. See [LICENSE](./LICENSE). Runtime deps in [NOTICE.md](./NOTICE.md).

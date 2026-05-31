@@ -76,7 +76,7 @@ Sources: `'user'`, `'api'`, `'silent'`.
 ## ChangeSet
 
 ```javascript
-import { ChangeSet } from 'lextron';
+import { ChangeSet } from '@reetesh/lextron';
 
 new ChangeSet()
   .retain(5)

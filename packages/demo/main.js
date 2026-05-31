@@ -23,14 +23,11 @@ function toolbarFor(theme) {
 const defaultContents = () => [
   { insert: 'Hello Lextron\n', attributes: { header: 1 } },
   {
-    insert: `Modular rich text editor — ${themeSelect.value} theme.\n`,
+    insert: `Lextron demo (${themeSelect.value})\n`,
   },
 ];
 
-/**
- * Toolbar and tooltip DOM live beside the editor container (not inside it).
- * Replacing only #editor leaves orphaned chrome — reset the whole mount.
- */
+// Theme switch rebuilds #editor-mount so old toolbar nodes don't stick around.
 function createEditor(theme, contents) {
   editorMount.replaceChildren();
   const container = document.createElement('div');

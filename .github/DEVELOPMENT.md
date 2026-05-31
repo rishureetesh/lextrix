@@ -6,7 +6,7 @@ Lextron is an npm [workspaces](https://docs.npmjs.com/cli/v10/using-npm/workspac
 
 | Package | Role |
 |---------|------|
-| `packages/lextron` | Published UMD + CSS bundle |
+| `packages/lextron` | Published npm package `@reetesh/lextron` |
 | `packages/lextron-change` | Change-set / OT layer |
 | `packages/lextron-dom` | Blot document model |
 | `packages/lextron-core` | Editor shell, selection, blots |
@@ -31,25 +31,28 @@ npm run typecheck
 ### Lextron package only
 
 ```bash
-npm run test:unit -w lextron
-npm run test:fuzz -w lextron
-npm run test:e2e -w lextron
+npm run test:unit -w @reetesh/lextron
+npm run test:fuzz -w @reetesh/lextron
+npm run test:e2e -w @reetesh/lextron
 ```
 
 E2E tests use Playwright with a local dev server (see `packages/lextron/playwright.config.ts`).
 
 ## npm publish
 
-Publishing uses the **lean bundle** at `packages/lextron/dist/dist/` (not the monorepo root).
+Build first, then publish from `packages/lextron/dist/dist/`:
 
 ```bash
 npm run build
 cd packages/lextron/dist/dist
-npm pack          # verify tarball (~11 files, no source maps)
-npm publish       # after npm login as reetesh
+npm pack
+npm publish --access public
 ```
 
-The build script writes a publish-only `package.json` (no devDependencies or workspace deps), copies `README.md` / `LICENSE` / `NOTICE.md`, and excludes `*.map` from the tarball.
+From repo root: `npm run publish:npm`
+
+The build drops a trimmed `package.json` in `dist/dist/` (no dev or workspace deps).
+README, LICENSE, and NOTICE are copied in. Source maps are not published.
 
 ## Registry paths
 

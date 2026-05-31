@@ -1,4 +1,3 @@
-/** Lextron modules — drag-to-resize selected images. */
 import type { Blot } from 'lextron-dom';
 import Lextron from 'lextron-core';
 import Emitter from 'lextron-core/core/emitter.js';
@@ -6,9 +5,7 @@ import Module from 'lextron-core/core/module.js';
 import type { Range } from 'lextron-core/core/selection.js';
 
 export interface ImageResizeOptions {
-  /** Minimum rendered width in pixels. */
   minWidth: number;
-  /** Maximum rendered width in pixels (`null` = editor width). */
   maxWidth: number | null;
 }
 

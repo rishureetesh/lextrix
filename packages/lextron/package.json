@@ -1,7 +1,7 @@
 {
-  "name": "lextron",
+  "name": "@reetesh/lextron",
   "version": "0.1.0",
-  "description": "Lextron — modular rich text editor",
+  "description": "Lextron — Rich text editor for the web",
   "author": "Reetesh (https://github.com/rishureetesh) (npm: reetesh)",
   "homepage": "https://github.com/rishureetesh/lextron#readme",
   "main": "lextron.js",

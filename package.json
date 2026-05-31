@@ -1,7 +1,7 @@
 {
   "name": "lextron",
   "version": "0.1.0",
-  "description": "Lextron — modular rich text editor monorepo",
+  "description": "Lextron monorepo (rich text editor)",
   "private": true,
   "license": "MIT",
   "author": "Reetesh (https://github.com/rishureetesh)",
@@ -16,13 +16,14 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w lextron",
+    "build": "npm run build -w @reetesh/lextron",
     "dev": "npm run dev -w lextron-demo",
-    "dev:bundle": "npm run start -w lextron",
+    "dev:bundle": "npm run start -w @reetesh/lextron",
     "demo": "npm run dev -w lextron-demo",
-    "test": "npm run test -w lextron-change && npm run test:unit -w lextron",
-    "lint": "npm run lint -w lextron",
-    "typecheck": "tsc --noEmit -p tsconfig.json && npm run lint:tsc -w lextron"
+    "test": "npm run test -w lextron-change && npm run test:unit -w @reetesh/lextron",
+    "lint": "npm run lint -w @reetesh/lextron",
+    "typecheck": "tsc --noEmit -p tsconfig.json && npm run lint:tsc -w @reetesh/lextron",
+    "publish:npm": "npm run build && npm publish --access public --prefix packages/lextron/dist/dist"
   },
   "engines": {
     "node": ">=18",
