@@ -126,12 +126,6 @@ export function getDocumentFormatDefinition(
   return definitionsByBlot.get(blot.constructor as BlotConstructor);
 }
 
-export function getDocumentFormatDefinitionByName(
-  name: string,
-): DocumentFormatDefinition | undefined {
-  return definitionsByName.get(name);
-}
-
 export function getFormatGroup(name: string): FormatGroupDefinition | undefined {
   return formatGroups.get(name);
 }

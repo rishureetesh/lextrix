@@ -33,17 +33,6 @@ export function embedTypeAndData(
   return [embedType, a[embedType], b[embedType]];
 }
 
-export function opDocumentLength(op: DocumentOperation): number {
-  switch (op.kind) {
-    case 'insert':
-      return operationLength(op);
-    case 'delete':
-      return -op.count;
-    case 'retain':
-      return 0;
-  }
-}
-
 export function sliceOperations(
   ops: readonly DocumentOperation[],
   start = 0,

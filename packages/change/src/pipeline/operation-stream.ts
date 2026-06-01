@@ -1,6 +1,5 @@
-import ChangeOp from '../change/change-op.js';
 import type { DocumentOperation } from '../operation/kinds.js';
-import { fromLegacyOp, operationLength, toLegacyOp } from '../operation/legacy-bridge.js';
+import { operationLength } from '../operation/kinds.js';
 
 type OpKind = 'insert' | 'delete' | 'retain';
 
@@ -12,10 +11,6 @@ export class OperationStream {
   private offset = 0;
 
   constructor(private readonly ops: readonly DocumentOperation[]) {}
-
-  static fromLegacy(ops: ChangeOp[]): OperationStream {
-    return new OperationStream(ops.map(fromLegacyOp));
-  }
 
   hasNext(): boolean {
     return this.peekLength() < Infinity;
@@ -75,10 +70,6 @@ export class OperationStream {
   peekType(): 'insert' | 'delete' | 'retain' {
     const op = this.peek();
     return op?.kind ?? 'retain';
-  }
-
-  toLegacy(): ChangeOp[] {
-    return this.ops.map(toLegacyOp);
   }
 
   private slice(

@@ -44,21 +44,3 @@ export function categoryFromScope(scope: number): FormatCategory | null {
   }
   return null;
 }
-
-export function scopeMatchesCategory(scope: number, category: FormatCategory): boolean {
-  const mapped = categoryFromScope(scope);
-  return mapped?.level === category.level && mapped?.kind === category.kind;
-}
-
-export function scopeForCategory(category: FormatCategory): number {
-  switch (category.level) {
-    case FormatLevel.Inline:
-      return category.kind === FormatKind.Blot
-        ? Scope.INLINE_BLOT
-        : Scope.INLINE_ATTRIBUTE;
-    case FormatLevel.Block:
-      return category.kind === FormatKind.Blot
-        ? Scope.BLOCK_BLOT
-        : Scope.BLOCK_ATTRIBUTE;
-  }
-}
