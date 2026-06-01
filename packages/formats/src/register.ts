@@ -1,6 +1,6 @@
-/** Lextron formats — built-in text and block formats. */
-import type Lextron from 'lextron-core';
-import { lxtPath } from 'lextron-core/registry-paths.js';
+/** Lextrix formats — built-in text and block formats. */
+import type Lextrix from 'lextrix-core';
+import { lxrPath } from 'lextrix-core/registry-paths.js';
 
 import { AlignClass, AlignStyle } from './formats/align.js';
 import {
@@ -27,49 +27,49 @@ import Image from './formats/image.js';
 import Video from './formats/video.js';
 import CodeBlock, { Code as InlineCode } from './formats/code.js';
 
-export function registerFormats(editor: typeof Lextron, overwrite = false) {
+export function registerFormats(editor: typeof Lextrix, overwrite = false) {
   editor.register(
     {
-      [lxtPath.attributor('attribute', 'direction')]: DirectionAttribute,
-      [lxtPath.attributor('class', 'align')]: AlignClass,
-      [lxtPath.attributor('class', 'background')]: BackgroundClass,
-      [lxtPath.attributor('class', 'color')]: ColorClass,
-      [lxtPath.attributor('class', 'direction')]: DirectionClass,
-      [lxtPath.attributor('class', 'font')]: FontClass,
-      [lxtPath.attributor('class', 'size')]: SizeClass,
-      [lxtPath.attributor('style', 'align')]: AlignStyle,
-      [lxtPath.attributor('style', 'background')]: BackgroundStyle,
-      [lxtPath.attributor('style', 'color')]: ColorStyle,
-      [lxtPath.attributor('style', 'direction')]: DirectionStyle,
-      [lxtPath.attributor('style', 'font')]: FontStyle,
-      [lxtPath.attributor('style', 'size')]: SizeStyle,
+      [lxrPath.attributor('attribute', 'direction')]: DirectionAttribute,
+      [lxrPath.attributor('class', 'align')]: AlignClass,
+      [lxrPath.attributor('class', 'background')]: BackgroundClass,
+      [lxrPath.attributor('class', 'color')]: ColorClass,
+      [lxrPath.attributor('class', 'direction')]: DirectionClass,
+      [lxrPath.attributor('class', 'font')]: FontClass,
+      [lxrPath.attributor('class', 'size')]: SizeClass,
+      [lxrPath.attributor('style', 'align')]: AlignStyle,
+      [lxrPath.attributor('style', 'background')]: BackgroundStyle,
+      [lxrPath.attributor('style', 'color')]: ColorStyle,
+      [lxrPath.attributor('style', 'direction')]: DirectionStyle,
+      [lxrPath.attributor('style', 'font')]: FontStyle,
+      [lxrPath.attributor('style', 'size')]: SizeStyle,
     },
     overwrite,
   );
 
   editor.register(
     {
-      [lxtPath.format('align')]: AlignClass,
-      [lxtPath.format('direction')]: DirectionClass,
-      [lxtPath.format('indent')]: Indent,
-      [lxtPath.format('background')]: BackgroundStyle,
-      [lxtPath.format('color')]: ColorStyle,
-      [lxtPath.format('font')]: FontClass,
-      [lxtPath.format('size')]: SizeClass,
-      [lxtPath.format('blockquote')]: Blockquote,
-      [lxtPath.format('code-block')]: CodeBlock,
-      [lxtPath.format('header')]: Header,
-      [lxtPath.format('list')]: List,
-      [lxtPath.format('bold')]: Bold,
-      [lxtPath.format('code')]: InlineCode,
-      [lxtPath.format('italic')]: Italic,
-      [lxtPath.format('link')]: Link,
-      [lxtPath.format('script')]: Script,
-      [lxtPath.format('strike')]: Strike,
-      [lxtPath.format('underline')]: Underline,
-      [lxtPath.format('formula')]: Formula,
-      [lxtPath.format('image')]: Image,
-      [lxtPath.format('video')]: Video,
+      [lxrPath.format('align')]: AlignClass,
+      [lxrPath.format('direction')]: DirectionClass,
+      [lxrPath.format('indent')]: Indent,
+      [lxrPath.format('background')]: BackgroundStyle,
+      [lxrPath.format('color')]: ColorStyle,
+      [lxrPath.format('font')]: FontClass,
+      [lxrPath.format('size')]: SizeClass,
+      [lxrPath.format('blockquote')]: Blockquote,
+      [lxrPath.format('code-block')]: CodeBlock,
+      [lxrPath.format('header')]: Header,
+      [lxrPath.format('list')]: List,
+      [lxrPath.format('bold')]: Bold,
+      [lxrPath.format('code')]: InlineCode,
+      [lxrPath.format('italic')]: Italic,
+      [lxrPath.format('link')]: Link,
+      [lxrPath.format('script')]: Script,
+      [lxrPath.format('strike')]: Strike,
+      [lxrPath.format('underline')]: Underline,
+      [lxrPath.format('formula')]: Formula,
+      [lxrPath.format('image')]: Image,
+      [lxrPath.format('video')]: Video,
     },
     overwrite,
   );

@@ -1,9 +1,9 @@
 ﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-  <g class="lxt-fill lxt-stroke lxt-thin lxt-transparent">
+  <g class="lxr-fill lxr-stroke lxr-thin lxr-transparent">
     <rect rx="0.5" ry="0.5" x="4.5" y="2.5"></rect>
     <rect rx="0.5" ry="0.5" x="4.5" y="12.5"></rect>
   </g>
-  <rect class="lxt-fill lxt-stroke lxt-thin" rx="0.5" ry="0.5" x="8.5" y="7.5"></rect>
-  <line class="lxt-stroke lxt-thin" x1="6.5" x2="3.5" y1="7.5" y2="10.5"></line>
-  <line class="lxt-stroke lxt-thin" x1="3.5" x2="6.5" y1="7.5" y2="10.5"></line>
+  <rect class="lxr-fill lxr-stroke lxr-thin" rx="0.5" ry="0.5" x="8.5" y="7.5"></rect>
+  <line class="lxr-stroke lxr-thin" x1="6.5" x2="3.5" y1="7.5" y2="10.5"></line>
+  <line class="lxr-stroke lxr-thin" x1="3.5" x2="6.5" y1="7.5" y2="10.5"></line>
 </svg>

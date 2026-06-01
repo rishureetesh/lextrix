@@ -1,5 +1,5 @@
-﻿/** Lextron core — document editor shell. */
-import { EmbedBlot } from 'lextron-dom';
+﻿/** Lextrix core — document editor shell. */
+import { EmbedBlot } from 'lextrix-dom';
 
 class Break extends EmbedBlot {
   static value() {

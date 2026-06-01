@@ -1,5 +1,5 @@
-﻿/** Lextron core — document editor shell. */
-import { TextBlot } from 'lextron-dom';
+﻿/** Lextrix core — document editor shell. */
+import { TextBlot } from 'lextrix-dom';
 
 class Text extends TextBlot {}
 

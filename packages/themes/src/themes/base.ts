@@ -1,18 +1,18 @@
 ﻿import { merge } from 'lodash-es';
-import type Lextron from 'lextron-core/core/lextron.js';
-import Emitter from 'lextron-core/core/emitter.js';
-import Theme from 'lextron-core/core/theme.js';
-import type { ThemeOptions } from 'lextron-core/core/theme.js';
-import ColorPicker from 'lextron-ui/ui/color-picker.js';
-import IconPicker from 'lextron-ui/ui/icon-picker.js';
-import Picker from 'lextron-ui/ui/picker.js';
-import Tooltip from 'lextron-ui/ui/tooltip.js';
-import type { Range } from 'lextron-core/core/selection.js';
-import type Clipboard from 'lextron-modules/modules/clipboard.js';
-import type History from 'lextron-modules/modules/history.js';
-import type Keyboard from 'lextron-modules/modules/keyboard.js';
-import type Uploader from 'lextron-modules/modules/uploader.js';
-import type Selection from 'lextron-core/core/selection.js';
+import type Lextrix from 'lextrix-core/core/lextrix.js';
+import Emitter from 'lextrix-core/core/emitter.js';
+import Theme from 'lextrix-core/core/theme.js';
+import type { ThemeOptions } from 'lextrix-core/core/theme.js';
+import ColorPicker from 'lextrix-ui/ui/color-picker.js';
+import IconPicker from 'lextrix-ui/ui/icon-picker.js';
+import Picker from 'lextrix-ui/ui/picker.js';
+import Tooltip from 'lextrix-ui/ui/tooltip.js';
+import type { Range } from 'lextrix-core/core/selection.js';
+import type Clipboard from 'lextrix-modules/modules/clipboard.js';
+import type History from 'lextrix-modules/modules/history.js';
+import type Keyboard from 'lextrix-modules/modules/keyboard.js';
+import type Uploader from 'lextrix-modules/modules/uploader.js';
+import type Selection from 'lextrix-core/core/selection.js';
 
 const ALIGNS = [false, 'center', 'right', 'justify'];
 
@@ -64,10 +64,10 @@ class BaseTheme extends Theme {
   pickers: Picker[];
   tooltip?: Tooltip;
 
-  constructor(lextron: Lextron, options: ThemeOptions) {
-    super(lextron, options);
+  constructor(lextrix: Lextrix, options: ThemeOptions) {
+    super(lextrix, options);
     const listener = (e: MouseEvent) => {
-      if (!document.body.contains(lextron.root)) {
+      if (!document.body.contains(lextrix.root)) {
         document.body.removeEventListener('click', listener);
         return;
       }
@@ -77,7 +77,7 @@ class BaseTheme extends Theme {
         !this.tooltip.root.contains(e.target) &&
         // @ts-expect-error
         document.activeElement !== this.tooltip.textbox &&
-        !this.lextron.hasFocus()
+        !this.lextrix.hasFocus()
       ) {
         this.tooltip.hide();
       }
@@ -90,7 +90,7 @@ class BaseTheme extends Theme {
         });
       }
     };
-    lextron.emitter.listenDOM('click', document.body, listener);
+    lextrix.emitter.listenDOM('click', document.body, listener);
   }
 
   addModule(name: 'clipboard'): Clipboard;
@@ -115,8 +115,8 @@ class BaseTheme extends Theme {
     Array.from(buttons).forEach((button) => {
       const className = button.getAttribute('class') || '';
       className.split(/\s+/).forEach((name) => {
-        if (!name.startsWith('lxt-')) return;
-        name = name.slice('lxt-'.length);
+        if (!name.startsWith('lxr-')) return;
+        name = name.slice('lxr-'.length);
         if (icons[name] == null) return;
         if (name === 'direction') {
           // @ts-expect-error
@@ -142,7 +142,7 @@ class BaseTheme extends Theme {
     icons: Record<string, string | Record<string, string>>,
   ) {
     this.pickers = Array.from(selects).map((select) => {
-      if (select.classList.contains('lxt-align')) {
+      if (select.classList.contains('lxr-align')) {
         if (select.querySelector('option') == null) {
           fillSelect(select, ALIGNS);
         }
@@ -151,10 +151,10 @@ class BaseTheme extends Theme {
         }
       }
       if (
-        select.classList.contains('lxt-background') ||
-        select.classList.contains('lxt-color')
+        select.classList.contains('lxr-background') ||
+        select.classList.contains('lxr-color')
       ) {
-        const format = select.classList.contains('lxt-background')
+        const format = select.classList.contains('lxr-background')
           ? 'background'
           : 'color';
         if (select.querySelector('option') == null) {
@@ -167,11 +167,11 @@ class BaseTheme extends Theme {
         return new ColorPicker(select, icons[format] as string);
       }
       if (select.querySelector('option') == null) {
-        if (select.classList.contains('lxt-font')) {
+        if (select.classList.contains('lxr-font')) {
           fillSelect(select, FONTS);
-        } else if (select.classList.contains('lxt-header')) {
+        } else if (select.classList.contains('lxr-header')) {
           fillSelect(select, HEADERS);
-        } else if (select.classList.contains('lxt-size')) {
+        } else if (select.classList.contains('lxr-size')) {
           fillSelect(select, SIZES);
         }
       }
@@ -182,7 +182,7 @@ class BaseTheme extends Theme {
         picker.update();
       });
     };
-    this.lextron.on(Emitter.events.EDITOR_CHANGE, update);
+    this.lextrix.on(Emitter.events.EDITOR_CHANGE, update);
   }
 }
 BaseTheme.DEFAULTS = merge({}, Theme.DEFAULTS, {
@@ -190,23 +190,23 @@ BaseTheme.DEFAULTS = merge({}, Theme.DEFAULTS, {
     toolbar: {
       handlers: {
         formula() {
-          this.lextron.theme.tooltip.edit('formula');
+          this.lextrix.theme.tooltip.edit('formula');
         },
         image() {
           let fileInput = this.container.querySelector(
-            'input.lxt-image[type=file]',
+            'input.lxr-image[type=file]',
           );
           if (fileInput == null) {
             fileInput = document.createElement('input');
             fileInput.setAttribute('type', 'file');
             fileInput.setAttribute(
               'accept',
-              this.lextron.uploader.options.mimetypes.join(', '),
+              this.lextrix.uploader.options.mimetypes.join(', '),
             );
-            fileInput.classList.add('lxt-image');
+            fileInput.classList.add('lxr-image');
             fileInput.addEventListener('change', () => {
-              const range = this.lextron.getSelection(true);
-              this.lextron.uploader.upload(range, fileInput.files);
+              const range = this.lextrix.getSelection(true);
+              this.lextrix.uploader.upload(range, fileInput.files);
               fileInput.value = '';
             });
             this.container.appendChild(fileInput);
@@ -214,7 +214,7 @@ BaseTheme.DEFAULTS = merge({}, Theme.DEFAULTS, {
           fileInput.click();
         },
         video() {
-          this.lextron.theme.tooltip.edit('video');
+          this.lextrix.theme.tooltip.edit('video');
         },
       },
     },
@@ -225,8 +225,8 @@ class BaseTooltip extends Tooltip {
   textbox: HTMLInputElement | null;
   linkRange?: Range;
 
-  constructor(lextron: Lextron, boundsContainer?: HTMLElement) {
-    super(lextron, boundsContainer);
+  constructor(lextrix: Lextrix, boundsContainer?: HTMLElement) {
+    super(lextrix, boundsContainer);
     this.textbox = this.root.querySelector('input[type="text"]');
     this.listen();
   }
@@ -250,8 +250,8 @@ class BaseTooltip extends Tooltip {
   }
 
   edit(mode = 'link', preview: string | null = null) {
-    this.root.classList.remove('lxt-hidden');
-    this.root.classList.add('lxt-editing');
+    this.root.classList.remove('lxr-hidden');
+    this.root.classList.add('lxr-editing');
     if (this.textbox == null) return;
 
     if (preview != null) {
@@ -259,7 +259,7 @@ class BaseTooltip extends Tooltip {
     } else if (mode !== this.root.getAttribute('data-mode')) {
       this.textbox.value = '';
     }
-    const bounds = this.lextron.getBounds(this.lextron.selection.savedRange);
+    const bounds = this.lextrix.getBounds(this.lextrix.selection.savedRange);
     if (bounds != null) {
       this.position(bounds);
     }
@@ -272,7 +272,7 @@ class BaseTooltip extends Tooltip {
   }
 
   restoreFocus() {
-    this.lextron.focus({ preventScroll: true });
+    this.lextrix.focus({ preventScroll: true });
   }
 
   save() {
@@ -280,9 +280,9 @@ class BaseTooltip extends Tooltip {
     let { value } = this.textbox;
     switch (this.root.getAttribute('data-mode')) {
       case 'link': {
-        const { scrollTop } = this.lextron.root;
+        const { scrollTop } = this.lextrix.root;
         if (this.linkRange) {
-          this.lextron.formatText(
+          this.lextrix.formatText(
             this.linkRange,
             'link',
             value,
@@ -291,9 +291,9 @@ class BaseTooltip extends Tooltip {
           delete this.linkRange;
         } else {
           this.restoreFocus();
-          this.lextron.format('link', value, Emitter.sources.USER);
+          this.lextrix.format('link', value, Emitter.sources.USER);
         }
-        this.lextron.root.scrollTop = scrollTop;
+        this.lextrix.root.scrollTop = scrollTop;
         break;
       }
       case 'video': {
@@ -301,10 +301,10 @@ class BaseTooltip extends Tooltip {
       } // eslint-disable-next-line no-fallthrough
       case 'formula': {
         if (!value) break;
-        const range = this.lextron.getSelection(true);
+        const range = this.lextrix.getSelection(true);
         if (range != null) {
           const index = range.index + range.length;
-          this.lextron.insertEmbed(
+          this.lextrix.insertEmbed(
             index,
             // @ts-expect-error Fix me later
             this.root.getAttribute('data-mode'),
@@ -312,9 +312,9 @@ class BaseTooltip extends Tooltip {
             Emitter.sources.USER,
           );
           if (this.root.getAttribute('data-mode') === 'formula') {
-            this.lextron.insertText(index + 1, ' ', Emitter.sources.USER);
+            this.lextrix.insertText(index + 1, ' ', Emitter.sources.USER);
           }
-          this.lextron.setSelection(index + 2, Emitter.sources.USER);
+          this.lextrix.setSelection(index + 2, Emitter.sources.USER);
         }
         break;
       }

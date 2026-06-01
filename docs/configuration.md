@@ -3,7 +3,7 @@
 ## Editor options
 
 ```typescript
-new Lextron(container, {
+new Lextrix(container, {
   theme: 'snow',           // snow | bubble | slate | dawn
   placeholder: '',
   readOnly: false,
@@ -88,7 +88,7 @@ modules: {
         body.append('file', file);
         const res = await fetch('/api/upload', { method: 'POST', body });
         const { url } = await res.json();
-        this.lextron.insertEmbed(range.index, 'image', url, 'user');
+        this.lextrix.insertEmbed(range.index, 'image', url, 'user');
         range.index += 1;
       }
     },
@@ -160,18 +160,18 @@ editor.getModule('table').insertTable(3, 4); // rows, columns
 Build a custom bundle from workspace packages:
 
 ```javascript
-import Lextron, { registerBlots } from 'lextron-core';
-import { registerFormats } from 'lextron-formats';
-import { registerCoreModules, registerOptionalModules } from 'lextron-modules';
-import { registerUI } from 'lextron-ui';
-import { registerThemes } from 'lextron-themes';
+import Lextrix, { registerBlots } from 'lextrix-core';
+import { registerFormats } from 'lextrix-formats';
+import { registerCoreModules, registerOptionalModules } from 'lextrix-modules';
+import { registerUI } from 'lextrix-ui';
+import { registerThemes } from 'lextrix-themes';
 
-registerBlots(Lextron);
-registerFormats(Lextron);
-registerCoreModules(Lextron);
-registerOptionalModules(Lextron);
-registerUI(Lextron);
-registerThemes(Lextron);
+registerBlots(Lextrix);
+registerFormats(Lextrix);
+registerCoreModules(Lextrix);
+registerOptionalModules(Lextrix);
+registerUI(Lextrix);
+registerThemes(Lextrix);
 ```
 
 See [modules.md](./modules.md) for per-module details.

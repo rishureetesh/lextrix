@@ -1,7 +1,7 @@
-/** Lextron formats — built-in text and block formats. */
-import { ClassAttributor, Scope, StyleAttributor } from 'lextron-dom';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import { ClassAttributor, Scope, StyleAttributor } from 'lextrix-dom';
 
-const SizeClass = new ClassAttributor('size', 'lxt-size', {
+const SizeClass = new ClassAttributor('size', 'lxr-size', {
   scope: Scope.INLINE,
   whitelist: ['small', 'large', 'huge'],
 });

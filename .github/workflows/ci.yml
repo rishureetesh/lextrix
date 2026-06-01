@@ -41,7 +41,7 @@ jobs:
       - run: npm ci
       - run: node scripts/ensure-rollup-native.mjs
       - run: npx playwright install --with-deps
-      - run: npm run test:unit -w @reetesh/lextron
+      - run: npm run test:unit -w lextrix
         env:
           BROWSER: ${{ matrix.browser }}
 
@@ -58,7 +58,7 @@ jobs:
       - run: node scripts/ensure-rollup-native.mjs
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 1
-      - run: npm run test:fuzz -w @reetesh/lextron
+      - run: npm run test:fuzz -w lextrix
 
   e2e:
     name: E2E tests
@@ -73,11 +73,11 @@ jobs:
       - run: npm ci
       - run: node scripts/ensure-rollup-native.mjs
       - run: npx playwright install --with-deps
-        working-directory: packages/lextron
+        working-directory: packages/lextrix
       - uses: coactions/setup-xvfb@v1
         with:
           run: npm run test:e2e -- --headed
-          working-directory: packages/lextron
+          working-directory: packages/lextrix
 
   build:
     name: Production build
@@ -94,6 +94,6 @@ jobs:
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
-          name: lextron-dist
-          path: packages/lextron/dist/dist/*
+          name: lextrix-dist
+          path: packages/lextrix/dist/dist/*
           if-no-files-found: error

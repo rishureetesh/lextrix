@@ -1,4 +1,4 @@
-﻿/** Lextron core — document editor shell. */
+﻿/** Lextrix core — document editor shell. */
 import Embed from '../blots/embed.js';
 import type Scroll from '../blots/scroll.js';
 import Emitter from './emitter.js';

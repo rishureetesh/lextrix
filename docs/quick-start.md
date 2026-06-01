@@ -7,10 +7,10 @@
 ```
 
 ```javascript
-import Lextron from '@reetesh/lextron';
-import '@reetesh/lextron/snow.css';
+import Lextrix from 'lextrix';
+import 'lextrix/snow.css';
 
-const editor = new Lextron('#editor', {
+const editor = new Lextrix('#editor', {
   theme: 'snow',
   placeholder: 'Start writing…',
   modules: {
@@ -26,7 +26,7 @@ const editor = new Lextron('#editor', {
 });
 
 editor.setContents([
-  { insert: 'Hello Lextron\n', attributes: { header: 1 } },
+  { insert: 'Hello Lextrix\n', attributes: { header: 1 } },
   { insert: 'Select an image and drag the corner handle to resize.\n' },
 ]);
 ```
@@ -34,7 +34,7 @@ editor.setContents([
 ## Bubble theme (floating toolbar)
 
 ```javascript
-const editor = new Lextron('#editor', {
+const editor = new Lextrix('#editor', {
   theme: 'bubble',
   modules: {
     toolbar: [
@@ -48,7 +48,7 @@ const editor = new Lextron('#editor', {
 ## Read-only
 
 ```javascript
-const editor = new Lextron('#editor', {
+const editor = new Lextrix('#editor', {
   theme: 'snow',
   readOnly: true,
 });

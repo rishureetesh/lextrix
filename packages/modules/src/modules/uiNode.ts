@@ -1,7 +1,7 @@
-﻿/** Lextron modules — editor behavior modules. */
-import { ParentBlot } from 'lextron-dom';
-import Module from 'lextron-core/core/module.js';
-import Lextron from 'lextron-core';
+﻿/** Lextrix modules — editor behavior modules. */
+import { ParentBlot } from 'lextrix-dom';
+import Module from 'lextrix-core/core/module.js';
+import Lextrix from 'lextrix-core';
 
 const isMac = /Mac/i.test(navigator.platform);
 
@@ -9,7 +9,7 @@ const isMac = /Mac/i.test(navigator.platform);
 export const TTL_FOR_VALID_SELECTION_CHANGE = 100;
 
 // A loose check to determine if the shortcut can move the caret before a UI node:
-// <ANY_PARENT>[CARET]<div class="lxt-ui"></div>[CONTENT]</ANY_PARENT>
+// <ANY_PARENT>[CARET]<div class="lxr-ui"></div>[CONTENT]</ANY_PARENT>
 const canMoveCaretBeforeUINode = (event: KeyboardEvent) => {
   if (
     event.key === 'ArrowLeft' ||
@@ -32,15 +32,15 @@ class UINode extends Module {
   isListening = false;
   selectionChangeDeadline = 0;
 
-  constructor(lextron: Lextron, options: Record<string, never>) {
-    super(lextron, options);
+  constructor(lextrix: Lextrix, options: Record<string, never>) {
+    super(lextrix, options);
 
     this.handleArrowKeys();
     this.handleNavigationShortcuts();
   }
 
   private handleArrowKeys() {
-    this.lextron.keyboard.addBinding({
+    this.lextrix.keyboard.addBinding({
       key: ['ArrowLeft', 'ArrowRight'],
       offset: 0,
       shiftKey: null,
@@ -57,10 +57,10 @@ class UINode extends Module {
           return true;
         }
 
-        this.lextron.setSelection(
+        this.lextrix.setSelection(
           range.index - 1,
           range.length + (event.shiftKey ? 1 : 0),
-          Lextron.sources.USER,
+          Lextrix.sources.USER,
         );
         return false;
       },
@@ -68,7 +68,7 @@ class UINode extends Module {
   }
 
   private handleNavigationShortcuts() {
-    this.lextron.root.addEventListener('keydown', (event) => {
+    this.lextrix.root.addEventListener('keydown', (event) => {
       if (!event.defaultPrevented && canMoveCaretBeforeUINode(event)) {
         this.ensureListeningToSelectionChange();
       }
@@ -106,7 +106,7 @@ class UINode extends Module {
     const range = selection.getRangeAt(0);
     if (range.collapsed !== true || range.startOffset !== 0) return;
 
-    const line = this.lextron.scroll.find(range.startContainer);
+    const line = this.lextrix.scroll.find(range.startContainer);
     if (!(line instanceof ParentBlot) || !line.uiNode) return;
 
     const newRange = document.createRange();

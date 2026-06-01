@@ -1,7 +1,7 @@
 {
-  "name": "lextron-themes",
-  "version": "0.1.0",
-  "description": "Snow and Bubble themes for Lextron",
+  "name": "lextrix-themes",
+  "version": "1.0.0",
+  "description": "Snow and Bubble themes for Lextrix",
   "type": "module",
   "license": "MIT",
   "main": "./src/index.ts",
@@ -11,10 +11,10 @@
     "./assets/*": "./src/assets/*"
   },
   "dependencies": {
-    "lextron-core": "0.1.0",
-    "lextron-formats": "0.1.0",
-    "lextron-modules": "0.1.0",
-    "lextron-ui": "0.1.0",
+    "lextrix-core": "1.0.0",
+    "lextrix-formats": "1.0.0",
+    "lextrix-modules": "1.0.0",
+    "lextrix-ui": "1.0.0",
     "lodash-es": "^4.18.1"
   }
 }

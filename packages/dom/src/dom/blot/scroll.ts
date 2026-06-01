@@ -146,7 +146,7 @@ class ScrollBlot extends ParentBlot implements Root {
     let remaining = mutations;
     for (let i = 0; remaining.length > 0; i += 1) {
       if (i >= MAX_OPTIMIZE_ITERATIONS) {
-        throw new Error('[Lextron Dom] Maximum optimize iterations reached');
+        throw new Error('[Lextrix Dom] Maximum optimize iterations reached');
       }
       remaining.forEach((mutation: MutationRecord) => {
         const blot = this.find(mutation.target, true);

@@ -1,6 +1,6 @@
-﻿/** Lextron core — document editor shell. */
-import type { ScrollBlot } from 'lextron-dom';
-import { EmbedBlot } from 'lextron-dom';
+﻿/** Lextrix core — document editor shell. */
+import type { ScrollBlot } from 'lextrix-dom';
+import { EmbedBlot } from 'lextrix-dom';
 import TextBlot from './text.js';
 
 const GUARD_TEXT = '\uFEFF';

@@ -1,15 +1,15 @@
-﻿/** Lextron modules — editor behavior modules. */
+﻿/** Lextrix modules — editor behavior modules. */
 import { cloneDeep, isEqual } from 'lodash-es';
-import ChangeSet, { ChangeAttributes } from 'lextron-change';
-import { EmbedBlot, Scope, TextBlot } from 'lextron-dom';
-import type { Blot, BlockBlot } from 'lextron-dom';
-import Lextron from 'lextron-core';
-import logger from 'lextron-core/core/logger.js';
-import Module from 'lextron-core/core/module.js';
-import type { BlockEmbed } from 'lextron-core/blots/block.js';
-import type { Range } from 'lextron-core/core/selection.js';
+import ChangeSet, { ChangeAttributes } from 'lextrix-change';
+import { EmbedBlot, Scope, TextBlot } from 'lextrix-dom';
+import type { Blot, BlockBlot } from 'lextrix-dom';
+import Lextrix from 'lextrix-core';
+import logger from 'lextrix-core/core/logger.js';
+import Module from 'lextrix-core/core/module.js';
+import type { BlockEmbed } from 'lextrix-core/blots/block.js';
+import type { Range } from 'lextrix-core/core/selection.js';
 
-const debug = logger('lextron:keyboard');
+const debug = logger('lextrix:keyboard');
 
 const SHORTKEY = /Mac/i.test(navigator.platform) ? 'metaKey' : 'ctrlKey';
 
@@ -36,7 +36,7 @@ interface BindingObject
   suffix?: RegExp;
   format?: Record<string, unknown> | string[];
   handler?: (
-    this: { lextron: Lextron },
+    this: { lextrix: Lextrix },
     range: Range,
     curContext: Context,
     // eslint-disable-next-line no-use-before-define
@@ -74,8 +74,8 @@ class Keyboard extends Module<KeyboardOptions> {
 
   bindings: Record<string, NormalizedBinding[]>;
 
-  constructor(lextron: Lextron, options: Partial<KeyboardOptions>) {
-    super(lextron, options);
+  constructor(lextrix: Lextrix, options: Partial<KeyboardOptions>) {
+    super(lextrix, options);
     this.bindings = {};
     // @ts-expect-error Fix me later
     Object.keys(this.options.bindings).forEach((name) => {
@@ -172,7 +172,7 @@ class Keyboard extends Module<KeyboardOptions> {
   }
 
   listen() {
-    this.lextron.root.addEventListener('keydown', (evt) => {
+    this.lextrix.root.addEventListener('keydown', (evt) => {
       if (evt.defaultPrevented || evt.isComposing) return;
 
       // evt.isComposing is false when pressing Enter/Backspace when composing in Safari
@@ -189,16 +189,16 @@ class Keyboard extends Module<KeyboardOptions> {
       );
       if (matches.length === 0) return;
       // @ts-expect-error
-      const blot = Lextron.find(evt.target, true);
-      if (blot && blot.scroll !== this.lextron.scroll) return;
-      const range = this.lextron.getSelection();
-      if (range == null || !this.lextron.hasFocus()) return;
-      const [line, offset] = this.lextron.getLine(range.index);
-      const [leafStart, offsetStart] = this.lextron.getLeaf(range.index);
+      const blot = Lextrix.find(evt.target, true);
+      if (blot && blot.scroll !== this.lextrix.scroll) return;
+      const range = this.lextrix.getSelection();
+      if (range == null || !this.lextrix.hasFocus()) return;
+      const [line, offset] = this.lextrix.getLine(range.index);
+      const [leafStart, offsetStart] = this.lextrix.getLeaf(range.index);
       const [leafEnd, offsetEnd] =
         range.length === 0
           ? [leafStart, offsetStart]
-          : this.lextron.getLeaf(range.index + range.length);
+          : this.lextrix.getLeaf(range.index + range.length);
       const prefixText =
         leafStart instanceof TextBlot
           ? leafStart.value().slice(0, offsetStart)
@@ -209,7 +209,7 @@ class Keyboard extends Module<KeyboardOptions> {
         collapsed: range.length === 0,
         // @ts-expect-error Fix me later
         empty: range.length === 0 && line.length() <= 1,
-        format: this.lextron.getFormat(range),
+        format: this.lextrix.getFormat(range),
         line,
         offset,
         prefix: prefixText,
@@ -271,20 +271,20 @@ class Keyboard extends Module<KeyboardOptions> {
     const length = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/.test(context.prefix)
       ? 2
       : 1;
-    if (range.index === 0 || this.lextron.getLength() <= 1) return;
+    if (range.index === 0 || this.lextrix.getLength() <= 1) return;
     let formats = {};
-    const [line] = this.lextron.getLine(range.index);
+    const [line] = this.lextrix.getLine(range.index);
     let delta = new ChangeSet().retain(range.index - length).delete(length);
     if (context.offset === 0) {
       // Always deleting newline here, length always 1
-      const [prev] = this.lextron.getLine(range.index - 1);
+      const [prev] = this.lextrix.getLine(range.index - 1);
       if (prev) {
         const isPrevLineEmpty =
           prev.statics.blotName === 'block' && prev.length() <= 1;
         if (!isPrevLineEmpty) {
           // @ts-expect-error Fix me later
           const curFormats = line.formats();
-          const prevFormats = this.lextron.getFormat(range.index - 1, 1);
+          const prevFormats = this.lextrix.getFormat(range.index - 1, 1);
           formats = ChangeAttributes.diff(curFormats, prevFormats) || {};
           if (Object.keys(formats).length > 0) {
             // line.length() - 1 targets \n in line, another -1 for newline being deleted
@@ -297,8 +297,8 @@ class Keyboard extends Module<KeyboardOptions> {
         }
       }
     }
-    this.lextron.updateContents(delta, Lextron.sources.USER);
-    this.lextron.focus();
+    this.lextrix.updateContents(delta, Lextrix.sources.USER);
+    this.lextrix.focus();
   }
 
   handleDelete(range: Range, context: Context) {
@@ -306,37 +306,37 @@ class Keyboard extends Module<KeyboardOptions> {
     const length = /^[\uD800-\uDBFF][\uDC00-\uDFFF]/.test(context.suffix)
       ? 2
       : 1;
-    if (range.index >= this.lextron.getLength() - length) return;
+    if (range.index >= this.lextrix.getLength() - length) return;
     let formats = {};
-    const [line] = this.lextron.getLine(range.index);
+    const [line] = this.lextrix.getLine(range.index);
     let delta = new ChangeSet().retain(range.index).delete(length);
     // @ts-expect-error Fix me later
     if (context.offset >= line.length() - 1) {
-      const [next] = this.lextron.getLine(range.index + 1);
+      const [next] = this.lextrix.getLine(range.index + 1);
       if (next) {
         // @ts-expect-error Fix me later
         const curFormats = line.formats();
-        const nextFormats = this.lextron.getFormat(range.index, 1);
+        const nextFormats = this.lextrix.getFormat(range.index, 1);
         formats = ChangeAttributes.diff(curFormats, nextFormats) || {};
         if (Object.keys(formats).length > 0) {
           delta = delta.retain(next.length() - 1).retain(1, formats);
         }
       }
     }
-    this.lextron.updateContents(delta, Lextron.sources.USER);
-    this.lextron.focus();
+    this.lextrix.updateContents(delta, Lextrix.sources.USER);
+    this.lextrix.focus();
   }
 
   handleDeleteRange(range: Range) {
-    deleteRange({ range, lextron: this.lextron });
-    this.lextron.focus();
+    deleteRange({ range, lextrix: this.lextrix });
+    this.lextrix.focus();
   }
 
   handleEnter(range: Range, context: Context) {
     const lineFormats = Object.keys(context.format).reduce(
       (formats: Record<string, unknown>, format) => {
         if (
-          this.lextron.scroll.query(format, Scope.BLOCK) &&
+          this.lextrix.scroll.query(format, Scope.BLOCK) &&
           !Array.isArray(context.format[format])
         ) {
           formats[format] = context.format[format];
@@ -349,9 +349,9 @@ class Keyboard extends Module<KeyboardOptions> {
       .retain(range.index)
       .delete(range.length)
       .insert('\n', lineFormats);
-    this.lextron.updateContents(delta, Lextron.sources.USER);
-    this.lextron.setSelection(range.index + 1, Lextron.sources.SILENT);
-    this.lextron.focus();
+    this.lextrix.updateContents(delta, Lextrix.sources.USER);
+    this.lextrix.setSelection(range.index + 1, Lextrix.sources.SILENT);
+    this.lextrix.focus();
   }
 }
 
@@ -366,7 +366,7 @@ const defaultOptions: KeyboardOptions = {
       format: ['blockquote', 'indent', 'list'],
       handler(range, context) {
         if (context.collapsed && context.offset !== 0) return true;
-        this.lextron.format('indent', '+1', Lextron.sources.USER);
+        this.lextrix.format('indent', '+1', Lextrix.sources.USER);
         return false;
       },
     },
@@ -377,7 +377,7 @@ const defaultOptions: KeyboardOptions = {
       // highlight tab or tab at beginning of list, indent or blockquote
       handler(range, context) {
         if (context.collapsed && context.offset !== 0) return true;
-        this.lextron.format('indent', '-1', Lextron.sources.USER);
+        this.lextrix.format('indent', '-1', Lextrix.sources.USER);
         return false;
       },
     },
@@ -392,9 +392,9 @@ const defaultOptions: KeyboardOptions = {
       offset: 0,
       handler(range, context) {
         if (context.format.indent != null) {
-          this.lextron.format('indent', '-1', Lextron.sources.USER);
+          this.lextrix.format('indent', '-1', Lextrix.sources.USER);
         } else if (context.format.list != null) {
-          this.lextron.format('list', false, Lextron.sources.USER);
+          this.lextrix.format('list', false, Lextrix.sources.USER);
         }
       },
     },
@@ -406,21 +406,21 @@ const defaultOptions: KeyboardOptions = {
       collapsed: true,
       prefix: /\t$/,
       handler(range) {
-        this.lextron.deleteText(range.index - 1, 1, Lextron.sources.USER);
+        this.lextrix.deleteText(range.index - 1, 1, Lextrix.sources.USER);
       },
     },
     tab: {
       key: 'Tab',
       handler(range, context) {
         if (context.format.table) return true;
-        this.lextron.history.cutoff();
+        this.lextrix.history.cutoff();
         const delta = new ChangeSet()
           .retain(range.index)
           .delete(range.length)
           .insert('\t');
-        this.lextron.updateContents(delta, Lextron.sources.USER);
-        this.lextron.history.cutoff();
-        this.lextron.setSelection(range.index + 1, Lextron.sources.SILENT);
+        this.lextrix.updateContents(delta, Lextrix.sources.USER);
+        this.lextrix.history.cutoff();
+        this.lextrix.setSelection(range.index + 1, Lextrix.sources.SILENT);
         return false;
       },
     },
@@ -430,7 +430,7 @@ const defaultOptions: KeyboardOptions = {
       format: ['blockquote'],
       empty: true,
       handler() {
-        this.lextron.format('blockquote', false, Lextron.sources.USER);
+        this.lextrix.format('blockquote', false, Lextrix.sources.USER);
       },
     },
     'list empty enter': {
@@ -443,11 +443,11 @@ const defaultOptions: KeyboardOptions = {
         if (context.format.indent) {
           formats.indent = false;
         }
-        this.lextron.formatLine(
+        this.lextrix.formatLine(
           range.index,
           range.length,
           formats,
-          Lextron.sources.USER,
+          Lextrix.sources.USER,
         );
       },
     },
@@ -456,7 +456,7 @@ const defaultOptions: KeyboardOptions = {
       collapsed: true,
       format: { list: 'checked' },
       handler(range) {
-        const [line, offset] = this.lextron.getLine(range.index);
+        const [line, offset] = this.lextrix.getLine(range.index);
         const formats = {
           // @ts-expect-error Fix me later
           ...line.formats(),
@@ -468,9 +468,9 @@ const defaultOptions: KeyboardOptions = {
           // @ts-expect-error Fix me later
           .retain(line.length() - offset - 1)
           .retain(1, { list: 'unchecked' });
-        this.lextron.updateContents(delta, Lextron.sources.USER);
-        this.lextron.setSelection(range.index + 1, Lextron.sources.SILENT);
-        this.lextron.scrollSelectionIntoView();
+        this.lextrix.updateContents(delta, Lextrix.sources.USER);
+        this.lextrix.setSelection(range.index + 1, Lextrix.sources.SILENT);
+        this.lextrix.scrollSelectionIntoView();
       },
     },
     'header enter': {
@@ -479,16 +479,16 @@ const defaultOptions: KeyboardOptions = {
       format: ['header'],
       suffix: /^$/,
       handler(range, context) {
-        const [line, offset] = this.lextron.getLine(range.index);
+        const [line, offset] = this.lextrix.getLine(range.index);
         const delta = new ChangeSet()
           .retain(range.index)
           .insert('\n', context.format)
           // @ts-expect-error Fix me later
           .retain(line.length() - offset - 1)
           .retain(1, { header: null });
-        this.lextron.updateContents(delta, Lextron.sources.USER);
-        this.lextron.setSelection(range.index + 1, Lextron.sources.SILENT);
-        this.lextron.scrollSelectionIntoView();
+        this.lextrix.updateContents(delta, Lextrix.sources.USER);
+        this.lextrix.setSelection(range.index + 1, Lextrix.sources.SILENT);
+        this.lextrix.scrollSelectionIntoView();
       },
     },
     'table backspace': {
@@ -510,7 +510,7 @@ const defaultOptions: KeyboardOptions = {
       shiftKey: null,
       format: ['table'],
       handler(range) {
-        const module = this.lextron.getModule('table');
+        const module = this.lextrix.getModule('table');
         if (module) {
           // @ts-expect-error
           const [table, row, cell, offset] = module.getTable(range);
@@ -519,17 +519,17 @@ const defaultOptions: KeyboardOptions = {
           let index = table.offset();
           if (shift < 0) {
             const delta = new ChangeSet().retain(index).insert('\n');
-            this.lextron.updateContents(delta, Lextron.sources.USER);
-            this.lextron.setSelection(
+            this.lextrix.updateContents(delta, Lextrix.sources.USER);
+            this.lextrix.setSelection(
               range.index + 1,
               range.length,
-              Lextron.sources.SILENT,
+              Lextrix.sources.SILENT,
             );
           } else if (shift > 0) {
             index += table.length();
             const delta = new ChangeSet().retain(index).insert('\n');
-            this.lextron.updateContents(delta, Lextron.sources.USER);
-            this.lextron.setSelection(index, Lextron.sources.USER);
+            this.lextrix.updateContents(delta, Lextrix.sources.USER);
+            this.lextrix.setSelection(index, Lextrix.sources.USER);
           }
         }
       },
@@ -540,11 +540,11 @@ const defaultOptions: KeyboardOptions = {
       format: ['table'],
       handler(range, context) {
         const { event, line: cell } = context;
-        const offset = cell.offset(this.lextron.scroll);
+        const offset = cell.offset(this.lextrix.scroll);
         if (event.shiftKey) {
-          this.lextron.setSelection(offset - 1, Lextron.sources.USER);
+          this.lextrix.setSelection(offset - 1, Lextrix.sources.USER);
         } else {
-          this.lextron.setSelection(offset + cell.length(), Lextron.sources.USER);
+          this.lextrix.setSelection(offset + cell.length(), Lextrix.sources.USER);
         }
       },
     },
@@ -559,9 +559,9 @@ const defaultOptions: KeyboardOptions = {
       },
       prefix: /^\s*?(\d+\.|-|\*|\[ ?\]|\[x\])$/,
       handler(range, context) {
-        if (this.lextron.scroll.query('list') == null) return true;
+        if (this.lextrix.scroll.query('list') == null) return true;
         const { length } = context.prefix;
-        const [line, offset] = this.lextron.getLine(range.index);
+        const [line, offset] = this.lextrix.getLine(range.index);
         if (offset > length) return true;
         let value;
         switch (context.prefix.trim()) {
@@ -579,17 +579,17 @@ const defaultOptions: KeyboardOptions = {
           default:
             value = 'ordered';
         }
-        this.lextron.insertText(range.index, ' ', Lextron.sources.USER);
-        this.lextron.history.cutoff();
+        this.lextrix.insertText(range.index, ' ', Lextrix.sources.USER);
+        this.lextrix.history.cutoff();
         const delta = new ChangeSet()
           .retain(range.index - offset)
           .delete(length + 1)
           // @ts-expect-error Fix me later
           .retain(line.length() - 2 - offset)
           .retain(1, { list: value });
-        this.lextron.updateContents(delta, Lextron.sources.USER);
-        this.lextron.history.cutoff();
-        this.lextron.setSelection(range.index - length, Lextron.sources.SILENT);
+        this.lextrix.updateContents(delta, Lextrix.sources.USER);
+        this.lextrix.history.cutoff();
+        this.lextrix.setSelection(range.index - length, Lextrix.sources.SILENT);
         return false;
       },
     },
@@ -600,7 +600,7 @@ const defaultOptions: KeyboardOptions = {
       prefix: /^$/,
       suffix: /^\s*$/,
       handler(range) {
-        const [line, offset] = this.lextron.getLine(range.index);
+        const [line, offset] = this.lextrix.getLine(range.index);
         let numLines = 2;
         let cur = line;
         while (
@@ -618,8 +618,8 @@ const defaultOptions: KeyboardOptions = {
               .retain(range.index + line.length() - offset - 2)
               .retain(1, { 'code-block': null })
               .delete(1);
-            this.lextron.updateContents(delta, Lextron.sources.USER);
-            this.lextron.setSelection(range.index - 1, Lextron.sources.SILENT);
+            this.lextrix.updateContents(delta, Lextrix.sources.USER);
+            this.lextrix.setSelection(range.index - 1, Lextrix.sources.SILENT);
             return false;
           }
         }
@@ -643,19 +643,19 @@ function makeCodeBlockHandler(indent: boolean): BindingObject {
     shiftKey: !indent,
     format: { 'code-block': true },
     handler(range, { event }) {
-      const CodeBlock = this.lextron.scroll.query('code-block');
+      const CodeBlock = this.lextrix.scroll.query('code-block');
       // @ts-expect-error
       const { TAB } = CodeBlock;
       if (range.length === 0 && !event.shiftKey) {
-        this.lextron.insertText(range.index, TAB, Lextron.sources.USER);
-        this.lextron.setSelection(range.index + TAB.length, Lextron.sources.SILENT);
+        this.lextrix.insertText(range.index, TAB, Lextrix.sources.USER);
+        this.lextrix.setSelection(range.index + TAB.length, Lextrix.sources.SILENT);
         return;
       }
 
       const lines =
         range.length === 0
-          ? this.lextron.getLines(range.index, 1)
-          : this.lextron.getLines(range);
+          ? this.lextrix.getLines(range.index, 1)
+          : this.lextrix.getLines(range);
       let { index, length } = range;
       lines.forEach((line, i) => {
         if (indent) {
@@ -674,8 +674,8 @@ function makeCodeBlockHandler(indent: boolean): BindingObject {
           }
         }
       });
-      this.lextron.update(Lextron.sources.USER);
-      this.lextron.setSelection(index, length, Lextron.sources.SILENT);
+      this.lextrix.update(Lextrix.sources.USER);
+      this.lextrix.setSelection(index, length, Lextrix.sources.SILENT);
     },
   };
 }
@@ -695,28 +695,28 @@ function makeEmbedArrowHandler(
       if (key === 'ArrowRight') {
         index += range.length + 1;
       }
-      const [leaf] = this.lextron.getLeaf(index);
+      const [leaf] = this.lextrix.getLeaf(index);
       if (!(leaf instanceof EmbedBlot)) return true;
       if (key === 'ArrowLeft') {
         if (shiftKey) {
-          this.lextron.setSelection(
+          this.lextrix.setSelection(
             range.index - 1,
             range.length + 1,
-            Lextron.sources.USER,
+            Lextrix.sources.USER,
           );
         } else {
-          this.lextron.setSelection(range.index - 1, Lextron.sources.USER);
+          this.lextrix.setSelection(range.index - 1, Lextrix.sources.USER);
         }
       } else if (shiftKey) {
-        this.lextron.setSelection(
+        this.lextrix.setSelection(
           range.index,
           range.length + 1,
-          Lextron.sources.USER,
+          Lextrix.sources.USER,
         );
       } else {
-        this.lextron.setSelection(
+        this.lextrix.setSelection(
           range.index + range.length + 1,
-          Lextron.sources.USER,
+          Lextrix.sources.USER,
         );
       }
       return false;
@@ -729,7 +729,7 @@ function makeFormatHandler(format: string): BindingObject {
     key: format[0],
     shortKey: true,
     handler(range, context) {
-      this.lextron.format(format, !context.format[format], Lextron.sources.USER);
+      this.lextrix.format(format, !context.format[format], Lextrix.sources.USER);
     },
   };
 }
@@ -755,25 +755,25 @@ function makeTableArrowHandler(up: boolean): BindingObject {
             targetCell = targetCell.next;
           }
           const index =
-            targetCell.offset(this.lextron.scroll) +
+            targetCell.offset(this.lextrix.scroll) +
             Math.min(context.offset, targetCell.length() - 1);
-          this.lextron.setSelection(index, 0, Lextron.sources.USER);
+          this.lextrix.setSelection(index, 0, Lextrix.sources.USER);
         }
       } else {
         // @ts-expect-error
         const targetLine = cell.table()[key];
         if (targetLine != null) {
           if (up) {
-            this.lextron.setSelection(
-              targetLine.offset(this.lextron.scroll) + targetLine.length() - 1,
+            this.lextrix.setSelection(
+              targetLine.offset(this.lextrix.scroll) + targetLine.length() - 1,
               0,
-              Lextron.sources.USER,
+              Lextrix.sources.USER,
             );
           } else {
-            this.lextron.setSelection(
-              targetLine.offset(this.lextron.scroll),
+            this.lextrix.setSelection(
+              targetLine.offset(this.lextrix.scroll),
               0,
-              Lextron.sources.USER,
+              Lextrix.sources.USER,
             );
           }
         }
@@ -798,20 +798,20 @@ function normalize(binding: Binding): BindingObject | null {
   return binding;
 }
 
-// TODO: Move into lextron.ts or editor.ts
-function deleteRange({ lextron, range }: { lextron: Lextron; range: Range }) {
-  const lines = lextron.getLines(range);
+// TODO: Move into lextrix.ts or editor.ts
+function deleteRange({ lextrix, range }: { lextrix: Lextrix; range: Range }) {
+  const lines = lextrix.getLines(range);
   let formats = {};
   if (lines.length > 1) {
     const firstFormats = lines[0].formats();
     const lastFormats = lines[lines.length - 1].formats();
     formats = ChangeAttributes.diff(lastFormats, firstFormats) || {};
   }
-  lextron.deleteText(range, Lextron.sources.USER);
+  lextrix.deleteText(range, Lextrix.sources.USER);
   if (Object.keys(formats).length > 0) {
-    lextron.formatLine(range.index, 1, formats, Lextron.sources.USER);
+    lextrix.formatLine(range.index, 1, formats, Lextrix.sources.USER);
   }
-  lextron.setSelection(range.index, Lextron.sources.SILENT);
+  lextrix.setSelection(range.index, Lextrix.sources.SILENT);
 }
 
 function tableSide(_table: unknown, row: Blot, cell: Blot, offset: number) {

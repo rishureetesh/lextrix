@@ -1,4 +1,4 @@
-/** Lextron DOM document model — blots, attributors, and registry. */
+/** Lextrix DOM document model — blots, attributors, and registry. */
 import ContainerBlot from './blot/abstract/container.js';
 import LeafBlot from './blot/abstract/leaf.js';
 import ParentBlot from './blot/abstract/parent.js';

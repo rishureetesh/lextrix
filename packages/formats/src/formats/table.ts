@@ -1,7 +1,7 @@
-/** Lextron formats — built-in text and block formats. */
-import type { LinkedList } from 'lextron-dom';
-import Block from 'lextron-core/blots/block.js';
-import Container from 'lextron-core/blots/container.js';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import type { LinkedList } from 'lextrix-dom';
+import Block from 'lextrix-core/blots/block.js';
+import Container from 'lextrix-core/blots/container.js';
 
 class TableCell extends Block {
   static blotName = 'table';

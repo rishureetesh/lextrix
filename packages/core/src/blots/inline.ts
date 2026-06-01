@@ -1,6 +1,6 @@
-﻿/** Lextron core — document editor shell. */
-import { EmbedBlot, InlineBlot, Scope } from 'lextron-dom';
-import type { BlotConstructor } from 'lextron-dom';
+﻿/** Lextrix core — document editor shell. */
+import { EmbedBlot, InlineBlot, Scope } from 'lextrix-dom';
+import type { BlotConstructor } from 'lextrix-dom';
 import Break from './break.js';
 import Text from './text.js';
 

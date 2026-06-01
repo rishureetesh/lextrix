@@ -1,4 +1,4 @@
-﻿/** Lextron modules — editor behavior modules. */
+﻿/** Lextrix modules — editor behavior modules. */
 const normalWeightRegexp = /font-weight:\s*normal/;
 const blockTagNames = ['P', 'OL', 'UL'];
 

@@ -1,4 +1,4 @@
-﻿/** Lextron core — document editor shell. */
+﻿/** Lextrix core — document editor shell. */
 export type Rect = {
   top: number;
   right: number;

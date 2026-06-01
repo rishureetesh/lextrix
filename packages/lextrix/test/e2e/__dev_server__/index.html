@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Lextrix E2E Tests</title>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <link href="/lextrix.core.css" rel="stylesheet">
+  <link href="/lextrix.snow.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="root">
+    <div id="standalone-container">
+      <div id="toolbar-container">
+        <span class="lxr-formats">
+          <select class="lxr-font"></select>
+          <select class="lxr-size"></select>
+        </span>
+        <span class="lxr-formats">
+          <button class="lxr-bold"></button>
+          <button class="lxr-italic"></button>
+          <button class="lxr-underline"></button>
+          <button class="lxr-strike"></button>
+        </span>
+        <span class="lxr-formats">
+          <select class="lxr-color"></select>
+          <select class="lxr-background"></select>
+        </span>
+        <span class="lxr-formats">
+          <button class="lxr-script" value="sub"></button>
+          <button class="lxr-script" value="super"></button>
+        </span>
+        <span class="lxr-formats">
+          <button class="lxr-header" value="1"></button>
+          <button class="lxr-header" value="2"></button>
+          <button class="lxr-blockquote"></button>
+          <button class="lxr-code-block"></button>
+        </span>
+        <span class="lxr-formats">
+          <button class="lxr-list" value="ordered"></button>
+          <button class="lxr-list" value="bullet"></button>
+          <button class="lxr-indent" value="-1"></button>
+          <button class="lxr-indent" value="+1"></button>
+        </span>
+        <span class="lxr-formats">
+          <button class="lxr-direction" value="rtl"></button>
+          <select class="lxr-align"></select>
+        </span>
+        <span class="lxr-formats">
+          <button class="lxr-link"></button>
+          <button class="lxr-image"></button>
+          <button class="lxr-video"></button>
+          <button class="lxr-formula"></button>
+        </span>
+        <span class="lxr-formats">
+          <button class="lxr-clean"></button>
+        </span>
+      </div>
+      <div id="editor" style="height: 350px;">
+      </div>
+      <script>
+        window.lextrix = new Lextrix(document.getElementById('editor'), {
+          modules: { syntax: true, toolbar: '#toolbar-container' },
+          placeholder: 'Compose an epic...',
+          theme: 'snow',
+        });
+      </script>
+    </div>
+  </div>
+</body>
+
+</html>

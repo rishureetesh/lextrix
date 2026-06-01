@@ -5,13 +5,13 @@ class IconPicker extends Picker {
 
   constructor(select: HTMLSelectElement, icons: Record<string, string>) {
     super(select);
-    this.container.classList.add('lxt-icon-picker');
-    Array.from(this.container.querySelectorAll('.lxt-picker-item')).forEach(
+    this.container.classList.add('lxr-icon-picker');
+    Array.from(this.container.querySelectorAll('.lxr-picker-item')).forEach(
       (item) => {
         item.innerHTML = icons[item.getAttribute('data-value') || ''];
       },
     );
-    this.defaultItem = this.container.querySelector('.lxt-selected');
+    this.defaultItem = this.container.querySelector('.lxr-selected');
     this.selectItem(this.defaultItem);
   }
 

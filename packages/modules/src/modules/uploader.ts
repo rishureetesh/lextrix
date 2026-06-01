@@ -1,21 +1,21 @@
-﻿/** Lextron modules — editor behavior modules. */
-import ChangeSet from 'lextron-change';
-import type Lextron from 'lextron-core';
-import Emitter from 'lextron-core/core/emitter.js';
-import Module from 'lextron-core/core/module.js';
-import type { Range } from 'lextron-core/core/selection.js';
+﻿/** Lextrix modules — editor behavior modules. */
+import ChangeSet from 'lextrix-change';
+import type Lextrix from 'lextrix-core';
+import Emitter from 'lextrix-core/core/emitter.js';
+import Module from 'lextrix-core/core/module.js';
+import type { Range } from 'lextrix-core/core/selection.js';
 
 interface UploaderOptions {
   mimetypes: string[];
-  handler: (this: { lextron: Lextron }, range: Range, files: File[]) => void;
+  handler: (this: { lextrix: Lextrix }, range: Range, files: File[]) => void;
 }
 
 class Uploader extends Module<UploaderOptions> {
   static DEFAULTS: UploaderOptions;
 
-  constructor(lextron: Lextron, options: Partial<UploaderOptions>) {
-    super(lextron, options);
-    lextron.root.addEventListener('drop', (e) => {
+  constructor(lextrix: Lextrix, options: Partial<UploaderOptions>) {
+    super(lextrix, options);
+    lextrix.root.addEventListener('drop', (e) => {
       e.preventDefault();
       let native: ReturnType<typeof document.createRange> | null = null;
       if (document.caretRangeFromPoint) {
@@ -29,9 +29,9 @@ class Uploader extends Module<UploaderOptions> {
         }
       }
 
-      const normalized = native && lextron.selection.normalizeNative(native);
+      const normalized = native && lextrix.selection.normalizeNative(native);
       if (normalized) {
-        const range = lextron.selection.normalizedToRange(normalized);
+        const range = lextrix.selection.normalizedToRange(normalized);
         if (e.dataTransfer?.files) {
           this.upload(range, e.dataTransfer.files);
         }
@@ -56,7 +56,7 @@ class Uploader extends Module<UploaderOptions> {
 Uploader.DEFAULTS = {
   mimetypes: ['image/png', 'image/jpeg'],
   handler(range: Range, files: File[]) {
-    if (!this.lextron.scroll.query('image')) {
+    if (!this.lextrix.scroll.query('image')) {
       return;
     }
     const promises = files.map<Promise<string>>((file) => {
@@ -72,8 +72,8 @@ Uploader.DEFAULTS = {
       const update = images.reduce((delta: ChangeSet, image) => {
         return delta.insert({ image });
       }, new ChangeSet().retain(range.index).delete(range.length)) as ChangeSet;
-      this.lextron.updateContents(update, Emitter.sources.USER);
-      this.lextron.setSelection(
+      this.lextrix.updateContents(update, Emitter.sources.USER);
+      this.lextrix.setSelection(
         range.index + images.length,
         Emitter.sources.SILENT,
       );

@@ -1,4 +1,4 @@
-﻿// Styles necessary for Lextron
+﻿// Styles necessary for Lextrix
 
 LIST_STYLE = decimal lower-alpha lower-roman
 LIST_STYLE_WIDTH = 1.2em
@@ -9,7 +9,7 @@ MAX_INDENT = 9
 resets(arr)
   unquote('list-' + join(' list-', arr))
 
-.lxt-container
+.lxr-container
   box-sizing: border-box
   font-family: Helvetica, Arial, sans-serif
   font-size: 13px
@@ -17,17 +17,17 @@ resets(arr)
   margin: 0px
   position: relative
 
-.lxt-container.lxt-disabled
-  .lxt-tooltip
+.lxr-container.lxr-disabled
+  .lxr-tooltip
     visibility: hidden
 
-.lxt-container:not(.lxt-disabled)
+.lxr-container:not(.lxr-disabled)
   li[data-list=checked],
   li[data-list=unchecked]
-    > .lxt-ui
+    > .lxr-ui
       cursor: pointer
 
-.lxt-clipboard
+.lxr-clipboard
   left: -100000px
   height: 1px
   overflow-y: hidden
@@ -37,7 +37,7 @@ resets(arr)
     margin: 0
     padding: 0
 
-.lxt-editor
+.lxr-editor
   box-sizing: border-box
   counter-reset: resets(0..MAX_INDENT)
   line-height: 1.42
@@ -73,7 +73,7 @@ resets(arr)
     padding-left: LIST_STYLE_OUTER_WIDTH
     position: relative
 
-    > .lxt-ui:before
+    > .lxr-ui:before
       display: inline-block
       margin-left: -1*LIST_STYLE_OUTER_WIDTH
       margin-right: LIST_STYLE_MARGIN
@@ -83,14 +83,14 @@ resets(arr)
 
   li[data-list=checked],
   li[data-list=unchecked]
-    > .lxt-ui
+    > .lxr-ui
       color: #777
 
-  li[data-list=bullet] > .lxt-ui:before
+  li[data-list=bullet] > .lxr-ui:before
     content: '\2022'
-  li[data-list=checked] > .lxt-ui:before
+  li[data-list=checked] > .lxr-ui:before
     content: '\2611'
-  li[data-list=unchecked] > .lxt-ui:before
+  li[data-list=unchecked] > .lxr-ui:before
     content: '\2610'
 
   li[data-list]
@@ -101,33 +101,33 @@ resets(arr)
 
   li[data-list=ordered]
     counter-increment: list-0
-    > .lxt-ui:before
+    > .lxr-ui:before
       content: unquote('counter(list-0, ' + LIST_STYLE[0] + ')') '. '
   for num in (1..MAX_INDENT)
-    li[data-list=ordered].lxt-indent-{num}
+    li[data-list=ordered].lxr-indent-{num}
       counter-increment: unquote('list-' + num)
-      > .lxt-ui:before
+      > .lxr-ui:before
         content: unquote('counter(list-' + num + ', ' + LIST_STYLE[num%3] + ')') '. '
     if (num < MAX_INDENT)
-      li[data-list].lxt-indent-{num}
+      li[data-list].lxr-indent-{num}
         @supports (counter-set: none)
           counter-set: resets((num+1)..MAX_INDENT)
         @supports not (counter-set: none)
           counter-reset: resets((num+1)..MAX_INDENT)
 
   for num in (1..MAX_INDENT)
-    .lxt-indent-{num}:not(.lxt-direction-rtl)
+    .lxr-indent-{num}:not(.lxr-direction-rtl)
       padding-left: (3*num)em
-    li.lxt-indent-{num}:not(.lxt-direction-rtl)
+    li.lxr-indent-{num}:not(.lxr-direction-rtl)
       padding-left: (3*num + LIST_STYLE_OUTER_WIDTH)em
-    .lxt-indent-{num}.lxt-direction-rtl.lxt-align-right
+    .lxr-indent-{num}.lxr-direction-rtl.lxr-align-right
       padding-right: (3*num)em
-    li.lxt-indent-{num}.lxt-direction-rtl.lxt-align-right
+    li.lxr-indent-{num}.lxr-direction-rtl.lxr-align-right
       padding-right: (3*num + LIST_STYLE_OUTER_WIDTH)em
 
-  li.lxt-direction-rtl
+  li.lxr-direction-rtl
     padding-right: LIST_STYLE_OUTER_WIDTH
-    > .lxt-ui:before
+    > .lxr-ui:before
       margin-left: LIST_STYLE_MARGIN
       margin-right: -1*LIST_STYLE_OUTER_WIDTH
       text-align: left
@@ -138,74 +138,74 @@ resets(arr)
     td
       outline: none
 
-  .lxt-code-block-container
+  .lxr-code-block-container
     font-family: monospace
 
-  .lxt-video
+  .lxr-video
     display: block
     max-width: 100%
-  .lxt-video.lxt-align-center
+  .lxr-video.lxr-align-center
     margin: 0 auto
-  .lxt-video.lxt-align-right
+  .lxr-video.lxr-align-right
     margin: 0 0 0 auto
 
-  .lxt-bg-black
+  .lxr-bg-black
     background-color: rgb(15, 23, 42)
-  .lxt-bg-red
+  .lxr-bg-red
     background-color: rgb(239, 68, 68)
-  .lxt-bg-orange
+  .lxr-bg-orange
     background-color: rgb(249, 115, 22)
-  .lxt-bg-yellow
+  .lxr-bg-yellow
     background-color: rgb(234, 179, 8)
-  .lxt-bg-green
+  .lxr-bg-green
     background-color: rgb(34, 197, 94)
-  .lxt-bg-blue
+  .lxr-bg-blue
     background-color: rgb(59, 130, 246)
-  .lxt-bg-purple
+  .lxr-bg-purple
     background-color: rgb(139, 92, 246)
 
-  .lxt-color-white
+  .lxr-color-white
     color: rgb(255, 255, 255)
-  .lxt-color-red
+  .lxr-color-red
     color: rgb(239, 68, 68)
-  .lxt-color-orange
+  .lxr-color-orange
     color: rgb(249, 115, 22)
-  .lxt-color-yellow
+  .lxr-color-yellow
     color: rgb(234, 179, 8)
-  .lxt-color-green
+  .lxr-color-green
     color: rgb(34, 197, 94)
-  .lxt-color-blue
+  .lxr-color-blue
     color: rgb(59, 130, 246)
-  .lxt-color-purple
+  .lxr-color-purple
     color: rgb(139, 92, 246)
 
-  .lxt-font-serif
+  .lxr-font-serif
     font-family: Georgia, Times New Roman, serif
-  .lxt-font-monospace
+  .lxr-font-monospace
     font-family: Monaco, Courier New, monospace
 
-  .lxt-size-small
+  .lxr-size-small
     font-size: 0.75em
-  .lxt-size-large
+  .lxr-size-large
     font-size: 1.5em
-  .lxt-size-huge
+  .lxr-size-huge
     font-size: 2.5em
 
-  .lxt-direction-rtl
+  .lxr-direction-rtl
     direction: rtl
     text-align: inherit
 
-  .lxt-align-center
+  .lxr-align-center
     text-align: center
-  .lxt-align-justify
+  .lxr-align-justify
     text-align: justify
-  .lxt-align-right
+  .lxr-align-right
     text-align: right
 
-  .lxt-ui
+  .lxr-ui
     position: absolute
 
-.lxt-editor.lxt-blank::before
+.lxr-editor.lxr-blank::before
   color: rgba(0,0,0,0.6)
   content: attr(data-placeholder)
   font-style: italic

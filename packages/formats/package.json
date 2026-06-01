@@ -1,7 +1,7 @@
 {
-  "name": "lextron-formats",
-  "version": "0.1.0",
-  "description": "Built-in text and block formats for Lextron",
+  "name": "lextrix-formats",
+  "version": "1.0.0",
+  "description": "Built-in text and block formats for Lextrix",
   "type": "module",
   "license": "MIT",
   "main": "./src/index.ts",
@@ -11,7 +11,7 @@
     "./formats/*": "./src/formats/*"
   },
   "dependencies": {
-    "lextron-core": "0.1.0",
-    "lextron-dom": "0.1.0"
+    "lextrix-core": "1.0.0",
+    "lextrix-dom": "1.0.0"
   }
 }

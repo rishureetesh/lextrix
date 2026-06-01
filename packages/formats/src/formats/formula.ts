@@ -1,9 +1,9 @@
-/** Lextron formats — built-in text and block formats. */
-import Embed from 'lextron-core/blots/embed.js';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import Embed from 'lextrix-core/blots/embed.js';
 
 class Formula extends Embed {
   static blotName = 'formula';
-  static className = 'lxt-formula';
+  static className = 'lxr-formula';
   static tagName = 'SPAN';
 
   static create(value: string) {

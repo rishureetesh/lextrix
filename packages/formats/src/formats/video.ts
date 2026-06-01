@@ -1,12 +1,12 @@
-/** Lextron formats — built-in text and block formats. */
-import { BlockEmbed } from 'lextron-core/blots/block.js';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import { BlockEmbed } from 'lextrix-core/blots/block.js';
 import Link from './link.js';
 
 const ATTRIBUTES = ['height', 'width'];
 
 class Video extends BlockEmbed {
   static blotName = 'video';
-  static className = 'lxt-video';
+  static className = 'lxr-video';
   static tagName = 'IFRAME';
 
   static create(value: string) {

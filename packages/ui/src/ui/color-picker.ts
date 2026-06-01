@@ -4,11 +4,11 @@ class ColorPicker extends Picker {
   constructor(select: HTMLSelectElement, label: string) {
     super(select);
     this.label.innerHTML = label;
-    this.container.classList.add('lxt-color-picker');
-    Array.from(this.container.querySelectorAll('.lxt-picker-item'))
+    this.container.classList.add('lxr-color-picker');
+    Array.from(this.container.querySelectorAll('.lxr-picker-item'))
       .slice(0, 7)
       .forEach((item) => {
-        item.classList.add('lxt-primary');
+        item.classList.add('lxr-primary');
       });
   }
 
@@ -20,7 +20,7 @@ class ColorPicker extends Picker {
 
   selectItem(item: HTMLElement | null, trigger?: boolean) {
     super.selectItem(item, trigger);
-    const colorLabel = this.label.querySelector<HTMLElement>('.lxt-color-label');
+    const colorLabel = this.label.querySelector<HTMLElement>('.lxr-color-label');
     const value = item ? item.getAttribute('data-value') || '' : '';
     if (colorLabel) {
       if (colorLabel.tagName === 'line') {

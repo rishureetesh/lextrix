@@ -1,18 +1,18 @@
-# Contributing to Lextron
+# Contributing to Lextrix
 
-Thank you for your interest in Lextron. This project is an independent rich text editor.
+Thank you for your interest in Lextrix. This project is an independent rich text editor.
 
 ## How to help
 
-- Report [bugs](https://github.com/rishureetesh/lextron/issues) with reproduction steps
+- Report [bugs](https://github.com/rishureetesh/lextrix/issues) with reproduction steps
 - Improve [documentation](./docs/README.md)
 - Submit focused pull requests with tests
 
 ## Development setup
 
 ```bash
-git clone https://github.com/rishureetesh/lextron.git
-cd lextron
+git clone https://github.com/rishureetesh/lextrix.git
+cd lextrix
 npm install
 npm run build
 npm run dev          # demo at http://localhost:5173

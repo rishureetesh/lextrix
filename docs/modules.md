@@ -64,7 +64,7 @@ table.deleteColumn();
 table.deleteTable();
 ```
 
-No default toolbar button — add a custom handler if needed (icon exists in `lextron-ui`).
+No default toolbar button — add a custom handler if needed (icon exists in `lextrix-ui`).
 
 ### Image resize
 

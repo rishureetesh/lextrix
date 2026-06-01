@@ -1,5 +1,5 @@
 /**
- * Lextron change-set — operational transform layer for document changes.
+ * Lextrix change-set — operational transform layer for document changes.
  */
 export {
   default,

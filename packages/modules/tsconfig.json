@@ -4,5 +4,5 @@
     "noEmit": true
   },
   "include": ["src/**/*.ts"],
-  "files": ["../../types/lextron-globals.d.ts"]
+  "files": ["../../types/lextrix-globals.d.ts"]
 }

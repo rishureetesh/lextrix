@@ -1,4 +1,4 @@
-﻿/** Lextron core — document editor shell. */
+﻿/** Lextrix core — document editor shell. */
 const levels = ['error', 'warn', 'log', 'info'] as const;
 export type DebugLevel = (typeof levels)[number];
 let level: DebugLevel | false = 'warn';

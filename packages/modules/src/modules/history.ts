@@ -1,10 +1,10 @@
-﻿/** Lextron modules — editor behavior modules. */
-import { Scope } from 'lextron-dom';
-import type ChangeSet from 'lextron-change';
-import Module from 'lextron-core/core/module.js';
-import Lextron from 'lextron-core';
-import type Scroll from 'lextron-core/blots/scroll.js';
-import type { Range } from 'lextron-core/core/selection.js';
+﻿/** Lextrix modules — editor behavior modules. */
+import { Scope } from 'lextrix-dom';
+import type ChangeSet from 'lextrix-change';
+import Module from 'lextrix-core/core/module.js';
+import Lextrix from 'lextrix-core';
+import type Scroll from 'lextrix-core/blots/scroll.js';
+import type { Range } from 'lextrix-core/core/selection.js';
 
 export interface HistoryOptions {
   userOnly: boolean;
@@ -34,18 +34,18 @@ class History extends Module<HistoryOptions> {
   stack: Stack = { undo: [], redo: [] };
   currentRange: Range | null = null;
 
-  constructor(lextron: Lextron, options: Partial<HistoryOptions>) {
-    super(lextron, options);
-    this.lextron.on(
-      Lextron.events.EDITOR_CHANGE,
+  constructor(lextrix: Lextrix, options: Partial<HistoryOptions>) {
+    super(lextrix, options);
+    this.lextrix.on(
+      Lextrix.events.EDITOR_CHANGE,
       (eventName, value, oldValue, source) => {
-        if (eventName === Lextron.events.SELECTION_CHANGE) {
-          if (value && source !== Lextron.sources.SILENT) {
+        if (eventName === Lextrix.events.SELECTION_CHANGE) {
+          if (value && source !== Lextrix.sources.SILENT) {
             this.currentRange = value;
           }
-        } else if (eventName === Lextron.events.TEXT_CHANGE) {
+        } else if (eventName === Lextrix.events.TEXT_CHANGE) {
           if (!this.ignoreChange) {
-            if (!this.options.userOnly || source === Lextron.sources.USER) {
+            if (!this.options.userOnly || source === Lextrix.sources.USER) {
               this.record(value, oldValue);
             } else {
               this.transform(value);
@@ -57,22 +57,22 @@ class History extends Module<HistoryOptions> {
       },
     );
 
-    this.lextron.keyboard.addBinding(
+    this.lextrix.keyboard.addBinding(
       { key: 'z', shortKey: true },
       this.undo.bind(this),
     );
-    this.lextron.keyboard.addBinding(
+    this.lextrix.keyboard.addBinding(
       { key: ['z', 'Z'], shortKey: true, shiftKey: true },
       this.redo.bind(this),
     );
     if (/Win/i.test(navigator.platform)) {
-      this.lextron.keyboard.addBinding(
+      this.lextrix.keyboard.addBinding(
         { key: 'y', shortKey: true },
         this.redo.bind(this),
       );
     }
 
-    this.lextron.root.addEventListener('beforeinput', (event) => {
+    this.lextrix.root.addEventListener('beforeinput', (event) => {
       if (event.inputType === 'historyUndo') {
         this.undo();
         event.preventDefault();
@@ -87,7 +87,7 @@ class History extends Module<HistoryOptions> {
     if (this.stack[source].length === 0) return;
     const item = this.stack[source].pop();
     if (!item) return;
-    const base = this.lextron.getContents();
+    const base = this.lextrix.getContents();
     const inverseChangeSet = item.changeSet.invert(base);
     this.stack[dest].push({
       changeSet: inverseChangeSet,
@@ -95,7 +95,7 @@ class History extends Module<HistoryOptions> {
     });
     this.lastRecorded = 0;
     this.ignoreChange = true;
-    this.lextron.updateContents(item.changeSet, Lextron.sources.USER);
+    this.lextrix.updateContents(item.changeSet, Lextrix.sources.USER);
     this.ignoreChange = false;
 
     this.restoreSelection(item);
@@ -151,10 +151,10 @@ class History extends Module<HistoryOptions> {
 
   protected restoreSelection(stackItem: StackItem) {
     if (stackItem.range) {
-      this.lextron.setSelection(stackItem.range, Lextron.sources.USER);
+      this.lextrix.setSelection(stackItem.range, Lextrix.sources.USER);
     } else {
-      const index = getLastChangeIndex(this.lextron.scroll, stackItem.changeSet);
-      this.lextron.setSelection(index, Lextron.sources.USER);
+      const index = getLastChangeIndex(this.lextrix.scroll, stackItem.changeSet);
+      this.lextrix.setSelection(index, Lextrix.sources.USER);
     }
   }
 }

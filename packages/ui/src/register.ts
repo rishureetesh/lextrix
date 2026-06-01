@@ -1,5 +1,5 @@
-import type Lextron from 'lextron-core';
-import { lxtPath } from 'lextron-core/registry-paths.js';
+import type Lextrix from 'lextrix-core';
+import { lxrPath } from 'lextrix-core/registry-paths.js';
 
 import Icons from './ui/icons.js';
 import Picker from './ui/picker.js';
@@ -7,14 +7,14 @@ import ColorPicker from './ui/color-picker.js';
 import IconPicker from './ui/icon-picker.js';
 import Tooltip from './ui/tooltip.js';
 
-export function registerUI(editor: typeof Lextron, overwrite = false) {
+export function registerUI(editor: typeof Lextrix, overwrite = false) {
   editor.register(
     {
-      [lxtPath.ui('icons')]: Icons,
-      [lxtPath.ui('picker')]: Picker,
-      [lxtPath.ui('icon-picker')]: IconPicker,
-      [lxtPath.ui('color-picker')]: ColorPicker,
-      [lxtPath.ui('tooltip')]: Tooltip,
+      [lxrPath.ui('icons')]: Icons,
+      [lxrPath.ui('picker')]: Picker,
+      [lxrPath.ui('icon-picker')]: IconPicker,
+      [lxrPath.ui('color-picker')]: ColorPicker,
+      [lxrPath.ui('tooltip')]: Tooltip,
     },
     overwrite,
   );

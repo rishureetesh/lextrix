@@ -1,4 +1,4 @@
-﻿/** Lextron core — document editor shell. */
-import type Lextron from '../core/lextron.js';
+﻿/** Lextrix core — document editor shell. */
+import type Lextrix from '../core/lextrix.js';
 
-export default new WeakMap<Node, Lextron>();
+export default new WeakMap<Node, Lextrix>();

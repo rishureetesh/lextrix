@@ -1,14 +1,14 @@
 # API reference
 
-Lextron exposes a familiar rich-text API centered on **ChangeSet** (operational transforms over document content).
+Lextrix exposes a familiar rich-text API centered on **ChangeSet** (operational transforms over document content).
 
 ## Construction
 
 ```javascript
-const editor = new Lextron(container, options);
+const editor = new Lextrix(container, options);
 ```
 
-Static properties: `Lextron.version`, `Lextron.events`, `Lextron.sources`, `Lextron.import()`, `Lextron.register()`.
+Static properties: `Lextrix.version`, `Lextrix.events`, `Lextrix.sources`, `Lextrix.import()`, `Lextrix.register()`.
 
 ## Content
 
@@ -76,7 +76,7 @@ Sources: `'user'`, `'api'`, `'silent'`.
 ## ChangeSet
 
 ```javascript
-import { ChangeSet } from '@reetesh/lextron';
+import { ChangeSet } from 'lextrix';
 
 new ChangeSet()
   .retain(5)
@@ -91,10 +91,10 @@ Legacy name `Delta` is not supported — use `ChangeSet`.
 Register custom formats or modules:
 
 ```javascript
-import { lxtPath } from 'lextron-core/registry-paths.js';
+import { lxrPath } from 'lextrix-core/registry-paths.js';
 
-Lextron.register({ [lxtPath.format('callout')]: CalloutBlot });
-Lextron.register({ [lxtPath.module('mentions')]: MentionsModule });
+Lextrix.register({ [lxrPath.format('callout')]: CalloutBlot });
+Lextrix.register({ [lxrPath.module('mentions')]: MentionsModule });
 ```
 
-Bare paths like `formats/bold` or `parchment` throw — use `lxt/*` paths only.
+Bare paths like `formats/bold` or `parchment` throw — use `lxr/*` paths only.

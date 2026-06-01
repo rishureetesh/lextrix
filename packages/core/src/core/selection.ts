@@ -1,5 +1,5 @@
-﻿/** Lextron core — document editor shell. */
-import { LeafBlot, Scope } from 'lextron-dom';
+﻿/** Lextrix core — document editor shell. */
+import { LeafBlot, Scope } from 'lextrix-dom';
 import { cloneDeep, isEqual } from 'lodash-es';
 import Emitter from './emitter.js';
 import type { EmitterSource } from './emitter.js';
@@ -7,7 +7,7 @@ import logger from './logger.js';
 import type Cursor from '../blots/cursor.js';
 import type Scroll from '../blots/scroll.js';
 
-const debug = logger('lextron:selection');
+const debug = logger('lextrix:selection');
 
 type NativeRange = AbstractRange;
 

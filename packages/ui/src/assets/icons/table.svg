@@ -1,8 +1,8 @@
 ﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-  <rect class="lxt-stroke" x="3" y="3"></rect>
-  <rect class="lxt-fill" x="5" y="5"></rect>
-  <rect class="lxt-fill" x="9" y="5"></rect>
-  <g class="lxt-fill lxt-transparent">
+  <rect class="lxr-stroke" x="3" y="3"></rect>
+  <rect class="lxr-fill" x="5" y="5"></rect>
+  <rect class="lxr-fill" x="9" y="5"></rect>
+  <g class="lxr-fill lxr-transparent">
     <rect x="5" y="8"></rect>
     <rect x="9" y="8"></rect>
     <rect x="5" y="11"></rect>

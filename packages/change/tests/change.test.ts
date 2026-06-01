@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import ChangeSet from 'lextron-change';
+import ChangeSet from 'lextrix-change';
 
-describe('lextron-change', () => {
+describe('lextrix-change', () => {
   it('composes insert ops', () => {
     const a = new ChangeSet().insert('Hello');
     const b = new ChangeSet().retain(5).insert(' World');

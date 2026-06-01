@@ -1,7 +1,7 @@
 {
-  "name": "lextron-dom",
-  "version": "0.1.0",
-  "description": "Lextron document model (blot registry and attributors)",
+  "name": "lextrix-dom",
+  "version": "1.0.0",
+  "description": "Lextrix document model (blot registry and attributors)",
   "type": "module",
   "license": "MIT",
   "main": "./src/index.ts",

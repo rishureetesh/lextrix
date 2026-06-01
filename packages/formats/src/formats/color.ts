@@ -1,5 +1,5 @@
-/** Lextron formats — built-in text and block formats. */
-import { ClassAttributor, Scope, StyleAttributor } from 'lextron-dom';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import { ClassAttributor, Scope, StyleAttributor } from 'lextrix-dom';
 
 class ColorAttributor extends StyleAttributor {
   value(domNode: HTMLElement) {
@@ -14,7 +14,7 @@ class ColorAttributor extends StyleAttributor {
   }
 }
 
-const ColorClass = new ClassAttributor('color', 'lxt-color', {
+const ColorClass = new ClassAttributor('color', 'lxr-color', {
   scope: Scope.INLINE,
 });
 const ColorStyle = new ColorAttributor('color', 'color', {

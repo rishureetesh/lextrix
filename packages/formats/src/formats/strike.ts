@@ -1,4 +1,4 @@
-/** Lextron formats — built-in text and block formats. */
+/** Lextrix formats ï¿½ built-in text and block formats. */
 import Bold from './bold.js';
 
 class Strike extends Bold {

@@ -1,8 +1,8 @@
-/** Lextron formats — built-in text and block formats. */
-import Block from 'lextron-core/blots/block.js';
-import Container from 'lextron-core/blots/container.js';
-import type Scroll from 'lextron-core/blots/scroll.js';
-import Lextron from 'lextron-core';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import Block from 'lextrix-core/blots/block.js';
+import Container from 'lextrix-core/blots/container.js';
+import type Scroll from 'lextrix-core/blots/scroll.js';
+import Lextrix from 'lextrix-core';
 
 class ListContainer extends Container {}
 ListContainer.blotName = 'list-container';
@@ -20,7 +20,7 @@ class ListItem extends Block {
   }
 
   static register() {
-    Lextron.register(ListContainer);
+    Lextrix.register(ListContainer);
   }
 
   constructor(scroll: Scroll, domNode: HTMLElement) {

@@ -1,11 +1,11 @@
-/** Lextron formats — built-in text and block formats. */
-import Block from 'lextron-core/blots/block.js';
-import Break from 'lextron-core/blots/break.js';
-import Cursor from 'lextron-core/blots/cursor.js';
-import Inline from 'lextron-core/blots/inline.js';
-import TextBlot, { escapeText } from 'lextron-core/blots/text.js';
-import Container from 'lextron-core/blots/container.js';
-import Lextron from 'lextron-core';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import Block from 'lextrix-core/blots/block.js';
+import Break from 'lextrix-core/blots/break.js';
+import Cursor from 'lextrix-core/blots/cursor.js';
+import Inline from 'lextrix-core/blots/inline.js';
+import TextBlot, { escapeText } from 'lextrix-core/blots/text.js';
+import Container from 'lextrix-core/blots/container.js';
+import Lextrix from 'lextrix-core';
 
 class CodeBlockContainer extends Container {
   static create(value: string) {
@@ -35,7 +35,7 @@ class CodeBlock extends Block {
   static TAB = '  ';
 
   static register() {
-    Lextron.register(CodeBlockContainer);
+    Lextrix.register(CodeBlockContainer);
   }
 }
 
@@ -44,10 +44,10 @@ Code.blotName = 'code';
 Code.tagName = 'CODE';
 
 CodeBlock.blotName = 'code-block';
-CodeBlock.className = 'lxt-code-block';
+CodeBlock.className = 'lxr-code-block';
 CodeBlock.tagName = 'DIV';
 CodeBlockContainer.blotName = 'code-block-container';
-CodeBlockContainer.className = 'lxt-code-block-container';
+CodeBlockContainer.className = 'lxr-code-block-container';
 CodeBlockContainer.tagName = 'DIV';
 
 CodeBlockContainer.allowedChildren = [CodeBlock];

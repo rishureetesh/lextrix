@@ -1,7 +1,7 @@
-﻿/** Lextron modules — editor behavior modules. */
-import ChangeSet, { ChangeIterator } from 'lextron-change';
-import type { ChangeOp, ChangeAttributes } from 'lextron-change';
-import Module from 'lextron-core/core/module.js';
+﻿/** Lextrix modules — editor behavior modules. */
+import ChangeSet, { ChangeIterator } from 'lextrix-change';
+import type { ChangeOp, ChangeAttributes } from 'lextrix-change';
+import Module from 'lextrix-core/core/module.js';
 
 export type CellData = {
   content?: ChangeSet['ops'];

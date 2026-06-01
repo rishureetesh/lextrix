@@ -1,17 +1,17 @@
-﻿/** Lextron core — document editor shell. */
+﻿/** Lextrix core — document editor shell. */
 import { EventEmitter } from 'eventemitter3';
 import instances from './instances.js';
 import logger from './logger.js';
 
-const debug = logger('lextron:events');
+const debug = logger('lextrix:events');
 const EVENTS = ['selectionchange', 'mousedown', 'mouseup', 'click'];
 
 EVENTS.forEach((eventName) => {
   document.addEventListener(eventName, (...args) => {
-    Array.from(document.querySelectorAll('.lxt-container')).forEach((node) => {
-      const lextron = instances.get(node);
-      if (lextron && lextron.emitter) {
-        lextron.emitter.handleDOM(...args);
+    Array.from(document.querySelectorAll('.lxr-container')).forEach((node) => {
+      const lextrix = instances.get(node);
+      if (lextrix && lextrix.emitter) {
+        lextrix.emitter.handleDOM(...args);
       }
     });
   });

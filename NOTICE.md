@@ -1,7 +1,7 @@
 # Third-Party Notices
 
-Lextron is an independent rich text editor. All editor source code in this
-repository is Lextron-original (MIT). See [LICENSE](./LICENSE).
+Lextrix is an independent rich text editor. All editor source code in this
+repository is Lextrix-original (MIT). See [LICENSE](./LICENSE).
 
 ## Runtime dependencies
 

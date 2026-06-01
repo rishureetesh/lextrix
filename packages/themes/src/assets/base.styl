@@ -9,7 +9,7 @@ colorItemSize = 16px
 colorItemsPerRow = 7
 
 
-.lxt-{themeName}.lxt-toolbar, .lxt-{themeName} .lxt-toolbar
+.lxr-{themeName}.lxr-toolbar, .lxr-{themeName} .lxr-toolbar
   &:after
     clear: both
     content: ''
@@ -32,48 +32,48 @@ colorItemsPerRow = 7
     &:active:hover
       outline: none
 
-  input.lxt-image[type=file]
+  input.lxr-image[type=file]
     display: none
 
-  button:hover, button:focus, button.lxt-active,
-  .lxt-picker-label:hover, .lxt-picker-label.lxt-active,
-  .lxt-picker-item:hover, .lxt-picker-item.lxt-selected
+  button:hover, button:focus, button.lxr-active,
+  .lxr-picker-label:hover, .lxr-picker-label.lxr-active,
+  .lxr-picker-item:hover, .lxr-picker-item.lxr-selected
     color: activeColor
-    .lxt-fill, .lxt-stroke.lxt-fill
+    .lxr-fill, .lxr-stroke.lxr-fill
       fill: activeColor
-    .lxt-stroke, .lxt-stroke-miter
+    .lxr-stroke, .lxr-stroke-miter
       stroke: activeColor
 
 // Fix for iOS not losing hover on touch
 @media (pointer: coarse)
-  .lxt-{themeName}.lxt-toolbar, .lxt-{themeName} .lxt-toolbar
-    button:hover:not(.lxt-active)
+  .lxr-{themeName}.lxr-toolbar, .lxr-{themeName} .lxr-toolbar
+    button:hover:not(.lxr-active)
       color: inactiveColor
-      .lxt-fill, .lxt-stroke.lxt-fill
+      .lxr-fill, .lxr-stroke.lxr-fill
         fill: inactiveColor
-      .lxt-stroke, .lxt-stroke-miter
+      .lxr-stroke, .lxr-stroke-miter
         stroke: inactiveColor
 
-.lxt-{themeName}
+.lxr-{themeName}
   box-sizing: border-box
   *
     box-sizing: border-box
 
-  .lxt-hidden
+  .lxr-hidden
     display: none
-  .lxt-out-bottom, .lxt-out-top
+  .lxr-out-bottom, .lxr-out-top
     visibility: hidden
 
-  .lxt-tooltip
+  .lxr-tooltip
     position: absolute
     transform: translateY(10px)
     a
       cursor: pointer
       text-decoration: none
-  .lxt-tooltip.lxt-flip
+  .lxr-tooltip.lxr-flip
     transform: translateY(-10px)
 
-  .lxt-formats
+  .lxr-formats
     &:after
       clear: both
       content: ''
@@ -81,50 +81,50 @@ colorItemsPerRow = 7
     display: inline-block
     vertical-align: middle
 
-  .lxt-stroke
+  .lxr-stroke
     fill: none
     stroke: inactiveColor
     stroke-linecap: round
     stroke-linejoin: round
     stroke-width: 1.75
-  .lxt-stroke-miter
+  .lxr-stroke-miter
     fill: none
     stroke: inactiveColor
     stroke-miterlimit: 10
     stroke-width: 1.75
 
-  .lxt-fill, .lxt-stroke.lxt-fill
+  .lxr-fill, .lxr-stroke.lxr-fill
     fill: inactiveColor
 
-  .lxt-toolbar button svg,
-  .lxt-picker-label svg
+  .lxr-toolbar button svg,
+  .lxr-picker-label svg
     transition: fill 120ms ease, stroke 120ms ease, opacity 120ms ease
 
-  button.lxt-active svg,
+  button.lxr-active svg,
   button:hover svg,
   button:focus svg
-    .lxt-stroke:not(.lxt-thin), .lxt-stroke-miter:not(.lxt-thin)
+    .lxr-stroke:not(.lxr-thin), .lxr-stroke-miter:not(.lxr-thin)
       stroke-width: 2
 
-  .lxt-empty
+  .lxr-empty
     fill: none
-  .lxt-even
+  .lxr-even
     fill-rule: evenodd
-  .lxt-thin, .lxt-stroke.lxt-thin
+  .lxr-thin, .lxr-stroke.lxr-thin
     stroke-width: 1
-  .lxt-transparent
+  .lxr-transparent
     opacity: 0.4
 
-  .lxt-direction
+  .lxr-direction
     svg:last-child
       display: none
-  .lxt-direction.lxt-active
+  .lxr-direction.lxr-active
     svg:last-child
       display: inline
     svg:first-child
       display: none
 
-  .lxt-editor
+  .lxr-editor
     h1
       font-size: 2em
     h2
@@ -144,24 +144,24 @@ colorItemsPerRow = 7
       margin-bottom: 5px
       margin-top: 5px
       padding-left: 16px
-    code, .lxt-code-block-container
+    code, .lxr-code-block-container
       background-color: #f0f0f0
       border-radius: 3px
-    .lxt-code-block-container
+    .lxr-code-block-container
       margin-bottom: 5px
       margin-top: 5px
       padding: 5px 10px
     code
       font-size: 85%
       padding: 2px 4px
-    .lxt-code-block-container
+    .lxr-code-block-container
       background-color: #23241f
       color: #f8f8f2
       overflow: visible
     img
       max-width: 100%
 
-  .lxt-picker
+  .lxr-picker
     color: inactiveColor
     display: inline-block
     float: left
@@ -170,7 +170,7 @@ colorItemsPerRow = 7
     height: controlHeight
     position: relative
     vertical-align: middle
-  .lxt-picker-label
+  .lxr-picker-label
     cursor: pointer
     display: inline-block
     height: 100%
@@ -181,50 +181,50 @@ colorItemsPerRow = 7
     &::before
       display: inline-block
       line-height: 22px
-  .lxt-picker-options
+  .lxr-picker-options
     background-color: backgroundColor
     display: none
     min-width: 100%
     padding: 4px 8px
     position: absolute
     white-space: nowrap
-    .lxt-picker-item
+    .lxr-picker-item
       cursor: pointer
       display: block
       padding-bottom: 5px
       padding-top: 5px
-  .lxt-picker.lxt-expanded
-    .lxt-picker-label
+  .lxr-picker.lxr-expanded
+    .lxr-picker-label
       color: borderColor
       z-index: 2
-      .lxt-fill
+      .lxr-fill
         fill: borderColor
-      .lxt-stroke
+      .lxr-stroke
         stroke: borderColor
-    .lxt-picker-options
+    .lxr-picker-options
       display: block
       margin-top: -1px
       top: 100%
       z-index: 1
 
-  .lxt-color-picker, .lxt-icon-picker
+  .lxr-color-picker, .lxr-icon-picker
     width: controlHeight + 4
-    .lxt-picker-label
+    .lxr-picker-label
       padding: 2px 4px
       svg
         right: 4px
-  .lxt-icon-picker
-    .lxt-picker-options
+  .lxr-icon-picker
+    .lxr-picker-options
       padding: 4px 0px
-    .lxt-picker-item
+    .lxr-picker-item
       height: controlHeight
       width: controlHeight
       padding: 2px 4px
-  .lxt-color-picker
-    .lxt-picker-options
+  .lxr-color-picker
+    .lxr-picker-options
       padding: inputPaddingHeight inputPaddingWidth
       width: (colorItemSize + 2*colorItemMargin) * colorItemsPerRow + 2*inputPaddingWidth + 2  // +2 for the border
-    .lxt-picker-item
+    .lxr-picker-item
       border: 1px solid transparent
       float: left
       height: colorItemSize
@@ -232,7 +232,7 @@ colorItemsPerRow = 7
       padding: 0px
       width: colorItemSize
 
-  .lxt-picker:not(.lxt-color-picker):not(.lxt-icon-picker)
+  .lxr-picker:not(.lxr-color-picker):not(.lxr-icon-picker)
     svg
       position: absolute
       margin-top: -9px
@@ -240,95 +240,95 @@ colorItemsPerRow = 7
       top: 50%
       width: 18px
 
-  .lxt-picker.lxt-header, .lxt-picker.lxt-font, .lxt-picker.lxt-size
-    .lxt-picker-label[data-label]:not([data-label='']),
-    .lxt-picker-item[data-label]:not([data-label=''])
+  .lxr-picker.lxr-header, .lxr-picker.lxr-font, .lxr-picker.lxr-size
+    .lxr-picker-label[data-label]:not([data-label='']),
+    .lxr-picker-item[data-label]:not([data-label=''])
       &::before
         content: attr(data-label)
 
-  .lxt-picker.lxt-header
+  .lxr-picker.lxr-header
     width: 98px
-    .lxt-picker-label::before,
-    .lxt-picker-item::before
+    .lxr-picker-label::before,
+    .lxr-picker-item::before
       content: 'Normal'
     for num in (1..6)
-      .lxt-picker-label[data-value=\"{num}\"]::before,
-      .lxt-picker-item[data-value=\"{num}\"]::before
+      .lxr-picker-label[data-value=\"{num}\"]::before,
+      .lxr-picker-item[data-value=\"{num}\"]::before
         content: 'Heading ' + num
-    .lxt-picker-item[data-value="1"]::before
+    .lxr-picker-item[data-value="1"]::before
       font-size: 2em
-    .lxt-picker-item[data-value="2"]::before
+    .lxr-picker-item[data-value="2"]::before
       font-size: 1.5em
-    .lxt-picker-item[data-value="3"]::before
+    .lxr-picker-item[data-value="3"]::before
       font-size: 1.17em
-    .lxt-picker-item[data-value="4"]::before
+    .lxr-picker-item[data-value="4"]::before
       font-size: 1em
-    .lxt-picker-item[data-value="5"]::before
+    .lxr-picker-item[data-value="5"]::before
       font-size: 0.83em
-    .lxt-picker-item[data-value="6"]::before
+    .lxr-picker-item[data-value="6"]::before
       font-size: 0.67em
 
-  .lxt-picker.lxt-font
+  .lxr-picker.lxr-font
     width: 108px
-    .lxt-picker-label::before,
-    .lxt-picker-item::before
+    .lxr-picker-label::before,
+    .lxr-picker-item::before
       content: 'Sans Serif'
-    .lxt-picker-label[data-value=serif]::before,
-    .lxt-picker-item[data-value=serif]::before
+    .lxr-picker-label[data-value=serif]::before,
+    .lxr-picker-item[data-value=serif]::before
       content: 'Serif'
-    .lxt-picker-label[data-value=monospace]::before,
-    .lxt-picker-item[data-value=monospace]::before
+    .lxr-picker-label[data-value=monospace]::before,
+    .lxr-picker-item[data-value=monospace]::before
       content: 'Monospace'
-    .lxt-picker-item[data-value=serif]::before
+    .lxr-picker-item[data-value=serif]::before
       font-family: Georgia, Times New Roman, serif
-    .lxt-picker-item[data-value=monospace]::before
+    .lxr-picker-item[data-value=monospace]::before
       font-family: Monaco, Courier New, monospace
 
-  .lxt-picker.lxt-size
+  .lxr-picker.lxr-size
     width: 98px
-    .lxt-picker-label::before,
-    .lxt-picker-item::before
+    .lxr-picker-label::before,
+    .lxr-picker-item::before
       content: 'Normal'
-    .lxt-picker-label[data-value=small]::before,
-    .lxt-picker-item[data-value=small]::before
+    .lxr-picker-label[data-value=small]::before,
+    .lxr-picker-item[data-value=small]::before
       content: 'Small'
-    .lxt-picker-label[data-value=large]::before,
-    .lxt-picker-item[data-value=large]::before
+    .lxr-picker-label[data-value=large]::before,
+    .lxr-picker-item[data-value=large]::before
       content: 'Large'
-    .lxt-picker-label[data-value=huge]::before,
-    .lxt-picker-item[data-value=huge]::before
+    .lxr-picker-label[data-value=huge]::before,
+    .lxr-picker-item[data-value=huge]::before
       content: 'Huge'
-    .lxt-picker-item[data-value=small]::before
+    .lxr-picker-item[data-value=small]::before
       font-size: 10px
-    .lxt-picker-item[data-value=large]::before
+    .lxr-picker-item[data-value=large]::before
       font-size: 18px
-    .lxt-picker-item[data-value=huge]::before
+    .lxr-picker-item[data-value=huge]::before
       font-size: 32px
 
-  .lxt-color-picker.lxt-background
-    .lxt-picker-item
+  .lxr-color-picker.lxr-background
+    .lxr-picker-item
       background-color: #fff
-  .lxt-color-picker.lxt-color
-    .lxt-picker-item
+  .lxr-color-picker.lxr-color
+    .lxr-picker-item
       background-color: #000
 
-.lxt-code-block-container
+.lxr-code-block-container
   position: relative
-  .lxt-ui
+  .lxr-ui
     right: 5px
     top: 5px
 
-.lxt-container
+.lxr-container
   position: relative
 
-.lxt-image-resize
+.lxr-image-resize
   border: 1px solid activeColor
   box-sizing: border-box
   pointer-events: none
   position: absolute
   z-index: 2
 
-.lxt-image-resize-handle
+.lxr-image-resize-handle
   background: activeColor
   border: 1px solid backgroundColor
   border-radius: 2px

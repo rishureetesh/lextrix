@@ -1,4 +1,4 @@
-/** Lextron modules — editor behavior modules. */
+/** Lextrix modules — editor behavior modules. */
 export {
   registerCoreModules,
   registerModules,

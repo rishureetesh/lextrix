@@ -1,8 +1,8 @@
-﻿/** Lextron core — document editor shell. */
+﻿/** Lextrix core — document editor shell. */
 import { cloneDeep, isEqual, merge } from 'lodash-es';
-import { LeafBlot, EmbedBlot, Scope, ParentBlot } from 'lextron-dom';
-import type { Blot } from 'lextron-dom';
-import ChangeSet, { ChangeAttributes, ChangeOp } from 'lextron-change';
+import { LeafBlot, EmbedBlot, Scope, ParentBlot } from 'lextrix-dom';
+import type { Blot } from 'lextrix-dom';
+import ChangeSet, { ChangeAttributes, ChangeOp } from 'lextrix-change';
 import Block, { BlockEmbed, bubbleFormats } from '../blots/block.js';
 import Break from '../blots/break.js';
 import CursorBlot from '../blots/cursor.js';

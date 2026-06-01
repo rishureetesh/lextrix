@@ -21,7 +21,7 @@ export interface BlotConstructor {
 }
 
 /**
- * Blots are the basic building blocks of a Lextron document.
+ * Blots are the basic building blocks of a Lextrix document.
  *
  * Several basic implementations such as Block, Inline, and Embed are provided.
  * In general you will want to extend one of these, instead of building from scratch.

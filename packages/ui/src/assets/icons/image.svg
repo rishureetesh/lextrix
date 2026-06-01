@@ -1,5 +1,5 @@
 ﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-  <rect class="lxt-stroke" x="3" y="4"></rect>
-  <circle class="lxt-fill" cx="6" cy="7" r="1"></circle>
-  <polyline class="lxt-even lxt-fill" points="5 12 5 11 7 9 8 10 11 7 13 9 13 12 5 12"></polyline>
+  <rect class="lxr-stroke" x="3" y="4"></rect>
+  <circle class="lxr-fill" cx="6" cy="7" r="1"></circle>
+  <polyline class="lxr-even lxr-fill" points="5 12 5 11 7 9 8 10 11 7 13 9 13 12 5 12"></polyline>
 </svg>

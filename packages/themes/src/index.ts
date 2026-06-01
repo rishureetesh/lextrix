@@ -1,4 +1,4 @@
-/** Lextron themes — snow and bubble editor chrome. */
+/** Lextrix themes — snow and bubble editor chrome. */
 export {
   registerThemes,
   BaseTheme,

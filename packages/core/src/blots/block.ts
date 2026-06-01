@@ -1,13 +1,13 @@
-﻿/** Lextron core — document editor shell. */
+﻿/** Lextrix core — document editor shell. */
 import {
   AttributorStore,
   BlockBlot,
   EmbedBlot,
   LeafBlot,
   Scope,
-} from 'lextron-dom';
-import type { Blot, Parent } from 'lextron-dom';
-import ChangeSet from 'lextron-change';
+} from 'lextrix-dom';
+import type { Blot, Parent } from 'lextrix-dom';
+import ChangeSet from 'lextrix-change';
 import Break from './break.js';
 import Inline from './inline.js';
 import TextBlot from './text.js';

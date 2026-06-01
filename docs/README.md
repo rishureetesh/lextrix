@@ -1,6 +1,6 @@
-# Lextron documentation
+# Lextrix documentation
 
-Guides for integrating Lextron into your application.
+Guides for integrating Lextrix into your application.
 
 | Guide | Description |
 |-------|-------------|
@@ -13,14 +13,14 @@ Guides for integrating Lextron into your application.
 ## Package overview
 
 ```
-@reetesh/lextron     ← publishable bundle (use this in apps)
-├── lextron-core     ← editor shell
-├── lextron-change   ← ChangeSet / OT
-├── lextron-dom      ← blot model
-├── lextron-formats  ← bold, image, lists, …
-├── lextron-modules  ← clipboard, keyboard, toolbar, …
-├── lextron-ui       ← toolbar widgets
-└── lextron-themes   ← snow, bubble, slate, dawn
+lextrix     ← publishable bundle (use this in apps)
+├── lextrix-core     ← editor shell
+├── lextrix-change   ← ChangeSet / OT
+├── lextrix-dom      ← blot model
+├── lextrix-formats  ← bold, image, lists, …
+├── lextrix-modules  ← clipboard, keyboard, toolbar, …
+├── lextrix-ui       ← toolbar widgets
+└── lextrix-themes   ← snow, bubble, slate, dawn
 ```
 
 For monorepo development see [.github/DEVELOPMENT.md](../.github/DEVELOPMENT.md).

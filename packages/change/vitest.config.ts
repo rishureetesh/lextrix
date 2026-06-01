@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 export default defineConfig({
   resolve: {
     alias: {
-      'lextron-change': resolve(__dirname, 'src/index.ts'),
+      'lextrix-change': resolve(__dirname, 'src/index.ts'),
     },
     extensions: ['.ts', '.js'],
   },

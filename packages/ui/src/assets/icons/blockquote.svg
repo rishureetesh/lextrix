@@ -1,6 +1,6 @@
 ﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-  <rect class="lxt-fill lxt-stroke" x="4" y="5"></rect>
-  <rect class="lxt-fill lxt-stroke" x="11" y="5"></rect>
-  <path class="lxt-even lxt-fill lxt-stroke" d="M7,8c0,4.031-3,5-3,5"></path>
-  <path class="lxt-even lxt-fill lxt-stroke" d="M14,8c0,4.031-3,5-3,5"></path>
+  <rect class="lxr-fill lxr-stroke" x="4" y="5"></rect>
+  <rect class="lxr-fill lxr-stroke" x="11" y="5"></rect>
+  <path class="lxr-even lxr-fill lxr-stroke" d="M7,8c0,4.031-3,5-3,5"></path>
+  <path class="lxr-even lxr-fill lxr-stroke" d="M14,8c0,4.031-3,5-3,5"></path>
 </svg>

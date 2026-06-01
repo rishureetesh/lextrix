@@ -41,7 +41,7 @@ class Picker {
   }
 
   togglePicker() {
-    this.container.classList.toggle('lxt-expanded');
+    this.container.classList.toggle('lxr-expanded');
     // Toggle aria-expanded and aria-hidden to make the picker accessible
     toggleAriaAttribute(this.label, 'aria-expanded');
     // @ts-expect-error
@@ -53,7 +53,7 @@ class Picker {
     // @ts-expect-error
     item.tabIndex = '0';
     item.setAttribute('role', 'button');
-    item.classList.add('lxt-picker-item');
+    item.classList.add('lxr-picker-item');
     const value = option.getAttribute('value');
     if (value) {
       item.setAttribute('data-value', value);
@@ -83,7 +83,7 @@ class Picker {
 
   buildLabel() {
     const label = document.createElement('span');
-    label.classList.add('lxt-picker-label');
+    label.classList.add('lxr-picker-label');
     label.innerHTML = DropdownIcon;
     // @ts-expect-error
     label.tabIndex = '0';
@@ -95,7 +95,7 @@ class Picker {
 
   buildOptions() {
     const options = document.createElement('span');
-    options.classList.add('lxt-picker-options');
+    options.classList.add('lxr-picker-options');
 
     // Don't want screen readers to read this until options are visible
     options.setAttribute('aria-hidden', 'true');
@@ -103,7 +103,7 @@ class Picker {
     options.tabIndex = '-1';
 
     // Need a unique id for aria-controls
-    options.id = `lxt-picker-options-${optionsCounter}`;
+    options.id = `lxr-picker-options-${optionsCounter}`;
     optionsCounter += 1;
     this.label.setAttribute('aria-controls', options.id);
 
@@ -124,7 +124,7 @@ class Picker {
     Array.from(this.select.attributes).forEach((item) => {
       this.container.setAttribute(item.name, item.value);
     });
-    this.container.classList.add('lxt-picker');
+    this.container.classList.add('lxr-picker');
     this.label = this.buildLabel();
     this.buildOptions();
   }
@@ -138,20 +138,20 @@ class Picker {
   }
 
   close() {
-    this.container.classList.remove('lxt-expanded');
+    this.container.classList.remove('lxr-expanded');
     this.label.setAttribute('aria-expanded', 'false');
     // @ts-expect-error
     this.options.setAttribute('aria-hidden', 'true');
   }
 
   selectItem(item: HTMLElement | null, trigger = false) {
-    const selected = this.container.querySelector('.lxt-selected');
+    const selected = this.container.querySelector('.lxr-selected');
     if (item === selected) return;
     if (selected != null) {
-      selected.classList.remove('lxt-selected');
+      selected.classList.remove('lxr-selected');
     }
     if (item == null) return;
-    item.classList.add('lxt-selected');
+    item.classList.add('lxr-selected');
     // @ts-expect-error Fix me later
     this.select.selectedIndex = Array.from(item.parentNode.children).indexOf(
       item,
@@ -179,7 +179,7 @@ class Picker {
     if (this.select.selectedIndex > -1) {
       const item =
         // @ts-expect-error Fix me later
-        this.container.querySelector('.lxt-picker-options').children[
+        this.container.querySelector('.lxr-picker-options').children[
           this.select.selectedIndex
         ];
       option = this.select.options[this.select.selectedIndex];
@@ -191,7 +191,7 @@ class Picker {
     const isActive =
       option != null &&
       option !== this.select.querySelector('option[selected]');
-    this.label.classList.toggle('lxt-active', isActive);
+    this.label.classList.toggle('lxr-active', isActive);
   }
 }
 

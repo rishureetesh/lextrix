@@ -21,9 +21,9 @@ function toolbarFor(theme) {
 }
 
 const defaultContents = () => [
-  { insert: 'Hello Lextron\n', attributes: { header: 1 } },
+  { insert: 'Hello Lextrix\n', attributes: { header: 1 } },
   {
-    insert: `Lextron demo (${themeSelect.value})\n`,
+    insert: `Lextrix demo (${themeSelect.value})\n`,
   },
 ];
 
@@ -34,7 +34,7 @@ function createEditor(theme, contents) {
   container.id = 'editor';
   editorMount.appendChild(container);
 
-  const editor = new Lextron(container, {
+  const editor = new Lextrix(container, {
     theme,
     placeholder: 'Write something…',
     modules: {
@@ -47,7 +47,7 @@ function createEditor(theme, contents) {
 }
 
 function loadThemeCss(theme) {
-  const href = `/lextron.${theme}.css`;
+  const href = `/lextrix.${theme}.css`;
   if (themeCss.getAttribute('href') === href) {
     return Promise.resolve();
   }

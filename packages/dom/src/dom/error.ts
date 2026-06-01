@@ -4,7 +4,7 @@ export default class DomError extends Error {
   public stack!: string;
 
   constructor(message: string) {
-    message = '[Lextron Dom] ' + message;
+    message = '[Lextrix Dom] ' + message;
     super(message);
     this.message = message;
     this.name = this.constructor.name;

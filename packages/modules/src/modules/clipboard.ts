@@ -1,5 +1,5 @@
-﻿/** Lextron modules — editor behavior modules. */
-import type { ScrollBlot } from 'lextron-dom';
+﻿/** Lextrix modules — editor behavior modules. */
+import type { ScrollBlot } from 'lextrix-dom';
 import {
   Attributor,
   BlockBlot,
@@ -7,25 +7,25 @@ import {
   EmbedBlot,
   Scope,
   StyleAttributor,
-} from 'lextron-dom';
-import ChangeSet from 'lextron-change';
-import { BlockEmbed } from 'lextron-core/blots/block.js';
-import type { EmitterSource } from 'lextron-core/core/emitter.js';
-import logger from 'lextron-core/core/logger.js';
-import Module from 'lextron-core/core/module.js';
-import Lextron from 'lextron-core';
-import type { Range } from 'lextron-core/core/selection.js';
-import { AlignAttribute, AlignStyle } from 'lextron-formats/formats/align.js';
-import { BackgroundStyle } from 'lextron-formats/formats/background.js';
-import CodeBlock from 'lextron-formats/formats/code.js';
-import { ColorStyle } from 'lextron-formats/formats/color.js';
-import { DirectionAttribute, DirectionStyle } from 'lextron-formats/formats/direction.js';
-import { FontStyle } from 'lextron-formats/formats/font.js';
-import { SizeStyle } from 'lextron-formats/formats/size.js';
+} from 'lextrix-dom';
+import ChangeSet from 'lextrix-change';
+import { BlockEmbed } from 'lextrix-core/blots/block.js';
+import type { EmitterSource } from 'lextrix-core/core/emitter.js';
+import logger from 'lextrix-core/core/logger.js';
+import Module from 'lextrix-core/core/module.js';
+import Lextrix from 'lextrix-core';
+import type { Range } from 'lextrix-core/core/selection.js';
+import { AlignAttribute, AlignStyle } from 'lextrix-formats/formats/align.js';
+import { BackgroundStyle } from 'lextrix-formats/formats/background.js';
+import CodeBlock from 'lextrix-formats/formats/code.js';
+import { ColorStyle } from 'lextrix-formats/formats/color.js';
+import { DirectionAttribute, DirectionStyle } from 'lextrix-formats/formats/direction.js';
+import { FontStyle } from 'lextrix-formats/formats/font.js';
+import { SizeStyle } from 'lextrix-formats/formats/size.js';
 import { deleteRange } from './keyboard.js';
 import normalizeExternalHTML from './normalizeExternalHTML/index.js';
 
-const debug = logger('lextron:clipboard');
+const debug = logger('lextrix:clipboard');
 
 type Selector = string | Node['TEXT_NODE'] | Node['ELEMENT_NODE'];
 type Matcher = (node: Node, delta: ChangeSet, scroll: ScrollBlot) => ChangeSet;
@@ -79,13 +79,13 @@ class Clipboard extends Module<ClipboardOptions> {
 
   matchers: [Selector, Matcher][];
 
-  constructor(lextron: Lextron, options: Partial<ClipboardOptions>) {
-    super(lextron, options);
-    this.lextron.root.addEventListener('copy', (e) =>
+  constructor(lextrix: Lextrix, options: Partial<ClipboardOptions>) {
+    super(lextrix, options);
+    this.lextrix.root.addEventListener('copy', (e) =>
       this.onCaptureCopy(e, false),
     );
-    this.lextron.root.addEventListener('cut', (e) => this.onCaptureCopy(e, true));
-    this.lextron.root.addEventListener('paste', this.onCapturePaste.bind(this));
+    this.lextrix.root.addEventListener('cut', (e) => this.onCaptureCopy(e, true));
+    this.lextrix.root.addEventListener('paste', this.onCapturePaste.bind(this));
     this.matchers = [];
     CLIPBOARD_CONFIG.concat(this.options.matchers ?? []).forEach(
       ([selector, matcher]) => {
@@ -135,7 +135,7 @@ class Clipboard extends Module<ClipboardOptions> {
       nodeMatches,
     );
     return traverse(
-      this.lextron.scroll,
+      this.lextrix.scroll,
       container,
       elementMatchers,
       textMatchers,
@@ -152,33 +152,33 @@ class Clipboard extends Module<ClipboardOptions> {
   dangerouslyPasteHTML(
     index: number | string,
     html?: string,
-    source: EmitterSource = Lextron.sources.API,
+    source: EmitterSource = Lextrix.sources.API,
   ) {
     if (typeof index === 'string') {
       const delta = this.convert({ html: index, text: '' });
       // @ts-expect-error
-      this.lextron.setContents(delta, html);
-      this.lextron.setSelection(0, Lextron.sources.SILENT);
+      this.lextrix.setContents(delta, html);
+      this.lextrix.setSelection(0, Lextrix.sources.SILENT);
     } else {
       const paste = this.convert({ html, text: '' });
-      this.lextron.updateContents(
+      this.lextrix.updateContents(
         new ChangeSet().retain(index).concat(paste),
         source,
       );
-      this.lextron.setSelection(index + paste.length(), Lextron.sources.SILENT);
+      this.lextrix.setSelection(index + paste.length(), Lextrix.sources.SILENT);
     }
   }
 
   onCaptureCopy(e: ClipboardEvent, isCut = false) {
     if (e.defaultPrevented) return;
     e.preventDefault();
-    const [range] = this.lextron.selection.getRange();
+    const [range] = this.lextrix.selection.getRange();
     if (range == null) return;
     const { html, text } = this.onCopy(range, isCut);
     e.clipboardData?.setData('text/plain', text);
     e.clipboardData?.setData('text/html', html);
     if (isCut) {
-      deleteRange({ range, lextron: this.lextron });
+      deleteRange({ range, lextrix: this.lextrix });
     }
   }
 
@@ -196,9 +196,9 @@ class Clipboard extends Module<ClipboardOptions> {
   }
 
   onCapturePaste(e: ClipboardEvent) {
-    if (e.defaultPrevented || !this.lextron.isEnabled()) return;
+    if (e.defaultPrevented || !this.lextrix.isEnabled()) return;
     e.preventDefault();
-    const range = this.lextron.getSelection(true);
+    const range = this.lextrix.getSelection(true);
     if (range == null) return;
     const html = e.clipboardData?.getData('text/html');
     let text = e.clipboardData?.getData('text/plain');
@@ -210,7 +210,7 @@ class Clipboard extends Module<ClipboardOptions> {
     }
     const files = Array.from(e.clipboardData?.files || []);
     if (!html && files.length > 0) {
-      this.lextron.uploader.upload(range, files);
+      this.lextrix.uploader.upload(range, files);
       return;
     }
     if (html && files.length > 0) {
@@ -219,7 +219,7 @@ class Clipboard extends Module<ClipboardOptions> {
         doc.body.childElementCount === 1 &&
         doc.body.firstElementChild?.tagName === 'IMG'
       ) {
-        this.lextron.uploader.upload(range, files);
+        this.lextrix.uploader.upload(range, files);
         return;
       }
     }
@@ -228,26 +228,26 @@ class Clipboard extends Module<ClipboardOptions> {
 
   onCopy(range: Range, isCut: boolean): { html: string; text: string };
   onCopy(range: Range) {
-    const text = this.lextron.getText(range);
-    const html = this.lextron.getSemanticHTML(range);
+    const text = this.lextrix.getText(range);
+    const html = this.lextrix.getSemanticHTML(range);
     return { html, text };
   }
 
   onPaste(range: Range, { text, html }: { text?: string; html?: string }) {
-    const formats = this.lextron.getFormat(range.index);
+    const formats = this.lextrix.getFormat(range.index);
     const pastedChangeSet = this.convert({ text, html }, formats);
     debug.log('onPaste', pastedChangeSet, { text, html });
     const delta = new ChangeSet()
       .retain(range.index)
       .delete(range.length)
       .concat(pastedChangeSet);
-    this.lextron.updateContents(delta, Lextron.sources.USER);
+    this.lextrix.updateContents(delta, Lextrix.sources.USER);
     // range.length contributes to delta.length()
-    this.lextron.setSelection(
+    this.lextrix.setSelection(
       delta.length() - range.length,
-      Lextron.sources.SILENT,
+      Lextrix.sources.SILENT,
     );
-    this.lextron.scrollSelectionIntoView();
+    this.lextrix.scrollSelectionIntoView();
   }
 
   prepareMatching(container: Element, nodeMatches: WeakMap<Node, Matcher[]>) {

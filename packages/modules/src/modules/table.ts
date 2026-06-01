@@ -1,21 +1,21 @@
-﻿/** Lextron modules — editor behavior modules. */
-import ChangeSet from 'lextron-change';
-import Lextron from 'lextron-core';
-import Module from 'lextron-core/core/module.js';
+﻿/** Lextrix modules — editor behavior modules. */
+import ChangeSet from 'lextrix-change';
+import Lextrix from 'lextrix-core';
+import Module from 'lextrix-core/core/module.js';
 import {
   TableCell,
   TableRow,
   TableBody,
   TableContainer,
   tableId,
-} from 'lextron-formats/formats/table.js';
+} from 'lextrix-formats/formats/table.js';
 
 class Table extends Module {
   static register() {
-    Lextron.register(TableCell);
-    Lextron.register(TableRow);
-    Lextron.register(TableBody);
-    Lextron.register(TableContainer);
+    Lextrix.register(TableCell);
+    Lextrix.register(TableRow);
+    Lextrix.register(TableBody);
+    Lextrix.register(TableContainer);
   }
 
   constructor(...args: ConstructorParameters<typeof Module>) {
@@ -24,7 +24,7 @@ class Table extends Module {
   }
 
   balanceTables() {
-    this.lextron.scroll.descendants(TableContainer).forEach((table) => {
+    this.lextrix.scroll.descendants(TableContainer).forEach((table) => {
       table.balanceCells();
     });
   }
@@ -34,14 +34,14 @@ class Table extends Module {
     if (cell == null) return;
     // @ts-expect-error
     table.deleteColumn(cell.cellOffset());
-    this.lextron.update(Lextron.sources.USER);
+    this.lextrix.update(Lextrix.sources.USER);
   }
 
   deleteRow() {
     const [, row] = this.getTable();
     if (row == null) return;
     row.remove();
-    this.lextron.update(Lextron.sources.USER);
+    this.lextrix.update(Lextrix.sources.USER);
   }
 
   deleteTable() {
@@ -51,15 +51,15 @@ class Table extends Module {
     const offset = table.offset();
     // @ts-expect-error
     table.remove();
-    this.lextron.update(Lextron.sources.USER);
-    this.lextron.setSelection(offset, Lextron.sources.SILENT);
+    this.lextrix.update(Lextrix.sources.USER);
+    this.lextrix.setSelection(offset, Lextrix.sources.SILENT);
   }
 
   getTable(
-    range = this.lextron.getSelection(),
+    range = this.lextrix.getSelection(),
   ): [null, null, null, -1] | [Table, TableRow, TableCell, number] {
     if (range == null) return [null, null, null, -1];
-    const [cell, offset] = this.lextron.getLine(range.index);
+    const [cell, offset] = this.lextrix.getLine(range.index);
     if (cell == null || cell.statics.blotName !== TableCell.blotName) {
       return [null, null, null, -1];
     }
@@ -70,21 +70,21 @@ class Table extends Module {
   }
 
   insertColumn(offset: number) {
-    const range = this.lextron.getSelection();
+    const range = this.lextrix.getSelection();
     if (!range) return;
     const [table, row, cell] = this.getTable(range);
     if (cell == null) return;
     const column = cell.cellOffset();
     table.insertColumn(column + offset);
-    this.lextron.update(Lextron.sources.USER);
+    this.lextrix.update(Lextrix.sources.USER);
     let shift = row.rowOffset();
     if (offset === 0) {
       shift += 1;
     }
-    this.lextron.setSelection(
+    this.lextrix.setSelection(
       range.index + shift,
       range.length,
-      Lextron.sources.SILENT,
+      Lextrix.sources.SILENT,
     );
   }
 
@@ -97,20 +97,20 @@ class Table extends Module {
   }
 
   insertRow(offset: number) {
-    const range = this.lextron.getSelection();
+    const range = this.lextrix.getSelection();
     if (!range) return;
     const [table, row, cell] = this.getTable(range);
     if (cell == null) return;
     const index = row.rowOffset();
     table.insertRow(index + offset);
-    this.lextron.update(Lextron.sources.USER);
+    this.lextrix.update(Lextrix.sources.USER);
     if (offset > 0) {
-      this.lextron.setSelection(range, Lextron.sources.SILENT);
+      this.lextrix.setSelection(range, Lextrix.sources.SILENT);
     } else {
-      this.lextron.setSelection(
+      this.lextrix.setSelection(
         range.index + row.children.length,
         range.length,
-        Lextron.sources.SILENT,
+        Lextrix.sources.SILENT,
       );
     }
   }
@@ -124,20 +124,20 @@ class Table extends Module {
   }
 
   insertTable(rows: number, columns: number) {
-    const range = this.lextron.getSelection();
+    const range = this.lextrix.getSelection();
     if (range == null) return;
     const delta = new Array(rows).fill(0).reduce((memo) => {
       const text = new Array(columns).fill('\n').join('');
       return memo.insert(text, { table: tableId() });
     }, new ChangeSet().retain(range.index));
-    this.lextron.updateContents(delta, Lextron.sources.USER);
-    this.lextron.setSelection(range.index, Lextron.sources.SILENT);
+    this.lextrix.updateContents(delta, Lextrix.sources.USER);
+    this.lextrix.setSelection(range.index, Lextrix.sources.SILENT);
     this.balanceTables();
   }
 
   listenBalanceCells() {
-    this.lextron.on(
-      Lextron.events.SCROLL_OPTIMIZE,
+    this.lextrix.on(
+      Lextrix.events.SCROLL_OPTIMIZE,
       (mutations: MutationRecord[]) => {
         mutations.some((mutation) => {
           if (
@@ -145,8 +145,8 @@ class Table extends Module {
               (mutation.target as HTMLElement).tagName,
             )
           ) {
-            this.lextron.once(Lextron.events.TEXT_CHANGE, (delta, old, source) => {
-              if (source !== Lextron.sources.USER) return;
+            this.lextrix.once(Lextrix.events.TEXT_CHANGE, (delta, old, source) => {
+              if (source !== Lextrix.sources.USER) return;
               this.balanceTables();
             });
             return true;

@@ -1,5 +1,5 @@
-/** Lextron formats — built-in text and block formats. */
-import { ClassAttributor, Scope } from 'lextron-dom';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import { ClassAttributor, Scope } from 'lextrix-dom';
 
 class IndentAttributor extends ClassAttributor {
   add(node: HTMLElement, value: string | number) {
@@ -26,7 +26,7 @@ class IndentAttributor extends ClassAttributor {
   }
 }
 
-const IndentClass = new IndentAttributor('indent', 'lxt-indent', {
+const IndentClass = new IndentAttributor('indent', 'lxr-indent', {
   scope: Scope.BLOCK,
   // @ts-expect-error
   whitelist: [1, 2, 3, 4, 5, 6, 7, 8],

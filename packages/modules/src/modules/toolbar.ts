@@ -1,12 +1,12 @@
-﻿/** Lextron modules — editor behavior modules. */
-import ChangeSet from 'lextron-change';
-import { EmbedBlot, Scope } from 'lextron-dom';
-import Lextron from 'lextron-core';
-import logger from 'lextron-core/core/logger.js';
-import Module from 'lextron-core/core/module.js';
-import type { Range } from 'lextron-core/core/selection.js';
+﻿/** Lextrix modules — editor behavior modules. */
+import ChangeSet from 'lextrix-change';
+import { EmbedBlot, Scope } from 'lextrix-dom';
+import Lextrix from 'lextrix-core';
+import logger from 'lextrix-core/core/logger.js';
+import Module from 'lextrix-core/core/module.js';
+import type { Range } from 'lextrix-core/core/selection.js';
 
-const debug = logger('lextron:toolbar');
+const debug = logger('lextrix:toolbar');
 
 type Handler = (this: Toolbar, value: any) => void;
 
@@ -28,13 +28,13 @@ class Toolbar extends Module<ToolbarProps> {
   controls: [string, HTMLElement][];
   handlers: Record<string, Handler>;
 
-  constructor(lextron: Lextron, options: Partial<ToolbarProps>) {
-    super(lextron, options);
+  constructor(lextrix: Lextrix, options: Partial<ToolbarProps>) {
+    super(lextrix, options);
     if (Array.isArray(this.options.container)) {
       const container = document.createElement('div');
       container.setAttribute('role', 'toolbar');
       addControls(container, this.options.container);
-      lextron.container?.parentNode?.insertBefore(container, lextron.container);
+      lextrix.container?.parentNode?.insertBefore(container, lextrix.container);
       this.container = container;
     } else if (typeof this.options.container === 'string') {
       this.container = document.querySelector(this.options.container);
@@ -45,7 +45,7 @@ class Toolbar extends Module<ToolbarProps> {
       debug.error('Container required for toolbar', this.options);
       return;
     }
-    this.container.classList.add('lxt-toolbar');
+    this.container.classList.add('lxr-toolbar');
     this.controls = [];
     this.handlers = {};
     if (this.options.handlers) {
@@ -62,8 +62,8 @@ class Toolbar extends Module<ToolbarProps> {
         this.attach(input);
       },
     );
-    this.lextron.on(Lextron.events.EDITOR_CHANGE, () => {
-      const [range] = this.lextron.selection.getRange(); // lextron.getSelection triggers update
+    this.lextrix.on(Lextrix.events.EDITOR_CHANGE, () => {
+      const [range] = this.lextrix.selection.getRange(); // lextrix.getSelection triggers update
       this.update(range);
     });
   }
@@ -74,16 +74,16 @@ class Toolbar extends Module<ToolbarProps> {
 
   attach(input: HTMLElement) {
     let format = Array.from(input.classList).find((className) => {
-      return className.indexOf('lxt-') === 0;
+      return className.indexOf('lxr-') === 0;
     });
     if (!format) return;
-    format = format.slice('lxt-'.length);
+    format = format.slice('lxr-'.length);
     if (input.tagName === 'BUTTON') {
       input.setAttribute('type', 'button');
     }
     if (
       this.handlers[format] == null &&
-      this.lextron.scroll.query(format) == null
+      this.lextrix.scroll.query(format) == null
     ) {
       debug.warn('ignoring attaching to nonexistent format', format, input);
       return;
@@ -102,7 +102,7 @@ class Toolbar extends Module<ToolbarProps> {
           value = selected.value || false;
         }
       } else {
-        if (input.classList.contains('lxt-active')) {
+        if (input.classList.contains('lxr-active')) {
           value = false;
         } else {
           // @ts-expect-error
@@ -110,27 +110,27 @@ class Toolbar extends Module<ToolbarProps> {
         }
         e.preventDefault();
       }
-      this.lextron.focus();
-      const [range] = this.lextron.selection.getRange();
+      this.lextrix.focus();
+      const [range] = this.lextrix.selection.getRange();
       if (this.handlers[format] != null) {
         this.handlers[format].call(this, value);
       } else if (
         // @ts-expect-error
-        this.lextron.scroll.query(format).prototype instanceof EmbedBlot
+        this.lextrix.scroll.query(format).prototype instanceof EmbedBlot
       ) {
         value = prompt(`Enter ${format}`); // eslint-disable-line no-alert
         if (!value) return;
-        this.lextron.updateContents(
+        this.lextrix.updateContents(
           new ChangeSet()
             // @ts-expect-error Fix me later
             .retain(range.index)
             // @ts-expect-error Fix me later
             .delete(range.length)
             .insert({ [format]: value }),
-          Lextron.sources.USER,
+          Lextrix.sources.USER,
         );
       } else {
-        this.lextron.format(format, value, Lextron.sources.USER);
+        this.lextrix.format(format, value, Lextrix.sources.USER);
       }
       this.update(range);
     });
@@ -138,7 +138,7 @@ class Toolbar extends Module<ToolbarProps> {
   }
 
   update(range: Range | null) {
-    const formats = range == null ? {} : this.lextron.getFormat(range);
+    const formats = range == null ? {} : this.lextrix.getFormat(range);
     this.controls.forEach((pair) => {
       const [format, input] = pair;
       if (input.tagName === 'SELECT') {
@@ -163,7 +163,7 @@ class Toolbar extends Module<ToolbarProps> {
           option.selected = true;
         }
       } else if (range == null) {
-        input.classList.remove('lxt-active');
+        input.classList.remove('lxr-active');
         input.setAttribute('aria-pressed', 'false');
       } else if (input.hasAttribute('value')) {
         // both being null should match (default values)
@@ -173,11 +173,11 @@ class Toolbar extends Module<ToolbarProps> {
           value === input.getAttribute('value') ||
           (value != null && value.toString() === input.getAttribute('value')) ||
           (value == null && !input.getAttribute('value'));
-        input.classList.toggle('lxt-active', isActive);
+        input.classList.toggle('lxr-active', isActive);
         input.setAttribute('aria-pressed', isActive.toString());
       } else {
         const isActive = formats[format] != null;
-        input.classList.toggle('lxt-active', isActive);
+        input.classList.toggle('lxr-active', isActive);
         input.setAttribute('aria-pressed', isActive.toString());
       }
     });
@@ -188,7 +188,7 @@ Toolbar.DEFAULTS = {};
 function addButton(container: HTMLElement, format: string, value?: string) {
   const input = document.createElement('button');
   input.setAttribute('type', 'button');
-  input.classList.add(`lxt-${format}`);
+  input.classList.add(`lxr-${format}`);
   input.setAttribute('aria-pressed', 'false');
   if (value != null) {
     input.value = value;
@@ -211,7 +211,7 @@ function addControls(
   }
   groups.forEach((controls: any) => {
     const group = document.createElement('span');
-    group.classList.add('lxt-formats');
+    group.classList.add('lxr-formats');
     controls.forEach((control: any) => {
       if (typeof control === 'string') {
         addButton(group, control);
@@ -235,7 +235,7 @@ function addSelect(
   values: Array<string | boolean>,
 ) {
   const input = document.createElement('select');
-  input.classList.add(`lxt-${format}`);
+  input.classList.add(`lxr-${format}`);
   values.forEach((value) => {
     const option = document.createElement('option');
     if (value !== false) {
@@ -252,59 +252,59 @@ Toolbar.DEFAULTS = {
   container: null,
   handlers: {
     clean() {
-      const range = this.lextron.getSelection();
+      const range = this.lextrix.getSelection();
       if (range == null) return;
       if (range.length === 0) {
-        const formats = this.lextron.getFormat();
+        const formats = this.lextrix.getFormat();
         Object.keys(formats).forEach((name) => {
           // Clean functionality in existing apps only clean inline formats
-          if (this.lextron.scroll.query(name, Scope.INLINE) != null) {
-            this.lextron.format(name, false, Lextron.sources.USER);
+          if (this.lextrix.scroll.query(name, Scope.INLINE) != null) {
+            this.lextrix.format(name, false, Lextrix.sources.USER);
           }
         });
       } else {
-        this.lextron.removeFormat(range.index, range.length, Lextron.sources.USER);
+        this.lextrix.removeFormat(range.index, range.length, Lextrix.sources.USER);
       }
     },
     direction(value) {
-      const { align } = this.lextron.getFormat();
+      const { align } = this.lextrix.getFormat();
       if (value === 'rtl' && align == null) {
-        this.lextron.format('align', 'right', Lextron.sources.USER);
+        this.lextrix.format('align', 'right', Lextrix.sources.USER);
       } else if (!value && align === 'right') {
-        this.lextron.format('align', false, Lextron.sources.USER);
+        this.lextrix.format('align', false, Lextrix.sources.USER);
       }
-      this.lextron.format('direction', value, Lextron.sources.USER);
+      this.lextrix.format('direction', value, Lextrix.sources.USER);
     },
     indent(value) {
-      const range = this.lextron.getSelection();
+      const range = this.lextrix.getSelection();
       // @ts-expect-error
-      const formats = this.lextron.getFormat(range);
+      const formats = this.lextrix.getFormat(range);
       // @ts-expect-error
       const indent = parseInt(formats.indent || 0, 10);
       if (value === '+1' || value === '-1') {
         let modifier = value === '+1' ? 1 : -1;
         if (formats.direction === 'rtl') modifier *= -1;
-        this.lextron.format('indent', indent + modifier, Lextron.sources.USER);
+        this.lextrix.format('indent', indent + modifier, Lextrix.sources.USER);
       }
     },
     link(value) {
       if (value === true) {
         value = prompt('Enter link URL:'); // eslint-disable-line no-alert
       }
-      this.lextron.format('link', value, Lextron.sources.USER);
+      this.lextrix.format('link', value, Lextrix.sources.USER);
     },
     list(value) {
-      const range = this.lextron.getSelection();
+      const range = this.lextrix.getSelection();
       // @ts-expect-error
-      const formats = this.lextron.getFormat(range);
+      const formats = this.lextrix.getFormat(range);
       if (value === 'check') {
         if (formats.list === 'checked' || formats.list === 'unchecked') {
-          this.lextron.format('list', false, Lextron.sources.USER);
+          this.lextrix.format('list', false, Lextrix.sources.USER);
         } else {
-          this.lextron.format('list', 'unchecked', Lextron.sources.USER);
+          this.lextrix.format('list', 'unchecked', Lextrix.sources.USER);
         }
       } else {
-        this.lextron.format('list', value, Lextron.sources.USER);
+        this.lextrix.format('list', value, Lextrix.sources.USER);
       }
     },
   },

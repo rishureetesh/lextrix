@@ -1,31 +1,31 @@
-﻿/** Lextron modules — editor behavior modules. */
-import ChangeSet from 'lextron-change';
-import Module from 'lextron-core/core/module.js';
-import Lextron from 'lextron-core';
-import type { Range } from 'lextron-core/core/selection.js';
+﻿/** Lextrix modules — editor behavior modules. */
+import ChangeSet from 'lextrix-change';
+import Module from 'lextrix-core/core/module.js';
+import Lextrix from 'lextrix-core';
+import type { Range } from 'lextrix-core/core/selection.js';
 import { deleteRange } from './keyboard.js';
 
 const INSERT_TYPES = ['insertText', 'insertReplacementText'];
 
 class Input extends Module {
-  constructor(lextron: Lextron, options: Record<string, never>) {
-    super(lextron, options);
+  constructor(lextrix: Lextrix, options: Record<string, never>) {
+    super(lextrix, options);
 
-    lextron.root.addEventListener('beforeinput', (event) => {
+    lextrix.root.addEventListener('beforeinput', (event) => {
       this.handleBeforeInput(event);
     });
 
     // Gboard with English input on Android triggers `compositionstart` sometimes even
     // users are not going to type anything.
     if (!/Android/i.test(navigator.userAgent)) {
-      lextron.on(Lextron.events.COMPOSITION_BEFORE_START, () => {
+      lextrix.on(Lextrix.events.COMPOSITION_BEFORE_START, () => {
         this.handleCompositionStart();
       });
     }
   }
 
   private deleteRange(range: Range) {
-    deleteRange({ range, lextron: this.lextron });
+    deleteRange({ range, lextrix: this.lextrix });
   }
 
   private replaceText(range: Range, text = '') {
@@ -33,23 +33,23 @@ class Input extends Module {
 
     if (text) {
       // Follow the native behavior that inherits the formats of the first character
-      const formats = this.lextron.getFormat(range.index, 1);
+      const formats = this.lextrix.getFormat(range.index, 1);
       this.deleteRange(range);
-      this.lextron.updateContents(
+      this.lextrix.updateContents(
         new ChangeSet().retain(range.index).insert(text, formats),
-        Lextron.sources.USER,
+        Lextrix.sources.USER,
       );
     } else {
       this.deleteRange(range);
     }
 
-    this.lextron.setSelection(range.index + text.length, 0, Lextron.sources.SILENT);
+    this.lextrix.setSelection(range.index + text.length, 0, Lextrix.sources.SILENT);
     return true;
   }
 
   private handleBeforeInput(event: InputEvent) {
     if (
-      this.lextron.composition.isComposing ||
+      this.lextrix.composition.isComposing ||
       event.defaultPrevented ||
       !INSERT_TYPES.includes(event.inputType)
     ) {
@@ -67,9 +67,9 @@ class Input extends Module {
     if (text == null) {
       return;
     }
-    const normalized = this.lextron.selection.normalizeNative(staticRange);
+    const normalized = this.lextrix.selection.normalizeNative(staticRange);
     const range = normalized
-      ? this.lextron.selection.normalizedToRange(normalized)
+      ? this.lextrix.selection.normalizedToRange(normalized)
       : null;
     if (range && this.replaceText(range, text)) {
       event.preventDefault();
@@ -77,7 +77,7 @@ class Input extends Module {
   }
 
   private handleCompositionStart() {
-    const range = this.lextron.getSelection();
+    const range = this.lextrix.getSelection();
     if (range) {
       this.replaceText(range);
     }

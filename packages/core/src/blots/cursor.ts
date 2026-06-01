@@ -1,13 +1,13 @@
-﻿/** Lextron core — document editor shell. */
-import { EmbedBlot, Scope } from 'lextron-dom';
-import type { Parent, ScrollBlot } from 'lextron-dom';
+﻿/** Lextrix core — document editor shell. */
+import { EmbedBlot, Scope } from 'lextrix-dom';
+import type { Parent, ScrollBlot } from 'lextrix-dom';
 import type Selection from '../core/selection.js';
 import TextBlot from './text.js';
 import type { EmbedContextRange } from './embed.js';
 
 class Cursor extends EmbedBlot {
   static blotName = 'cursor';
-  static className = 'lxt-cursor';
+  static className = 'lxr-cursor';
   static tagName = 'span';
   static CONTENTS = '\uFEFF'; // Zero width no break space
 
@@ -164,16 +164,16 @@ class Cursor extends EmbedBlot {
     }
   }
 
-  // Avoid .lxt-cursor being a descendant of `<a/>`.
+  // Avoid .lxr-cursor being a descendant of `<a/>`.
   // The reason is Safari pushes down `<a/>` on text insertion.
   // That will cause DOM nodes not sync with the model.
   //
   // For example ({I} is the caret), given the markup:
-  //    <a><span class="lxt-cursor">\uFEFF{I}</span></a>
+  //    <a><span class="lxr-cursor">\uFEFF{I}</span></a>
   // When typing a char "x", `<a/>` will be pushed down inside the `<span>` first:
-  //    <span class="lxt-cursor"><a>\uFEFF{I}</a></span>
+  //    <span class="lxr-cursor"><a>\uFEFF{I}</a></span>
   // And then "x" will be inserted after `<a/>`:
-  //    <span class="lxt-cursor"><a>\uFEFF</a>d{I}</span>
+  //    <span class="lxr-cursor"><a>\uFEFF</a>d{I}</span>
   optimize(context?: unknown) {
     // @ts-expect-error Fix me later
     super.optimize(context);

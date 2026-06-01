@@ -1,5 +1,5 @@
 ﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-  <g class="lxt-fill lxt-transparent">
+  <g class="lxr-fill lxr-transparent">
     <rect transform="translate(30 6) rotate(180)" x="14" y="2"></rect>
     <rect transform="translate(24 6) rotate(180)" x="11" y="2"></rect>
     <rect transform="translate(18 6) rotate(180)" x="8" y="2"></rect>
@@ -11,8 +11,8 @@
     <rect transform="translate(6 30) rotate(180)" x="2" y="14"></rect>
     <rect transform="translate(12 30) rotate(180)" x="5" y="14"></rect>
   </g>
-  <line class="lxt-stroke-miter" x1="3" x2="3" y1="16" y2="2"></line>
-  <g class="lxt-fill lxt-transparent">
+  <line class="lxr-stroke-miter" x1="3" x2="3" y1="16" y2="2"></line>
+  <g class="lxr-fill lxr-transparent">
     <rect transform="translate(3 27) rotate(-90)" x="14" y="11"></rect>
     <rect transform="translate(6 24) rotate(-90)" x="14" y="8"></rect>
     <rect transform="translate(9 21) rotate(-90)" x="14" y="5"></rect>

@@ -1,4 +1,4 @@
-﻿/** Lextron modules — editor behavior modules. */
+﻿/** Lextrix modules — editor behavior modules. */
 const ignoreRegexp = /\bmso-list:[^;]*ignore/i;
 const idRegexp = /\bmso-list:[^;]*\bl(\d+)/i;
 const indentRegexp = /\bmso-list:[^;]*\blevel(\d+)/i;
@@ -71,7 +71,7 @@ const normalizeListItem = (doc: Document) => {
       const li = document.createElement('li');
       li.setAttribute('data-list', listItem.type);
       if (listItem.indent > 1) {
-        li.setAttribute('class', `lxt-indent-${listItem.indent - 1}`);
+        li.setAttribute('class', `lxr-indent-${listItem.indent - 1}`);
       }
       li.innerHTML = listItem.element.innerHTML;
       ul.appendChild(li);

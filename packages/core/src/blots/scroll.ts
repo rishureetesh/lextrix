@@ -1,7 +1,7 @@
-﻿/** Lextron core — document editor shell. */
-import { ContainerBlot, LeafBlot, Scope, ScrollBlot } from 'lextron-dom';
-import type { Blot, Parent, EmbedBlot, ParentBlot, Registry } from 'lextron-dom';
-import ChangeSet, { ChangeAttributes, ChangeOp } from 'lextron-change';
+﻿/** Lextrix core — document editor shell. */
+import { ContainerBlot, LeafBlot, Scope, ScrollBlot } from 'lextrix-dom';
+import type { Blot, Parent, EmbedBlot, ParentBlot, Registry } from 'lextrix-dom';
+import ChangeSet, { ChangeAttributes, ChangeOp } from 'lextrix-change';
 import Emitter from '../core/emitter.js';
 import type { EmitterSource } from '../core/emitter.js';
 import Block, { BlockEmbed, bubbleFormats } from './block.js';
@@ -31,7 +31,7 @@ function isUpdatable(blot: Blot): blot is Blot & UpdatableEmbed {
 
 class Scroll extends ScrollBlot {
   static blotName = 'scroll';
-  static className = 'lxt-editor';
+  static className = 'lxr-editor';
   static tagName = 'DIV';
   static defaultChild = Block;
   static allowedChildren = [Block, BlockEmbed, Container];

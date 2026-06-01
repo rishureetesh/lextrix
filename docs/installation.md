@@ -5,38 +5,38 @@
 Install the published package:
 
 ```bash
-npm install @reetesh/lextron
+npm install lextrix
 ```
 
 Import the editor and a theme stylesheet:
 
 ```javascript
-import Lextron from '@reetesh/lextron';
-import '@reetesh/lextron/snow.css';
+import Lextrix from 'lextrix';
+import 'lextrix/snow.css';
 ```
 
 ### Exports
 
 | Import | Purpose |
 |--------|---------|
-| `@reetesh/lextron` | Full editor (UMD default export) |
-| `@reetesh/lextron/core` | Core-only bundle (no formats/themes) |
-| `@reetesh/lextron/lextron.css` | Base editor styles |
-| `@reetesh/lextron/snow.css` | Snow theme |
-| `@reetesh/lextron/bubble.css` | Bubble theme |
-| `@reetesh/lextron/slate.css` | Dark slate theme |
-| `@reetesh/lextron/dawn.css` | Warm dawn theme |
+| `lextrix` | Full editor (UMD default export) |
+| `lextrix/core` | Core-only bundle (no formats/themes) |
+| `lextrix/lextrix.css` | Base editor styles |
+| `lextrix/snow.css` | Snow theme |
+| `lextrix/bubble.css` | Bubble theme |
+| `lextrix/slate.css` | Dark slate theme |
+| `lextrix/dawn.css` | Warm dawn theme |
 
 ## Script tag (bundle)
 
-After `npm run build` in this repo, use files from `packages/lextron/dist/dist/`:
+After `npm run build` in this repo, use files from `packages/lextrix/dist/dist/`:
 
 ```html
-<link href="lextron.core.css" rel="stylesheet" />
-<link href="lextron.snow.css" rel="stylesheet" />
-<script src="lextron.js"></script>
+<link href="lextrix.core.css" rel="stylesheet" />
+<link href="lextrix.snow.css" rel="stylesheet" />
+<script src="lextrix.js"></script>
 <script>
-  const editor = new Lextron('#editor', { theme: 'snow' });
+  const editor = new Lextrix('#editor', { theme: 'snow' });
 </script>
 ```
 
@@ -51,4 +51,4 @@ These are only needed when you enable `modules.syntax` or use the formula toolba
 
 ## Browser support
 
-Node **≥ 18**, npm **≥ 8.2.3**. The editor targets modern evergreen browsers (see `browserslist` in `packages/lextron/package.json`).
+Node **≥ 18**, npm **≥ 8.2.3**. The editor targets modern evergreen browsers (see `browserslist` in `packages/lextrix/package.json`).

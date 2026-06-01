@@ -1,0 +1,41 @@
+import '../../../src/lextrix.js';
+import { describe, expect, test } from 'vitest';
+import UINode, {
+  TTL_FOR_VALID_SELECTION_CHANGE,
+} from 'lextrix-modules/modules/uiNode.js';
+import Lextrix, { ChangeSet } from '../../../src/core.js';
+
+// Fake timer is not supported in browser mode yet.
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+describe('uiNode', () => {
+  test('extends deadline when multiple possible shortcuts are pressed', async () => {
+    const editor = new Lextrix(document.createElement('div'));
+    document.body.appendChild(editor.container);
+    editor.setContents(
+      new ChangeSet().insert('item 1').insert('\n', { list: 'bullet' }),
+    );
+    new UINode(editor, {});
+
+    for (let i = 0; i < 2; i += 1) {
+      editor.root.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowRight', metaKey: true }),
+      );
+      await delay(TTL_FOR_VALID_SELECTION_CHANGE / 2);
+    }
+
+    editor.root.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowLeft', metaKey: true }),
+    );
+    const range = document.createRange();
+    range.setStart(editor.root.querySelector('li')!, 0);
+    range.setEnd(editor.root.querySelector('li')!, 0);
+
+    const selection = document.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+
+    await delay(TTL_FOR_VALID_SELECTION_CHANGE / 2);
+    expect(selection?.getRangeAt(0).startOffset).toEqual(1);
+  });
+});

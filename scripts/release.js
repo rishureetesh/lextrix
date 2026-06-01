@@ -106,16 +106,16 @@ async function main() {
   }
 
   /*
-   * Build Lextron package
+   * Build Lextrix package
    */
-  console.log("Building Lextron");
+  console.log("Building Lextrix");
   exec("npm run build");
 
   /*
-   * Publish Lextron package
+   * Publish Lextrix package
    */
-  console.log("Publishing Lextron");
-  const distFolder = "packages/lextron/dist/dist";
+  console.log("Publishing Lextrix");
+  const distFolder = "packages/lextrix/dist/dist";
   if (
     JSON.parse(fs.readFileSync(path.join(distFolder, "package.json"), "utf-8"))
       .version !== version

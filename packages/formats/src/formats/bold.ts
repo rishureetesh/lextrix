@@ -1,5 +1,5 @@
-/** Lextron formats — built-in text and block formats. */
-import Inline from 'lextron-core/blots/inline.js';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import Inline from 'lextrix-core/blots/inline.js';
 
 class Bold extends Inline {
   static blotName = 'bold';

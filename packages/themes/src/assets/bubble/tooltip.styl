@@ -1,11 +1,11 @@
 ﻿arrowWidth = 6px
 
-.lxt-bubble
-  .lxt-tooltip
+.lxr-bubble
+  .lxr-tooltip
     background-color: backgroundColor
     border-radius: 25px
     color: textColor
-  .lxt-tooltip-arrow
+  .lxr-tooltip-arrow
     border-left: arrowWidth solid transparent
     border-right: arrowWidth solid transparent
     content: " "
@@ -13,20 +13,20 @@
     left: 50%
     margin-left: -1 * arrowWidth
     position: absolute
-  .lxt-tooltip:not(.lxt-flip) .lxt-tooltip-arrow
+  .lxr-tooltip:not(.lxr-flip) .lxr-tooltip-arrow
     border-bottom: arrowWidth solid backgroundColor
     top: -1 * arrowWidth
-  .lxt-tooltip.lxt-flip .lxt-tooltip-arrow
+  .lxr-tooltip.lxr-flip .lxr-tooltip-arrow
     border-top: arrowWidth solid backgroundColor
     bottom: -1 * arrowWidth
 
-  .lxt-tooltip.lxt-editing
-    .lxt-tooltip-editor
+  .lxr-tooltip.lxr-editing
+    .lxr-tooltip-editor
       display: block
-    .lxt-formats
+    .lxr-formats
       visibility: hidden
 
-  .lxt-tooltip-editor
+  .lxr-tooltip-editor
     display: none
     input[type=text]
       background: transparent

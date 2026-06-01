@@ -1,5 +1,5 @@
-/** Lextron formats — built-in text and block formats. */
-import { EmbedBlot } from 'lextron-dom';
+/** Lextrix formats ï¿½ built-in text and block formats. */
+import { EmbedBlot } from 'lextrix-dom';
 import { sanitize } from './link.js';
 
 const ATTRIBUTES = ['alt', 'height', 'width'];

@@ -1,8 +1,8 @@
-import type { Blot } from 'lextron-dom';
-import Lextron from 'lextron-core';
-import Emitter from 'lextron-core/core/emitter.js';
-import Module from 'lextron-core/core/module.js';
-import type { Range } from 'lextron-core/core/selection.js';
+import type { Blot } from 'lextrix-dom';
+import Lextrix from 'lextrix-core';
+import Emitter from 'lextrix-core/core/emitter.js';
+import Module from 'lextrix-core/core/module.js';
+import type { Range } from 'lextrix-core/core/selection.js';
 
 export interface ImageResizeOptions {
   minWidth: number;
@@ -20,14 +20,14 @@ class ImageResize extends Module<ImageResizeOptions> {
   activeIndex: number | null = null;
   activeBlot: Blot | null = null;
 
-  constructor(lextron: Lextron, options: Partial<ImageResizeOptions>) {
-    super(lextron, options);
+  constructor(lextrix: Lextrix, options: Partial<ImageResizeOptions>) {
+    super(lextrix, options);
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.reposition = this.reposition.bind(this);
-    this.lextron.on(Lextron.events.SELECTION_CHANGE, this.onSelectionChange);
-    this.lextron.on(Lextron.events.SCROLL_OPTIMIZE, this.reposition);
-    this.lextron.on(Lextron.events.TEXT_CHANGE, this.reposition);
-    this.lextron.root.addEventListener('scroll', this.reposition, {
+    this.lextrix.on(Lextrix.events.SELECTION_CHANGE, this.onSelectionChange);
+    this.lextrix.on(Lextrix.events.SCROLL_OPTIMIZE, this.reposition);
+    this.lextrix.on(Lextrix.events.TEXT_CHANGE, this.reposition);
+    this.lextrix.root.addEventListener('scroll', this.reposition, {
       passive: true,
     });
   }
@@ -36,12 +36,12 @@ class ImageResize extends Module<ImageResizeOptions> {
     if (
       range == null ||
       range.length !== 1 ||
-      this.lextron.scroll.query('image') == null
+      this.lextrix.scroll.query('image') == null
     ) {
       this.hide();
       return;
     }
-    const [blot] = this.lextron.scroll.descendant(
+    const [blot] = this.lextrix.scroll.descendant(
       (candidate: Blot) => candidate.statics.blotName === 'image',
       range.index,
     );
@@ -58,24 +58,24 @@ class ImageResize extends Module<ImageResizeOptions> {
     if (this.overlay == null) {
       this.createOverlay();
     }
-    this.overlay!.classList.remove('lxt-hidden');
+    this.overlay!.classList.remove('lxr-hidden');
     this.reposition();
   }
 
   hide() {
     this.activeBlot = null;
     this.activeIndex = null;
-    this.overlay?.classList.add('lxt-hidden');
+    this.overlay?.classList.add('lxr-hidden');
   }
 
   createOverlay() {
     const overlay = document.createElement('div');
-    overlay.className = 'lxt-image-resize lxt-hidden';
+    overlay.className = 'lxr-image-resize lxr-hidden';
     const handle = document.createElement('div');
-    handle.className = 'lxt-image-resize-handle';
+    handle.className = 'lxr-image-resize-handle';
     handle.setAttribute('aria-label', 'Resize image');
     overlay.appendChild(handle);
-    this.lextron.container.appendChild(overlay);
+    this.lextrix.container.appendChild(overlay);
     this.overlay = overlay;
     this.handle = handle;
     this.bindHandle(handle);
@@ -114,7 +114,7 @@ class ImageResize extends Module<ImageResizeOptions> {
       };
       imageBlot.format('width', String(width));
       imageBlot.format('height', String(height));
-      this.lextron.update(Emitter.sources.USER);
+      this.lextrix.update(Emitter.sources.USER);
       this.reposition();
     };
 
@@ -136,7 +136,7 @@ class ImageResize extends Module<ImageResizeOptions> {
     if (this.options.maxWidth != null) {
       return this.options.maxWidth;
     }
-    return this.lextron.root.clientWidth || Number.MAX_SAFE_INTEGER;
+    return this.lextrix.root.clientWidth || Number.MAX_SAFE_INTEGER;
   }
 
   reposition() {
@@ -147,12 +147,12 @@ class ImageResize extends Module<ImageResizeOptions> {
     ) {
       return;
     }
-    const bounds = this.lextron.getBounds(this.activeIndex, 1);
+    const bounds = this.lextrix.getBounds(this.activeIndex, 1);
     if (bounds == null) {
       this.hide();
       return;
     }
-    const containerRect = this.lextron.container.getBoundingClientRect();
+    const containerRect = this.lextrix.container.getBoundingClientRect();
     this.overlay.style.left = `${bounds.left - containerRect.left}px`;
     this.overlay.style.top = `${bounds.top - containerRect.top}px`;
     this.overlay.style.width = `${bounds.width}px`;

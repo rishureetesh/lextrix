@@ -1,15 +1,15 @@
-﻿/** Lextron modules — editor behavior modules. */
-import ChangeSet from 'lextron-change';
-import { ClassAttributor, Scope } from 'lextron-dom';
-import type { Blot, ScrollBlot } from 'lextron-dom';
-import Inline from 'lextron-core/blots/inline.js';
-import Lextron from 'lextron-core';
-import Module from 'lextron-core/core/module.js';
-import { blotToChangeSet } from 'lextron-core/blots/block.js';
-import BreakBlot from 'lextron-core/blots/break.js';
-import CursorBlot from 'lextron-core/blots/cursor.js';
-import TextBlot, { escapeText } from 'lextron-core/blots/text.js';
-import CodeBlock, { CodeBlockContainer } from 'lextron-formats/formats/code.js';
+﻿/** Lextrix modules — editor behavior modules. */
+import ChangeSet from 'lextrix-change';
+import { ClassAttributor, Scope } from 'lextrix-dom';
+import type { Blot, ScrollBlot } from 'lextrix-dom';
+import Inline from 'lextrix-core/blots/inline.js';
+import Lextrix from 'lextrix-core';
+import Module from 'lextrix-core/core/module.js';
+import { blotToChangeSet } from 'lextrix-core/blots/block.js';
+import BreakBlot from 'lextrix-core/blots/break.js';
+import CursorBlot from 'lextrix-core/blots/cursor.js';
+import TextBlot, { escapeText } from 'lextrix-core/blots/text.js';
+import CodeBlock, { CodeBlockContainer } from 'lextrix-formats/formats/code.js';
 import { traverse } from './clipboard.js';
 
 const TokenAttributor = new ClassAttributor('code-token', 'hljs', {
@@ -54,7 +54,7 @@ class CodeToken extends Inline {
   }
 }
 CodeToken.blotName = 'code-token';
-CodeToken.className = 'lxt-token';
+CodeToken.className = 'lxr-token';
 
 class SyntaxCodeBlock extends CodeBlock {
   static create(value: unknown) {
@@ -212,18 +212,18 @@ class Syntax extends Module<SyntaxOptions> {
   static DEFAULTS: SyntaxOptions & { hljs: any };
 
   static register() {
-    Lextron.register(CodeToken, true);
-    Lextron.register(SyntaxCodeBlock, true);
-    Lextron.register(SyntaxCodeBlockContainer, true);
+    Lextrix.register(CodeToken, true);
+    Lextrix.register(SyntaxCodeBlock, true);
+    Lextrix.register(SyntaxCodeBlockContainer, true);
   }
 
   languages: Record<string, true>;
 
-  constructor(lextron: Lextron, options: Partial<SyntaxOptions>) {
-    super(lextron, options);
+  constructor(lextrix: Lextrix, options: Partial<SyntaxOptions>) {
+    super(lextrix, options);
     if (this.options.hljs == null) {
       throw new Error(
-        'Syntax module requires highlight.js. Please include the library on the page before lextron.',
+        'Syntax module requires highlight.js. Please include the library on the page before lextrix.',
       );
     }
     // @ts-expect-error Fix me later
@@ -240,9 +240,9 @@ class Syntax extends Module<SyntaxOptions> {
   }
 
   initListener() {
-    this.lextron.on(Lextron.events.SCROLL_BLOT_MOUNT, (blot: Blot) => {
+    this.lextrix.on(Lextrix.events.SCROLL_BLOT_MOUNT, (blot: Blot) => {
       if (!(blot instanceof SyntaxCodeBlockContainer)) return;
-      const select = this.lextron.root.ownerDocument.createElement('select');
+      const select = this.lextrix.root.ownerDocument.createElement('select');
       // @ts-expect-error Fix me later
       this.options.languages.forEach(({ key, label }) => {
         const option = select.ownerDocument.createElement('option');
@@ -252,7 +252,7 @@ class Syntax extends Module<SyntaxOptions> {
       });
       select.addEventListener('change', () => {
         blot.format(SyntaxCodeBlock.blotName, select.value);
-        this.lextron.root.focus(); // Prevent scrolling
+        this.lextrix.root.focus(); // Prevent scrolling
         this.highlight(blot, true);
       });
       if (blot.uiNode == null) {
@@ -266,7 +266,7 @@ class Syntax extends Module<SyntaxOptions> {
 
   initTimer() {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    this.lextron.on(Lextron.events.SCROLL_OPTIMIZE, () => {
+    this.lextrix.on(Lextrix.events.SCROLL_OPTIMIZE, () => {
       if (timer) {
         clearTimeout(timer);
       }
@@ -278,19 +278,19 @@ class Syntax extends Module<SyntaxOptions> {
   }
 
   highlight(blot: SyntaxCodeBlockContainer | null = null, force = false) {
-    if (this.lextron.selection.composing) return;
-    this.lextron.update(Lextron.sources.USER);
-    const range = this.lextron.getSelection();
+    if (this.lextrix.selection.composing) return;
+    this.lextrix.update(Lextrix.sources.USER);
+    const range = this.lextrix.getSelection();
     const blots =
       blot == null
-        ? this.lextron.scroll.descendants(SyntaxCodeBlockContainer)
+        ? this.lextrix.scroll.descendants(SyntaxCodeBlockContainer)
         : [blot];
     blots.forEach((container) => {
       container.highlight(this.highlightBlot, force);
     });
-    this.lextron.update(Lextron.sources.SILENT);
+    this.lextrix.update(Lextrix.sources.SILENT);
     if (range != null) {
-      this.lextron.setSelection(range, Lextron.sources.SILENT);
+      this.lextrix.setSelection(range, Lextrix.sources.SILENT);
     }
   }
 
@@ -306,11 +306,11 @@ class Syntax extends Module<SyntaxOptions> {
           return delta.insert(line);
         }, new ChangeSet());
     }
-    const container = this.lextron.root.ownerDocument.createElement('div');
+    const container = this.lextrix.root.ownerDocument.createElement('div');
     container.classList.add(CodeBlock.className);
     container.innerHTML = highlight(this.options.hljs, language, text);
     return traverse(
-      this.lextron.scroll,
+      this.lextrix.scroll,
       container,
       [
         (node, delta) => {

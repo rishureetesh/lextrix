@@ -1,5 +1,5 @@
 ﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-  <line class="lxt-stroke" x1="7.5" x2="13.5" y1="4.5" y2="4.5"></line>
-  <line class="lxt-stroke" x1="4.5" x2="10.5" y1="13.5" y2="13.5"></line>
-  <line class="lxt-stroke" x1="8.25" x2="9.75" y1="13.5" y2="4.5"></line>
+  <line class="lxr-stroke" x1="7.5" x2="13.5" y1="4.5" y2="4.5"></line>
+  <line class="lxr-stroke" x1="4.5" x2="10.5" y1="13.5" y2="13.5"></line>
+  <line class="lxr-stroke" x1="8.25" x2="9.75" y1="13.5" y2="4.5"></line>
 </svg>

@@ -1,5 +1,5 @@
 ﻿<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-  <g class="lxt-fill lxt-color-label">
+  <g class="lxr-fill lxr-color-label">
     <polygon points="6 6.868 6 6 5 6 5 7 5.942 7 6 6.868"></polygon>
     <rect x="4" y="4"></rect>
     <polygon points="6.817 5 6 5 6 6 6.38 6 6.817 5"></polygon>
@@ -47,6 +47,6 @@
     <rect x="14" y="15"></rect>
     <rect x="15" y="11"></rect>
   </g>
-  <polyline class="lxt-stroke" points="5.5 13 9 5 12.5 13"></polyline>
-  <line class="lxt-stroke" x1="11.63" x2="6.38" y1="11" y2="11"></line>
+  <polyline class="lxr-stroke" points="5.5 13 9 5 12.5 13"></polyline>
+  <line class="lxr-stroke" x1="11.63" x2="6.38" y1="11" y2="11"></line>
 </svg>

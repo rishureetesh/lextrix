@@ -1,11 +1,11 @@
-﻿/** Lextron core — document editor shell. */
-import type Lextron from '../core/lextron.js';
-import { lxtPath } from '../registry-paths.js';
-import type Clipboard from 'lextron-modules/modules/clipboard.js';
-import type History from 'lextron-modules/modules/history.js';
-import type Keyboard from 'lextron-modules/modules/keyboard.js';
-import type { ToolbarProps } from 'lextron-modules/modules/toolbar.js';
-import type Uploader from 'lextron-modules/modules/uploader.js';
+﻿/** Lextrix core — document editor shell. */
+import type Lextrix from '../core/lextrix.js';
+import { lxrPath } from '../registry-paths.js';
+import type Clipboard from 'lextrix-modules/modules/clipboard.js';
+import type History from 'lextrix-modules/modules/history.js';
+import type Keyboard from 'lextrix-modules/modules/keyboard.js';
+import type { ToolbarProps } from 'lextrix-modules/modules/toolbar.js';
+import type Uploader from 'lextrix-modules/modules/uploader.js';
 
 export interface ThemeOptions {
   modules: Record<string, unknown> & {
@@ -25,7 +25,7 @@ class Theme {
   modules: ThemeOptions['modules'] = {};
 
   constructor(
-    protected lextron: Lextron,
+    protected lextrix: Lextrix,
     protected options: ThemeOptions,
   ) {}
 
@@ -44,9 +44,9 @@ class Theme {
   addModule(name: string): unknown;
   addModule(name: string) {
     // @ts-expect-error
-    const ModuleClass = this.lextron.constructor.import(lxtPath.module(name));
+    const ModuleClass = this.lextrix.constructor.import(lxrPath.module(name));
     this.modules[name] = new ModuleClass(
-      this.lextron,
+      this.lextrix,
       this.options.modules[name] || {},
     );
     return this.modules[name];
@@ -54,7 +54,7 @@ class Theme {
 }
 
 export interface ThemeConstructor {
-  new (lextron: Lextron, options: unknown): Theme;
+  new (lextrix: Lextrix, options: unknown): Theme;
   DEFAULTS: ThemeOptions;
 }
 

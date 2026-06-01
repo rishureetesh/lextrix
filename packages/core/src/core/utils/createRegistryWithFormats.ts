@@ -1,5 +1,5 @@
-﻿/** Lextron core — document editor shell. */
-import { Registry } from 'lextron-dom';
+﻿/** Lextrix core — document editor shell. */
+import { Registry } from 'lextrix-dom';
 
 const MAX_REGISTER_ITERATIONS = 100;
 const CORE_FORMATS = ['block', 'break', 'cursor', 'inline', 'scroll', 'text'];

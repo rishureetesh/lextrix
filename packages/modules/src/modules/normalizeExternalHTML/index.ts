@@ -1,4 +1,4 @@
-﻿/** Lextron modules — editor behavior modules. */
+﻿/** Lextrix modules — editor behavior modules. */
 import googleDocs from './normalizers/googleDocs.js';
 import msWord from './normalizers/msWord.js';
 
