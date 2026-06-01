@@ -1,6 +1,6 @@
 {
   "name": "lextrix-core",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lextrix editor core — blots, document model, and editor shell",
   "type": "module",
   "license": "MIT",
@@ -14,12 +14,12 @@
   },
   "dependencies": {
     "eventemitter3": "^5.0.1",
-    "lextrix-change": "1.0.1",
-    "lextrix-dom": "1.0.1",
+    "lextrix-change": "1.0.2",
+    "lextrix-dom": "1.0.2",
     "lodash-es": "^4.18.1"
   },
   "devDependencies": {
-    "lextrix-modules": "1.0.1",
+    "lextrix-modules": "1.0.2",
     "vitest": "^3.2.4"
   },
   "scripts": {

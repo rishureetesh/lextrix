@@ -15,6 +15,10 @@ class Input extends Module {
       this.handleBeforeInput(event);
     });
 
+    lextrix.root.addEventListener('input', () => {
+      this.handleInput();
+    });
+
     // Gboard with English input on Android triggers `compositionstart` sometimes even
     // users are not going to type anything.
     if (!/Android/i.test(navigator.userAgent)) {
@@ -45,6 +49,21 @@ class Input extends Module {
 
     this.lextrix.setSelection(range.index + text.length, 0, Lextrix.sources.SILENT);
     return true;
+  }
+
+  private handleInput() {
+    if (this.lextrix.composition.isComposing) return;
+    const { cursor } = this.lextrix.selection;
+    if (!cursor.parent) return;
+    const range = cursor.restore();
+    if (range) {
+      this.lextrix.selection.setNativeRange(
+        range.startNode,
+        range.startOffset,
+        range.endNode,
+        range.endOffset,
+      );
+    }
   }
 
   private handleBeforeInput(event: InputEvent) {

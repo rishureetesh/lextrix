@@ -1,6 +1,6 @@
 {
   "name": "lextrix-modules",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Editor modules for Lextrix (clipboard, keyboard, toolbar, …)",
   "type": "module",
   "license": "MIT",
@@ -11,10 +11,10 @@
     "./modules/*": "./src/modules/*"
   },
   "dependencies": {
-    "lextrix-change": "1.0.1",
-    "lextrix-core": "1.0.1",
-    "lextrix-formats": "1.0.1",
-    "lextrix-dom": "1.0.1",
+    "lextrix-change": "1.0.2",
+    "lextrix-core": "1.0.2",
+    "lextrix-formats": "1.0.2",
+    "lextrix-dom": "1.0.2",
     "lodash-es": "^4.18.1"
   },
   "peerDependencies": {

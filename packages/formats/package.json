@@ -1,6 +1,6 @@
 {
   "name": "lextrix-formats",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Built-in text and block formats for Lextrix",
   "type": "module",
   "license": "MIT",
@@ -11,8 +11,8 @@
     "./formats/*": "./src/formats/*"
   },
   "dependencies": {
-    "lextrix-core": "1.0.1",
-    "lextrix-dom": "1.0.1"
+    "lextrix-core": "1.0.2",
+    "lextrix-dom": "1.0.2"
   },
   "scripts": {
     "test": "vitest run"

@@ -169,9 +169,11 @@ class DeletePass {
 
 /** Applies change-set operations to the live scroll tree. */
 export class ChangeApplier {
-  private readonly deleteRunner = new DeletePass(this.scroll);
+  private readonly deleteRunner: DeletePass;
 
-  constructor(private readonly scroll: Scroll) {}
+  constructor(private readonly scroll: Scroll) {
+    this.deleteRunner = new DeletePass(scroll);
+  }
 
   apply(raw: ChangeSet): ChangeSet {
     this.scroll.update();
