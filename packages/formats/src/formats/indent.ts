@@ -1,5 +1,6 @@
-/** Lextrix formats � built-in text and block formats. */
-import { ClassAttributor, Scope } from 'lextrix-dom';
+/** Lextrix formats — built-in text and block formats. */
+import { ClassAttributor } from 'lextrix-dom';
+import { defineAttributorGroup, registerAttributorFormat, Scope } from '../attributor-format.js';
 
 class IndentAttributor extends ClassAttributor {
   add(node: HTMLElement, value: string | number) {
@@ -22,14 +23,18 @@ class IndentAttributor extends ClassAttributor {
   }
 
   value(node: HTMLElement) {
-    return parseInt(super.value(node), 10) || undefined; // Don't return NaN
+    return parseInt(super.value(node), 10) || undefined;
   }
 }
 
-const IndentClass = new IndentAttributor('indent', 'lxr-indent', {
-  scope: Scope.BLOCK,
-  // @ts-expect-error
-  whitelist: [1, 2, 3, 4, 5, 6, 7, 8],
-});
+const IndentClass = registerAttributorFormat(
+  new IndentAttributor('indent', 'lxr-indent', {
+    scope: Scope.BLOCK,
+    // @ts-expect-error whitelist accepts numeric indent levels
+    whitelist: [1, 2, 3, 4, 5, 6, 7, 8],
+  }),
+);
+
+defineAttributorGroup('indent', [IndentClass]);
 
 export default IndentClass;

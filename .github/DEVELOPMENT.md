@@ -58,3 +58,5 @@ README, LICENSE, and NOTICE are copied in. Source maps are not published.
 
 Use canonical `lxr/*` import paths (`lxrPath.module('toolbar')`, etc.).
 Legacy bare paths (`modules/foo`, `delta`, `parchment`) throw at runtime.
+
+Architecture: [docs/architecture/overview.md](../docs/architecture/overview.md).

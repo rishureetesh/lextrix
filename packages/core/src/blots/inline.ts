@@ -1,43 +1,28 @@
 ﻿/** Lextrix core — document editor shell. */
-import { EmbedBlot, InlineBlot, Scope } from 'lextrix-dom';
+import { EmbedBlot, InlineBlot } from 'lextrix-dom';
 import type { BlotConstructor } from 'lextrix-dom';
+import {
+  DEFAULT_INLINE_ORDER,
+  defaultInlineNesting,
+} from '../core/document/inline-nesting.js';
 import Break from './break.js';
 import Text from './text.js';
 
 class Inline extends InlineBlot {
   static allowedChildren: BlotConstructor[] = [Inline, Break, EmbedBlot, Text];
-  // Lower index means deeper in the DOM tree, since not found (-1) is for embeds
-  static order = [
-    'cursor',
-    'inline', // Must be lower
-    'link', // Chrome wants <a> to be lower
-    'underline',
-    'strike',
-    'italic',
-    'bold',
-    'script',
-    'code', // Must be higher
-  ];
+  static order = [...DEFAULT_INLINE_ORDER];
 
   static compare(self: string, other: string) {
-    const selfIndex = Inline.order.indexOf(self);
-    const otherIndex = Inline.order.indexOf(other);
-    if (selfIndex >= 0 || otherIndex >= 0) {
-      return selfIndex - otherIndex;
-    }
-    if (self === other) {
-      return 0;
-    }
-    if (self < other) {
-      return -1;
-    }
-    return 1;
+    return defaultInlineNesting.compare(self, other);
   }
 
   formatAt(index: number, length: number, name: string, value: unknown) {
     if (
-      Inline.compare(this.statics.blotName, name) < 0 &&
-      this.scroll.query(name, Scope.BLOT)
+      defaultInlineNesting.shouldWrapBeforeFormat(
+        this.statics.blotName,
+        name,
+        this.scroll,
+      )
     ) {
       const blot = this.isolate(index, length);
       if (value) {
@@ -52,7 +37,10 @@ class Inline extends InlineBlot {
     super.optimize(context);
     if (
       this.parent instanceof Inline &&
-      Inline.compare(this.statics.blotName, this.parent.statics.blotName) > 0
+      defaultInlineNesting.shouldReorderUnderParent(
+        this.statics.blotName,
+        this.parent.statics.blotName,
+      )
     ) {
       const parent = this.parent.isolate(this.offset(), this.length());
       // @ts-expect-error TODO: make isolate generic

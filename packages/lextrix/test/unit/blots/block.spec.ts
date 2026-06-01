@@ -13,7 +13,6 @@ describe('Block', () => {
   test('childless', () => {
     const scroll = createScroll('');
     const block = scroll.create('block');
-    // @ts-expect-error
     block.optimize();
     expect(block.domNode).toEqualHTML('<br>');
   });

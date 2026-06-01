@@ -22,6 +22,7 @@ import type { Bounds } from './selection.js';
 import Composition from './composition.js';
 import Theme from './theme.js';
 import type { ThemeConstructor } from './theme.js';
+import { PluginHost } from './plugins/plugin-host.js';
 import scrollRectIntoView from './utils/scrollRectIntoView.js';
 import type {
   Rect,
@@ -195,6 +196,7 @@ class Lextrix {
   selection: Selection;
 
   theme: Theme;
+  pluginHost: PluginHost;
   keyboard: Keyboard;
   clipboard: Clipboard;
   history: History;
@@ -232,6 +234,7 @@ class Lextrix {
     this.editor = new Editor(this.scroll);
     this.selection = new Selection(this.scroll, this.emitter);
     this.composition = new Composition(this.scroll, this.emitter);
+    this.pluginHost = new PluginHost();
     this.theme = new this.options.theme(this, this.options); // eslint-disable-line new-cap
     this.keyboard = this.theme.addModule('keyboard');
     this.clipboard = this.theme.addModule('clipboard');
@@ -240,6 +243,7 @@ class Lextrix {
     this.theme.addModule('input');
     this.theme.addModule('uiNode');
     this.theme.init();
+    this.pluginHost.bindAll(this);
     this.emitter.on(Emitter.events.EDITOR_CHANGE, (type) => {
       if (type === Emitter.events.TEXT_CHANGE) {
         this.root.classList.toggle('lxr-blank', this.editor.isBlank());
@@ -536,7 +540,7 @@ class Lextrix {
   }
 
   getModule(name: string) {
-    return this.theme.modules[name];
+    return this.pluginHost.get(name);
   }
 
   getSelection(focus: true): Range;

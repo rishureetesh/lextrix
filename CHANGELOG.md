@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 (2026-05-31)
+
+- Fix TypeScript errors across dom, core, formats, and test type definitions
+- Restore CI: lint, typecheck, unit tests, fuzz tests, and production build
+
 ## 1.0.0 (2026-05-31)
 
 - First stable release as **lextrix**
@@ -8,4 +13,5 @@
 - Image resize module (`modules.imageResize`)
 - Docs in `docs/`
 
+[1.0.1]: https://github.com/rishureetesh/lextrix/releases/tag/v1.0.1
 [1.0.0]: https://github.com/rishureetesh/lextrix/releases/tag/v1.0.0

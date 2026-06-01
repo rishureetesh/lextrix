@@ -34,6 +34,21 @@ export {
   Scope,
 };
 
+export {
+  defineDocumentFormat,
+  defineAttributorFormat,
+  defineAttributorGroup,
+  getDocumentFormatDefinition,
+  getAttributorFormat,
+  getAttributorFormatDefinition,
+  getFormatGroup,
+  FormatDefinitionCatalog,
+  defineFormatGroup,
+  type DocumentFormatDefinition,
+  type AttributorFormatDefinition,
+  type FormatGroupDefinition,
+} from './format/format-definition.js';
+
 export type { RegistryInterface, RegistryDefinition } from './registry.js';
 export type { default as ShadowBlot } from './blot/abstract/shadow.js';
 export type { default as LinkedList } from './collection/linked-list.js';

@@ -1,4 +1,5 @@
 import Scope from '../scope.js';
+import TextNodeSync from '../sync/text-node-sync.js';
 import type { Blot, Leaf, Root } from './abstract/blot.js';
 import LeafBlot from './abstract/leaf.js';
 
@@ -20,6 +21,14 @@ class TextBlot extends LeafBlot implements Leaf {
   constructor(scroll: Root, node: Node) {
     super(scroll, node);
     this.text = this.statics.value(this.domNode);
+  }
+
+  public syncTextFromDom(): void {
+    this.text = this.statics.value(this.domNode);
+  }
+
+  public textLength(): number {
+    return this.text.length;
   }
 
   public deleteAt(index: number, length: number): void {
@@ -49,13 +58,7 @@ class TextBlot extends LeafBlot implements Leaf {
 
   public optimize(context: { [key: string]: any }): void {
     super.optimize(context);
-    this.text = this.statics.value(this.domNode);
-    if (this.text.length === 0) {
-      this.remove();
-    } else if (this.next instanceof TextBlot && this.next.prev === this) {
-      this.insertAt(this.length(), (this.next as TextBlot).value());
-      this.next.remove();
-    }
+    TextNodeSync.compactAfterEdit(this);
   }
 
   public position(index: number, _inclusive = false): [Node, number] {
@@ -73,7 +76,7 @@ class TextBlot extends LeafBlot implements Leaf {
     }
     const after = this.scroll.create(this.domNode.splitText(index));
     this.parent.insertBefore(after, this.next || undefined);
-    this.text = this.statics.value(this.domNode);
+    this.syncTextFromDom();
     return after;
   }
 
@@ -81,15 +84,7 @@ class TextBlot extends LeafBlot implements Leaf {
     mutations: MutationRecord[],
     _context: { [key: string]: any },
   ): void {
-    if (
-      mutations.some((mutation) => {
-        return (
-          mutation.type === 'characterData' && mutation.target === this.domNode
-        );
-      })
-    ) {
-      this.text = this.statics.value(this.domNode);
-    }
+    TextNodeSync.applyCharacterDataMutations(this, mutations);
   }
 
   public value(): string {

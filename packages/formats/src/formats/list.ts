@@ -1,8 +1,9 @@
-/** Lextrix formats � built-in text and block formats. */
 import Block from 'lextrix-core/blots/block.js';
 import Container from 'lextrix-core/blots/container.js';
 import type Scroll from 'lextrix-core/blots/scroll.js';
 import Lextrix from 'lextrix-core';
+import { defineDocumentFormat } from '../format-definition.js';
+import { registerFormatGroup } from '../block-format.js';
 
 class ListContainer extends Container {}
 ListContainer.blotName = 'list-container';
@@ -55,5 +56,10 @@ ListItem.tagName = 'LI';
 
 ListContainer.allowedChildren = [ListItem];
 ListItem.requiredContainer = ListContainer;
+
+defineDocumentFormat(ListContainer, { tagName: 'OL' });
+defineDocumentFormat(ListItem, { tagName: 'LI' });
+
+registerFormatGroup('list', [ListItem, ListContainer]);
 
 export { ListContainer, ListItem as default };

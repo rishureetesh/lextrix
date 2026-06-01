@@ -1,7 +1,7 @@
 ﻿/** Lextrix core — document editor shell. */
 import { Registry } from 'lextrix-dom';
+import { registerFormatWithContainers } from '../registry/format-dependency-graph.js';
 
-const MAX_REGISTER_ITERATIONS = 100;
 const CORE_FORMATS = ['block', 'break', 'cursor', 'inline', 'scroll', 'text'];
 
 const createRegistryWithFormats = (
@@ -16,24 +16,23 @@ const createRegistryWithFormats = (
   });
 
   formats.forEach((name) => {
-    let format = sourceRegistry.query(name);
+    const format = sourceRegistry.query(name);
     if (!format) {
       debug.error(
         `Cannot register "${name}" specified in "formats" config. Are you sure it was registered?`,
       );
+      return;
     }
-    let iterations = 0;
-    while (format) {
-      registry.register(format);
-      format = 'blotName' in format ? format.requiredContainer ?? null : null;
-
-      iterations += 1;
-      if (iterations > MAX_REGISTER_ITERATIONS) {
+    if ('blotName' in format) {
+      try {
+        registerFormatWithContainers(registry, format);
+      } catch {
         debug.error(
           `Cycle detected in registering blot requiredContainer: "${name}"`,
         );
-        break;
       }
+    } else {
+      registry.register(format);
     }
   });
 

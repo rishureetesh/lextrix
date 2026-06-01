@@ -71,8 +71,8 @@ export interface Blot extends LinkedNode {
    * of the document, and any DOM operation must reduce complexity of the DOM
    * tree. A shared context object is passed through all blots.
    */
-  optimize(context: { [key: string]: any }): void;
-  optimize(mutations: MutationRecord[], context: { [key: string]: any }): void;
+  optimize(context?: { [key: string]: any }): void;
+  optimize(mutations: MutationRecord[], context?: { [key: string]: any }): void;
 
   /**
    * Called when blot changes, with the mutation records of its change.
@@ -88,9 +88,9 @@ export interface Parent extends Blot {
   domNode: HTMLElement;
 
   appendChild(child: Blot): void;
-  descendant<T>(type: new () => T, index: number): [T, number];
+  descendant<T>(type: new (...args: any[]) => T, index: number): [T, number];
   descendant<T>(matcher: (blot: Blot) => boolean, index: number): [T, number];
-  descendants<T>(type: new () => T, index: number, length: number): T[];
+  descendants<T>(type: new (...args: any[]) => T, index: number, length: number): T[];
   descendants<T>(
     matcher: (blot: Blot) => boolean,
     index: number,

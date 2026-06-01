@@ -1,7 +1,7 @@
 {
   "name": "lextrix",
-  "version": "1.0.0",
-  "description": "Lextrix monorepo (rich text editor)",
+  "version": "1.0.1",
+  "description": "Lextrix — modular rich-text editor monorepo",
   "private": true,
   "license": "MIT",
   "author": "Reetesh (https://github.com/rishureetesh)",

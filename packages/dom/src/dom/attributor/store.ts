@@ -1,78 +1,41 @@
-import type { Formattable } from '../blot/abstract/blot.js';
-import Registry from '../registry.js';
-import Scope from '../scope.js';
+import type { Formattable, Root } from '../blot/abstract/blot.js';
 import Attributor from './attributor.js';
-import ClassAttributor from './class.js';
-import StyleAttributor from './style.js';
+import FormatAttributeStore from './format-attribute-store.js';
+import { FormatDefinitionCatalog } from '../format/format-definition.js';
 
+/** Back-compat facade over FormatAttributeStore with scroll-based resolution. */
 class AttributorStore {
-  private attributes: { [key: string]: Attributor } = {};
-  private domNode: HTMLElement;
+  private readonly store: FormatAttributeStore;
 
-  constructor(domNode: HTMLElement) {
-    this.domNode = domNode;
-    this.build();
+  constructor(domNode: HTMLElement, scroll: Root) {
+    this.store = new FormatAttributeStore(domNode, (name, scope) => {
+      const fromCatalog = FormatDefinitionCatalog.resolveAttributor(name, scope);
+      if (fromCatalog instanceof Attributor) {
+        return fromCatalog;
+      }
+      const match = scroll.query(name, scope);
+      return match instanceof Attributor ? match : null;
+    });
   }
 
-  public attribute(attribute: Attributor, value: any): void {
-    // verb
-    if (value) {
-      if (attribute.add(this.domNode, value)) {
-        if (attribute.value(this.domNode) != null) {
-          this.attributes[attribute.attrName] = attribute;
-        } else {
-          delete this.attributes[attribute.attrName];
-        }
-      }
-    } else {
-      attribute.remove(this.domNode);
-      delete this.attributes[attribute.attrName];
-    }
+  public attribute(attribute: Attributor, value: unknown): void {
+    this.store.apply(attribute, value);
   }
 
   public build(): void {
-    this.attributes = {};
-    const blot = Registry.find(this.domNode);
-    if (blot == null) {
-      return;
-    }
-    const attributes = Attributor.keys(this.domNode);
-    const classes = ClassAttributor.keys(this.domNode);
-    const styles = StyleAttributor.keys(this.domNode);
-    attributes
-      .concat(classes)
-      .concat(styles)
-      .forEach((name) => {
-        const attr = blot.scroll.query(name, Scope.ATTRIBUTE);
-        if (attr instanceof Attributor) {
-          this.attributes[attr.attrName] = attr;
-        }
-      });
+    this.store.rebuild();
   }
 
   public copy(target: Formattable): void {
-    Object.keys(this.attributes).forEach((key) => {
-      const value = this.attributes[key].value(this.domNode);
-      target.format(key, value);
-    });
+    this.store.copyTo(target);
   }
 
   public move(target: Formattable): void {
-    this.copy(target);
-    Object.keys(this.attributes).forEach((key) => {
-      this.attributes[key].remove(this.domNode);
-    });
-    this.attributes = {};
+    this.store.moveTo(target);
   }
 
-  public values(): { [key: string]: any } {
-    return Object.keys(this.attributes).reduce(
-      (attributes: { [key: string]: any }, name: string) => {
-        attributes[name] = this.attributes[name].value(this.domNode);
-        return attributes;
-      },
-      {},
-    );
+  public values(): Record<string, unknown> {
+    return this.store.values();
   }
 }
 

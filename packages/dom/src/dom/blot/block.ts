@@ -43,7 +43,7 @@ class BlockBlot extends ParentBlot implements Formattable {
 
   constructor(scroll: Root, domNode: Node) {
     super(scroll, domNode);
-    this.attributes = new AttributorStore(this.domNode);
+    this.attributes = new AttributorStore(this.domNode, scroll);
   }
 
   public format(name: string, value: any): void {

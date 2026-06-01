@@ -22,16 +22,19 @@ class Theme {
     default: Theme,
   };
 
-  modules: ThemeOptions['modules'] = {};
-
   constructor(
     protected lextrix: Lextrix,
     protected options: ThemeOptions,
   ) {}
 
+  /** Legacy module map — reads from the canonical PluginHost. */
+  get modules(): Record<string, unknown> {
+    return this.lextrix.pluginHost.asModuleRecord();
+  }
+
   init() {
     Object.keys(this.options.modules).forEach((name) => {
-      if (this.modules[name] == null) {
+      if (!this.lextrix.pluginHost.has(name)) {
         this.addModule(name);
       }
     });
@@ -45,11 +48,12 @@ class Theme {
   addModule(name: string) {
     // @ts-expect-error
     const ModuleClass = this.lextrix.constructor.import(lxrPath.module(name));
-    this.modules[name] = new ModuleClass(
+    const instance = new ModuleClass(
       this.lextrix,
       this.options.modules[name] || {},
     );
-    return this.modules[name];
+    this.lextrix.pluginHost.register(name, instance);
+    return instance;
   }
 }
 

@@ -1,9 +1,6 @@
-/** Lextrix formats � built-in text and block formats. */
-import Inline from 'lextrix-core/blots/inline.js';
+import { defineInlineTagFormat } from '../inline-format.js';
 
-class Underline extends Inline {
-  static blotName = 'underline';
-  static tagName = 'U';
-}
-
-export default Underline;
+export default defineInlineTagFormat({
+  blotName: 'underline',
+  tagName: 'U',
+});

@@ -1,5 +1,6 @@
 import Registry, { type RegistryDefinition } from '../registry.js';
 import Scope from '../scope.js';
+import MutationCoordinator from '../sync/mutation-coordinator.js';
 import type { Blot, BlotConstructor, Root } from './abstract/blot.js';
 import ContainerBlot from './abstract/container.js';
 import ParentBlot from './abstract/parent.js';
@@ -13,7 +14,7 @@ const OBSERVER_CONFIG = {
   subtree: true,
 };
 
-const MAX_OPTIMIZE_ITERATIONS = 100;
+const mutationCoordinator = new MutationCoordinator();
 
 class ScrollBlot extends ParentBlot implements Root {
   public static blotName = 'scroll';
@@ -109,75 +110,7 @@ class ScrollBlot extends ParentBlot implements Root {
     context: { [key: string]: any },
   ): void;
   public optimize(mutations: any = [], context: any = {}): void {
-    super.optimize(context);
-    const mutationsMap = context.mutationsMap || new WeakMap();
-    // We must modify mutations directly, cannot make copy and then modify
-    let records = Array.from(this.observer.takeRecords());
-    // Array.push currently seems to be implemented by a non-tail recursive function
-    // so we cannot just mutations.push.apply(mutations, this.observer.takeRecords());
-    while (records.length > 0) {
-      mutations.push(records.pop());
-    }
-    const mark = (blot: Blot | null, markParent = true): void => {
-      if (blot == null || blot === this) {
-        return;
-      }
-      if (blot.domNode.parentNode == null) {
-        return;
-      }
-      if (!mutationsMap.has(blot.domNode)) {
-        mutationsMap.set(blot.domNode, []);
-      }
-      if (markParent) {
-        mark(blot.parent);
-      }
-    };
-    const optimize = (blot: Blot): void => {
-      // Post-order traversal
-      if (!mutationsMap.has(blot.domNode)) {
-        return;
-      }
-      if (blot instanceof ParentBlot) {
-        blot.children.forEach(optimize);
-      }
-      mutationsMap.delete(blot.domNode);
-      blot.optimize(context);
-    };
-    let remaining = mutations;
-    for (let i = 0; remaining.length > 0; i += 1) {
-      if (i >= MAX_OPTIMIZE_ITERATIONS) {
-        throw new Error('[Lextrix Dom] Maximum optimize iterations reached');
-      }
-      remaining.forEach((mutation: MutationRecord) => {
-        const blot = this.find(mutation.target, true);
-        if (blot == null) {
-          return;
-        }
-        if (blot.domNode === mutation.target) {
-          if (mutation.type === 'childList') {
-            mark(this.find(mutation.previousSibling, false));
-            Array.from(mutation.addedNodes).forEach((node: Node) => {
-              const child = this.find(node, false);
-              mark(child, false);
-              if (child instanceof ParentBlot) {
-                child.children.forEach((grandChild: Blot) => {
-                  mark(grandChild, false);
-                });
-              }
-            });
-          } else if (mutation.type === 'attributes') {
-            mark(blot.prev);
-          }
-        }
-        mark(blot);
-      });
-      this.children.forEach(optimize);
-      remaining = Array.from(this.observer.takeRecords());
-      records = remaining.slice();
-      while (records.length > 0) {
-        mutations.push(records.pop());
-      }
-    }
+    mutationCoordinator.optimizeTree(this, mutations, context);
   }
 
   public update(

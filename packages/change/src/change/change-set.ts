@@ -1,4 +1,3 @@
-import { cloneDeep, isEqual } from 'lodash-es';
 import type fastDiff from 'fast-diff';
 import ChangeAttributes from './change-attributes.js';
 import ChangeOp from './change-op.js';
@@ -12,6 +11,12 @@ import {
 } from './embed-handlers.js';
 import { invertChangeSet } from './invert.js';
 import { transformChangeSets, transformPosition } from './transform.js';
+import { OperationBuffer } from '../document/operation-buffer.js';
+import { fromLegacyOps, toLegacyOps } from '../operation/legacy-bridge.js';
+import {
+  eachLineOperations,
+  sliceLegacyOps,
+} from '../pipeline/operation-stream-nav.js';
 
 class ChangeSet {
   static ChangeOp = ChangeOp;
@@ -82,60 +87,16 @@ class ChangeSet {
   }
 
   push(newChangeOp: ChangeOp): this {
-    let index = this.ops.length;
-    let lastChangeOp = this.ops[index - 1];
-    newChangeOp = cloneDeep(newChangeOp);
-    if (typeof lastChangeOp === 'object') {
-      if (
-        typeof newChangeOp.delete === 'number' &&
-        typeof lastChangeOp.delete === 'number'
-      ) {
-        this.ops[index - 1] = { delete: lastChangeOp.delete + newChangeOp.delete };
-        return this;
-      }
-      if (typeof lastChangeOp.delete === 'number' && newChangeOp.insert != null) {
-        index -= 1;
-        lastChangeOp = this.ops[index - 1];
-        if (typeof lastChangeOp !== 'object') {
-          this.ops.unshift(newChangeOp);
-          return this;
-        }
-      }
-      if (isEqual(newChangeOp.attributes, lastChangeOp.attributes)) {
-        if (
-          typeof newChangeOp.insert === 'string' &&
-          typeof lastChangeOp.insert === 'string'
-        ) {
-          this.ops[index - 1] = { insert: lastChangeOp.insert + newChangeOp.insert };
-          if (typeof newChangeOp.attributes === 'object') {
-            this.ops[index - 1].attributes = newChangeOp.attributes;
-          }
-          return this;
-        } else if (
-          typeof newChangeOp.retain === 'number' &&
-          typeof lastChangeOp.retain === 'number'
-        ) {
-          this.ops[index - 1] = { retain: lastChangeOp.retain + newChangeOp.retain };
-          if (typeof newChangeOp.attributes === 'object') {
-            this.ops[index - 1].attributes = newChangeOp.attributes;
-          }
-          return this;
-        }
-      }
-    }
-    if (index === this.ops.length) {
-      this.ops.push(newChangeOp);
-    } else {
-      this.ops.splice(index, 0, newChangeOp);
-    }
+    const buffer = OperationBuffer.fromLegacyOps(this.ops);
+    buffer.appendLegacy(newChangeOp);
+    this.ops = buffer.toLegacyOps();
     return this;
   }
 
   chop(): this {
-    const lastChangeOp = this.ops[this.ops.length - 1];
-    if (lastChangeOp && typeof lastChangeOp.retain === 'number' && !lastChangeOp.attributes) {
-      this.ops.pop();
-    }
+    const buffer = OperationBuffer.fromLegacyOps(this.ops);
+    buffer.chopTrailingRetain();
+    this.ops = buffer.toLegacyOps();
     return this;
   }
 
@@ -186,20 +147,7 @@ class ChangeSet {
   }
 
   slice(start = 0, end = Infinity): ChangeSet {
-    const ops = [];
-    const iter = new ChangeIterator(this.ops);
-    let index = 0;
-    while (index < end && iter.hasNext()) {
-      let nextChangeOp;
-      if (index < start) {
-        nextChangeOp = iter.next(start - index);
-      } else {
-        nextChangeOp = iter.next(end - index);
-        ops.push(nextChangeOp);
-      }
-      index += ChangeOp.length(nextChangeOp);
-    }
-    return new ChangeSet(ops);
+    return new ChangeSet(sliceLegacyOps(this.ops, start, end));
   }
 
   compose(other: ChangeSet): ChangeSet {
@@ -227,34 +175,12 @@ class ChangeSet {
     ) => boolean | void,
     newline = '\n',
   ): void {
-    const iter = new ChangeIterator(this.ops);
-    let line = new ChangeSet();
-    let i = 0;
-    while (iter.hasNext()) {
-      if (iter.peekType() !== 'insert') {
-        return;
-      }
-      const thisChangeOp = iter.peek();
-      const start = ChangeOp.length(thisChangeOp) - iter.peekLength();
-      const index =
-        typeof thisChangeOp.insert === 'string'
-          ? thisChangeOp.insert.indexOf(newline, start) - start
-          : -1;
-      if (index < 0) {
-        line.push(iter.next());
-      } else if (index > 0) {
-        line.push(iter.next(index));
-      } else {
-        if (predicate(line, iter.next(1).attributes || {}, i) === false) {
-          return;
-        }
-        i += 1;
-        line = new ChangeSet();
-      }
-    }
-    if (line.length() > 0) {
-      predicate(line, {}, i);
-    }
+    eachLineOperations(
+      fromLegacyOps(this.ops),
+      (lineOps, attributes, index) =>
+        predicate(new ChangeSet(toLegacyOps(lineOps)), attributes, index),
+      newline,
+    );
   }
 
   invert(base: ChangeSet): ChangeSet {

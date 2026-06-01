@@ -133,7 +133,6 @@ describe('History', () => {
       expect(editor.history.stack.undo.length).toEqual(0);
       editor.updateContents(new ChangeSet().retain(12).insert('e'));
       expect(editor.history.stack.undo.length).toEqual(1);
-      // @ts-expect-error
       await sleep((editor.history.options.delay as number) * 1.25);
       editor.updateContents(new ChangeSet().retain(13).insert('s'));
       expect(editor.history.stack.undo.length).toEqual(2);
@@ -144,7 +143,6 @@ describe('History', () => {
       expect(editor.history.stack.undo.length).toEqual(0);
       editor.updateContents(new ChangeSet().retain(12).insert('e'));
       const contents = editor.getContents();
-      // @ts-expect-error
       await sleep((editor.history.options.delay as number) * 1.25);
       editor.updateContents(new ChangeSet().retain(13).insert('s'));
       editor.history.undo();
@@ -155,7 +153,6 @@ describe('History', () => {
 
     test('transform api change', () => {
       const { editor } = setup();
-      // @ts-expect-error
       editor.history.options.userOnly = true;
       editor.updateContents(
         new ChangeSet().retain(12).insert('es'),
@@ -210,9 +207,7 @@ describe('History', () => {
 
     test('ignore remote changes', () => {
       const { editor } = setup();
-      // @ts-expect-error
       editor.history.options.delay = 0;
-      // @ts-expect-error
       editor.history.options.userOnly = true;
       editor.setText('\n');
       editor.insertText(0, 'a', Lextrix.sources.USER);

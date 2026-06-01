@@ -47,7 +47,6 @@ class Cursor extends EmbedBlot {
     }
     if (target != null) {
       this.savedLength = Cursor.CONTENTS.length;
-      // @ts-expect-error optimize() requires a context argument in strict typing
       target.optimize();
       target.formatAt(index, Cursor.CONTENTS.length, name, value);
       this.savedLength = 0;

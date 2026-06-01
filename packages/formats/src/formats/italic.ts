@@ -1,9 +1,6 @@
-/** Lextrix formats � built-in text and block formats. */
-import Bold from './bold.js';
+import { defineInlineTagFormat } from '../inline-format.js';
 
-class Italic extends Bold {
-  static blotName = 'italic';
-  static tagName = ['EM', 'I'];
-}
-
-export default Italic;
+export default defineInlineTagFormat({
+  blotName: 'italic',
+  tagName: ['EM', 'I'],
+});

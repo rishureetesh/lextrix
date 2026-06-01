@@ -21,6 +21,8 @@ npm test             # unit + change tests
 
 See [.github/DEVELOPMENT.md](./.github/DEVELOPMENT.md) for package layout and testing details.
 
+Start with the [architecture overview](../docs/architecture/overview.md) before changing core packages.
+
 ## Pull request guidelines
 
 1. Branch from `main`

@@ -1,9 +1,6 @@
-/** Lextrix formats � built-in text and block formats. */
-import Bold from './bold.js';
+import { defineInlineTagFormat } from '../inline-format.js';
 
-class Strike extends Bold {
-  static blotName = 'strike';
-  static tagName = ['S', 'STRIKE'];
-}
-
-export default Strike;
+export default defineInlineTagFormat({
+  blotName: 'strike',
+  tagName: ['S', 'STRIKE'],
+});

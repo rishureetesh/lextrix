@@ -1,12 +1,19 @@
 # Third-Party Notices
 
-Lextrix is an independent rich text editor. All editor source code in this
-repository is Lextrix-original (MIT). See [LICENSE](./LICENSE).
+Lextrix is an independent rich-text editor released under the MIT License.
+See LICENSE for license terms.
 
-## Runtime dependencies
+This repository contains the Lextrix editor implementation and associated
+packages maintained as part of the Lextrix project.
 
-| Package | Role | License |
-|---------|------|---------|
-| [eventemitter3](https://github.com/primus/eventemitter3) | Event bus | MIT |
-| [lodash-es](https://github.com/lodash/lodash) | Utilities | MIT |
-| [fast-diff](https://github.com/jhchen/fast-diff) | Text diff in change-set | Apache-2.0 |
+Lextrix provides a modular document model, change engine, formatting system,
+selection engine, and plugin architecture for building rich-text editing
+experiences on the web.
+
+## Runtime Dependencies
+
+| Package       | Purpose                      | License    |
+| ------------- | ---------------------------- | ---------- |
+| eventemitter3 | Event emitter implementation | MIT        |
+| lodash-es     | Utility functions            | MIT        |
+| fast-diff     | Text diff implementation     | Apache-2.0 |

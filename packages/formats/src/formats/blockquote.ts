@@ -1,9 +1,12 @@
-/** Lextrix formats � built-in text and block formats. */
-import Block from 'lextrix-core/blots/block.js';
+/** Lextrix formats — built-in text and block formats. */
+import { defineBlockFormat } from '../block-format.js';
+import { registerFormatGroup } from '../block-format.js';
 
-class Blockquote extends Block {
-  static blotName = 'blockquote';
-  static tagName = 'blockquote';
-}
+const Blockquote = defineBlockFormat({
+  blotName: 'blockquote',
+  tagName: 'blockquote',
+});
+
+registerFormatGroup('blockquote', [Blockquote]);
 
 export default Blockquote;

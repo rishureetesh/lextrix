@@ -1,26 +1,16 @@
 import LinkedList from '../../collection/linked-list.js';
+import BlotMountFactory from '../../factory/blot-mount-factory.js';
+import ParentMutationSync from '../../sync/parent-mutation-sync.js';
+import FormatDefinitionCatalog from '../../format/format-definition.js';
+import NodeTree from '../../tree/node-tree.js';
+import TreeCursor from '../../tree/tree-cursor.js';
+import TreeMutationService from '../../tree/tree-mutation-service.js';
 import DomError from '../../error.js';
 import Scope from '../../scope.js';
 import type { Blot, BlotConstructor, Parent, Root } from './blot.js';
 import ShadowBlot from './shadow.js';
 
-function makeAttachedBlot(node: Node, scroll: Root): Blot {
-  const found = scroll.find(node);
-  if (found) return found;
-  try {
-    return scroll.create(node);
-  } catch (e) {
-    const blot = scroll.create(Scope.INLINE);
-    Array.from(node.childNodes).forEach((child: Node) => {
-      blot.domNode.appendChild(child);
-    });
-    if (node.parentNode) {
-      node.parentNode.replaceChild(blot.domNode, node);
-    }
-    blot.attach();
-    return blot;
-  }
-}
+const mutationSync = new ParentMutationSync();
 
 class ParentBlot extends ShadowBlot implements Parent {
   /**
@@ -38,8 +28,13 @@ class ParentBlot extends ShadowBlot implements Parent {
   public domNode!: HTMLElement;
   public uiNode: HTMLElement | null = null;
 
+  protected readonly tree = new NodeTree();
+  protected readonly treeCursor = new TreeCursor(this.tree);
+  protected readonly treeMutation = new TreeMutationService(this.tree);
+
   constructor(scroll: Root, domNode: Node) {
     super(scroll, domNode);
+    this.children = this.tree.children;
     this.build();
   }
 
@@ -70,14 +65,16 @@ class ParentBlot extends ShadowBlot implements Parent {
    * Called during construction, should fill its own children LinkedList.
    */
   public build(): void {
-    this.children = new LinkedList<Blot>();
+    while (this.tree.length > 0) {
+      this.tree.remove(this.tree.children.head!);
+    }
     // Need to be reversed for if DOM nodes already in order
     Array.from(this.domNode.childNodes)
       .filter((node: Node) => node !== this.uiNode)
       .reverse()
       .forEach((node: Node) => {
         try {
-          const child = makeAttachedBlot(node, this.scroll);
+          const child = BlotMountFactory.attachNode(node, this.scroll);
           this.insertBefore(child, this.children.head || undefined);
         } catch (err) {
           if (err instanceof DomError) {
@@ -107,17 +104,7 @@ class ParentBlot extends ShadowBlot implements Parent {
     index: number,
   ): [Blot | null, number];
   public descendant(criteria: any, index = 0): [Blot | null, number] {
-    const [child, offset] = this.children.find(index);
-    if (
-      (criteria.blotName == null && criteria(child)) ||
-      (criteria.blotName != null && child instanceof criteria)
-    ) {
-      return [child as any, offset];
-    } else if (child instanceof ParentBlot) {
-      return child.descendant(criteria, offset);
-    } else {
-      return [null, -1];
-    }
+    return this.treeCursor.descendant(this, criteria, index);
   }
 
   public descendants<T extends Blot>(
@@ -135,27 +122,7 @@ class ParentBlot extends ShadowBlot implements Parent {
     index = 0,
     length: number = Number.MAX_VALUE,
   ): Blot[] {
-    let descendants: Blot[] = [];
-    let lengthLeft = length;
-    this.children.forEachAt(
-      index,
-      length,
-      (child: Blot, childIndex: number, childLength: number) => {
-        if (
-          (criteria.blotName == null && criteria(child)) ||
-          (criteria.blotName != null && child instanceof criteria)
-        ) {
-          descendants.push(child);
-        }
-        if (child instanceof ParentBlot) {
-          descendants = descendants.concat(
-            child.descendants(criteria, childIndex, lengthLeft),
-          );
-        }
-        lengthLeft -= childLength;
-      },
-    );
-    return descendants;
+    return this.treeCursor.descendants(this, criteria, index, length);
   }
 
   public detach(): void {
@@ -219,34 +186,15 @@ class ParentBlot extends ShadowBlot implements Parent {
   }
 
   public insertBefore(childBlot: Blot, refBlot?: Blot | null): void {
-    if (childBlot.parent != null) {
-      childBlot.parent.children.remove(childBlot);
-    }
-    let refDomNode: Node | null = null;
-    this.children.insertBefore(childBlot, refBlot || null);
-    childBlot.parent = this;
-    if (refBlot != null) {
-      refDomNode = refBlot.domNode;
-    }
-    if (
-      this.domNode.parentNode !== childBlot.domNode ||
-      this.domNode.nextSibling !== refDomNode
-    ) {
-      this.domNode.insertBefore(childBlot.domNode, refDomNode);
-    }
-    childBlot.attach();
+    this.treeMutation.insertBefore(this, childBlot, refBlot);
   }
 
   public length(): number {
-    return this.children.reduce((memo, child) => {
-      return memo + child.length();
-    }, 0);
+    return this.tree.contentLength();
   }
 
   public moveChildren(targetParent: Parent, refNode?: Blot | null): void {
-    this.children.forEach((child) => {
-      targetParent.insertBefore(child, refNode);
-    });
+    this.treeMutation.moveChildren(this, targetParent, refNode);
   }
 
   public optimize(context?: { [key: string]: any }): void {
@@ -265,134 +213,41 @@ class ParentBlot extends ShadowBlot implements Parent {
         this.remove();
       }
     }
+    FormatDefinitionCatalog.runPostOptimize(this, context ?? {});
   }
 
   public path(index: number, inclusive = false): [Blot, number][] {
-    const [child, offset] = this.children.find(index, inclusive);
-    const position: [Blot, number][] = [[this, index]];
-    if (child instanceof ParentBlot) {
-      return position.concat(child.path(offset, inclusive));
-    } else if (child != null) {
-      position.push([child, offset]);
-    }
-    return position;
+    return this.treeCursor.path(this, index, inclusive);
   }
 
   public removeChild(child: Blot): void {
-    this.children.remove(child);
+    this.treeMutation.removeChild(this, child);
   }
 
   public replaceWith(name: string | Blot, value?: any): Blot {
     const replacement =
       typeof name === 'string' ? this.scroll.create(name, value) : name;
-    if (replacement instanceof ParentBlot) {
-      this.moveChildren(replacement);
-    }
+    this.treeMutation.prepareReplaceWith(this, replacement);
     return super.replaceWith(replacement);
   }
 
   public split(index: number, force = false): Blot | null {
-    if (!force) {
-      if (index === 0) {
-        return this;
-      }
-      if (index === this.length()) {
-        return this.next;
-      }
-    }
-    const after = this.clone() as ParentBlot;
-    if (this.parent) {
-      this.parent.insertBefore(after, this.next || undefined);
-    }
-    this.children.forEachAt(index, this.length(), (child, offset, _length) => {
-      const split = child.split(offset, force);
-      if (split != null) {
-        after.appendChild(split);
-      }
-    });
-    return after;
+    return this.treeMutation.split(this, index, force);
   }
 
   public splitAfter(child: Blot): Parent {
-    const after = this.clone() as ParentBlot;
-    while (child.next != null) {
-      after.appendChild(child.next);
-    }
-    if (this.parent) {
-      this.parent.insertBefore(after, this.next || undefined);
-    }
-    return after;
+    return this.treeMutation.splitAfter(this, child);
   }
 
   public unwrap(): void {
-    if (this.parent) {
-      this.moveChildren(this.parent, this.next || undefined);
-    }
-    this.remove();
+    this.treeMutation.unwrap(this);
   }
 
   public update(
     mutations: MutationRecord[],
     _context: { [key: string]: any },
   ): void {
-    const addedNodes: Node[] = [];
-    const removedNodes: Node[] = [];
-    mutations.forEach((mutation) => {
-      if (mutation.target === this.domNode && mutation.type === 'childList') {
-        addedNodes.push(...mutation.addedNodes);
-        removedNodes.push(...mutation.removedNodes);
-      }
-    });
-    removedNodes.forEach((node: Node) => {
-      // Check node has actually been removed
-      // One exception is Chrome does not immediately remove IFRAMEs
-      // from DOM but MutationRecord is correct in its reported removal
-      if (
-        node.parentNode != null &&
-        // @ts-expect-error Fix me later
-        node.tagName !== 'IFRAME' &&
-        document.body.compareDocumentPosition(node) &
-          Node.DOCUMENT_POSITION_CONTAINED_BY
-      ) {
-        return;
-      }
-      const blot = this.scroll.find(node);
-      if (blot == null) {
-        return;
-      }
-      if (
-        blot.domNode.parentNode == null ||
-        blot.domNode.parentNode === this.domNode
-      ) {
-        blot.detach();
-      }
-    });
-    addedNodes
-      .filter((node) => {
-        return node.parentNode === this.domNode && node !== this.uiNode;
-      })
-      .sort((a, b) => {
-        if (a === b) {
-          return 0;
-        }
-        if (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) {
-          return 1;
-        }
-        return -1;
-      })
-      .forEach((node) => {
-        let refBlot: Blot | null = null;
-        if (node.nextSibling != null) {
-          refBlot = this.scroll.find(node.nextSibling);
-        }
-        const blot = makeAttachedBlot(node, this.scroll);
-        if (blot.next !== refBlot || blot.next == null) {
-          if (blot.parent != null) {
-            blot.parent.removeChild(this);
-          }
-          this.insertBefore(blot, refBlot || undefined);
-        }
-      });
+    mutationSync.reconcile(this, mutations, this.scroll, this.uiNode);
     this.enforceAllowedChildren();
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "lextrix-dom",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lextrix document model (blot registry and attributors)",
   "type": "module",
   "license": "MIT",

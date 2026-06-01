@@ -1,7 +1,9 @@
-/** Lextrix formats � built-in text and block formats. */
 import type { LinkedList } from 'lextrix-dom';
+import type { Blot } from 'lextrix-dom';
 import Block from 'lextrix-core/blots/block.js';
 import Container from 'lextrix-core/blots/container.js';
+import { defineDocumentFormat } from '../format-definition.js';
+import { registerFormatGroup } from '../block-format.js';
 
 class TableCell extends Block {
   static blotName = 'table';
@@ -84,27 +86,6 @@ class TableRow extends Container {
     return false;
   }
 
-  optimize(context: { [key: string]: any }) {
-    super.optimize(context);
-    this.children.forEach((child) => {
-      if (child.next == null) return;
-      const childFormats = child.formats();
-      const nextFormats = child.next.formats();
-      if (childFormats.table !== nextFormats.table) {
-        const next = this.splitAfter(child);
-        if (next) {
-          // @ts-expect-error TODO: parameters of optimize() should be a optional
-          next.optimize();
-        }
-        // We might be able to merge with prev now
-        if (this.prev) {
-          // @ts-expect-error TODO: parameters of optimize() should be a optional
-          this.prev.optimize();
-        }
-      }
-    });
-  }
-
   rowOffset() {
     if (this.parent) {
       return this.parent.children.indexOf(this);
@@ -143,8 +124,7 @@ class TableContainer extends Container {
         }
         const blot = this.scroll.create(TableCell.blotName, value);
         row.appendChild(blot);
-        // @ts-expect-error TODO: parameters of optimize() should be a optional
-        blot.optimize(); // Add break blot
+        blot.optimize();
       });
     });
   }
@@ -201,12 +181,43 @@ class TableContainer extends Container {
 
 TableContainer.allowedChildren = [TableBody];
 TableBody.requiredContainer = TableContainer;
-
 TableBody.allowedChildren = [TableRow];
 TableRow.requiredContainer = TableBody;
-
 TableRow.allowedChildren = [TableCell];
 TableCell.requiredContainer = TableRow;
+
+function tableRowPostOptimize(blot: Blot, context: Record<string, unknown>): void {
+  const row = blot as TableRow;
+  row.children.forEach((child) => {
+    if (child.next == null) return;
+    const childFormats = child.formats();
+    const nextFormats = child.next.formats();
+    if (childFormats.table !== nextFormats.table) {
+      const next = row.splitAfter(child);
+      if (next) {
+        next.optimize(context);
+      }
+      if (row.prev) {
+        row.prev.optimize(context);
+      }
+    }
+  });
+}
+
+defineDocumentFormat(TableCell, { tagName: 'TD' });
+defineDocumentFormat(TableRow, {
+  tagName: 'TR',
+  postOptimize: tableRowPostOptimize,
+});
+defineDocumentFormat(TableBody, { tagName: 'TBODY' });
+defineDocumentFormat(TableContainer, { tagName: 'TABLE' });
+
+registerFormatGroup('table', [
+  TableCell,
+  TableRow,
+  TableBody,
+  TableContainer,
+]);
 
 function tableId() {
   const id = Math.random().toString(36).slice(2, 6);

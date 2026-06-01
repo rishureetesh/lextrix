@@ -1,24 +1,6 @@
-/** Lextrix formats � built-in text and block formats. */
-import Inline from 'lextrix-core/blots/inline.js';
+import { defineInlineTagFormat } from '../inline-format.js';
 
-class Bold extends Inline {
-  static blotName = 'bold';
-  static tagName = ['STRONG', 'B'];
-
-  static create() {
-    return super.create();
-  }
-
-  static formats() {
-    return true;
-  }
-
-  optimize(context: { [key: string]: any }) {
-    super.optimize(context);
-    if (this.domNode.tagName !== this.statics.tagName[0]) {
-      this.replaceWith(this.statics.blotName);
-    }
-  }
-}
-
-export default Bold;
+export default defineInlineTagFormat({
+  blotName: 'bold',
+  tagName: ['STRONG', 'B'],
+});

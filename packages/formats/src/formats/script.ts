@@ -1,25 +1,26 @@
-/** Lextrix formats � built-in text and block formats. */
-import Inline from 'lextrix-core/blots/inline.js';
+/** Lextrix formats — built-in text and block formats. */
+import { defineInlineTagFormat } from '../inline-format.js';
+import { registerFormatGroup } from '../block-format.js';
 
-class Script extends Inline {
-  static blotName = 'script';
-  static tagName = ['SUB', 'SUP'];
-
-  static create(value: 'super' | 'sub' | (string & {})) {
+const Script = defineInlineTagFormat({
+  blotName: 'script',
+  tagName: ['SUB', 'SUP'],
+  create(value) {
     if (value === 'super') {
       return document.createElement('sup');
     }
     if (value === 'sub') {
       return document.createElement('sub');
     }
-    return super.create(value);
-  }
-
-  static formats(domNode: HTMLElement) {
+    return undefined!;
+  },
+  formats(domNode) {
     if (domNode.tagName === 'SUB') return 'sub';
     if (domNode.tagName === 'SUP') return 'super';
     return undefined;
-  }
-}
+  },
+});
+
+registerFormatGroup('script', [Script]);
 
 export default Script;

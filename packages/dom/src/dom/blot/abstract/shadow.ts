@@ -1,14 +1,17 @@
-import DomError from '../../error.js';
-import Registry from '../../registry.js';
+import NodeElementFactory from '../../factory/node-element-factory.js';
+import DomBinding from '../../binding/dom-binding.js';
+import ShadowNodeBehavior from '../../behavior/shadow-node-behavior.js';
+import BlotDocumentNodeAdapter from '../../document/blot-document-node-adapter.js';
+import type { DocumentNode } from '../../document/document-node.js';
 import Scope from '../../scope.js';
 import type {
   Blot,
   BlotConstructor,
-  Formattable,
   Parent,
   Root,
 } from './blot.js';
 
+/** Public compatibility facade — all behavior delegated to services. */
 class ShadowBlot implements Blot {
   public static blotName = 'abstract';
   public static className: string;
@@ -17,107 +20,60 @@ class ShadowBlot implements Blot {
   public static tagName: string | string[];
 
   public static create(rawValue?: unknown): Node {
-    if (this.tagName == null) {
-      throw new DomError('Blot definition missing tagName');
-    }
-    let node: HTMLElement;
-    let value: string | number | undefined;
-    if (Array.isArray(this.tagName)) {
-      if (typeof rawValue === 'string') {
-        value = rawValue.toUpperCase();
-        if (parseInt(value, 10).toString() === value) {
-          value = parseInt(value, 10);
-        }
-      } else if (typeof rawValue === 'number') {
-        value = rawValue;
-      }
-      if (typeof value === 'number') {
-        node = document.createElement(this.tagName[value - 1]);
-      } else if (value && this.tagName.indexOf(value) > -1) {
-        node = document.createElement(value);
-      } else {
-        node = document.createElement(this.tagName[0]);
-      }
-    } else {
-      node = document.createElement(this.tagName);
-    }
-    if (this.className) {
-      node.classList.add(this.className);
-    }
-    return node;
+    return NodeElementFactory.createFromBlot(this, rawValue);
   }
 
   public prev: Blot | null;
   public next: Blot | null;
   public parent: Parent;
+  public readonly documentNode: DocumentNode;
+  protected readonly binding: DomBinding;
 
-  // Hack for accessing inherited static methods
   get statics(): any {
     return this.constructor;
   }
+
   constructor(
     public scroll: Root,
     public domNode: Node,
   ) {
-    Registry.blots.set(domNode, this);
+    this.binding = new DomBinding(domNode, this);
+    this.documentNode = BlotDocumentNodeAdapter.forBlot(this);
     this.prev = null;
     this.next = null;
   }
 
   public attach(): void {
-    // Nothing to do
+    ShadowNodeBehavior.attach(this);
   }
 
   public clone(): Blot {
-    const domNode = this.domNode.cloneNode(false);
-    return this.scroll.create(domNode);
+    return this.scroll.create(this.domNode.cloneNode(false));
   }
 
   public detach(): void {
-    if (this.parent != null) {
-      this.parent.removeChild(this);
-    }
-    Registry.blots.delete(this.domNode);
+    ShadowNodeBehavior.detach(this, this.binding);
   }
 
   public deleteAt(index: number, length: number): void {
-    const blot = this.isolate(index, length);
-    blot.remove();
+    ShadowNodeBehavior.deleteAt(this, index, length);
   }
 
   public formatAt(
     index: number,
     length: number,
     name: string,
-    value: any,
+    value: unknown,
   ): void {
-    const blot = this.isolate(index, length);
-    if (this.scroll.query(name, Scope.BLOT) != null && value) {
-      blot.wrap(name, value);
-    } else if (this.scroll.query(name, Scope.ATTRIBUTE) != null) {
-      const parent = this.scroll.create(this.statics.scope) as Parent &
-        Formattable;
-      blot.wrap(parent);
-      parent.format(name, value);
-    }
+    ShadowNodeBehavior.formatAt(this, this.scroll, index, length, name, value);
   }
 
-  public insertAt(index: number, value: string, def?: any): void {
-    const blot =
-      def == null
-        ? this.scroll.create('text', value)
-        : this.scroll.create(value, def);
-    const ref = this.split(index);
-    this.parent.insertBefore(blot, ref || undefined);
+  public insertAt(index: number, value: string, def?: unknown): void {
+    ShadowNodeBehavior.insertAt(this, this.scroll, index, value, def);
   }
 
   public isolate(index: number, length: number): Blot {
-    const target = this.split(index);
-    if (target == null) {
-      throw new Error('Attempt to isolate at end');
-    }
-    target.split(length);
-    return target;
+    return ShadowNodeBehavior.isolate(this, index, length);
   }
 
   public length(): number {
@@ -131,30 +87,25 @@ class ShadowBlot implements Blot {
     return this.parent.children.offset(this) + this.parent.offset(root);
   }
 
-  public optimize(_context?: { [key: string]: any }): void {
-    if (
-      this.statics.requiredContainer &&
-      !(this.parent instanceof this.statics.requiredContainer)
-    ) {
-      this.wrap(this.statics.requiredContainer.blotName);
-    }
+  public optimize(context?: { [key: string]: any }): void;
+  public optimize(
+    mutations: MutationRecord[],
+    context?: { [key: string]: any },
+  ): void;
+  public optimize(
+    mutations: MutationRecord[] | { [key: string]: any } = {},
+    context: { [key: string]: any } = {},
+  ): void {
+    const ctx = Array.isArray(mutations) ? context : mutations;
+    ShadowNodeBehavior.optimize(this, ctx);
   }
 
   public remove(): void {
-    if (this.domNode.parentNode != null) {
-      this.domNode.parentNode.removeChild(this.domNode);
-    }
-    this.detach();
+    ShadowNodeBehavior.remove(this, this.binding);
   }
 
-  public replaceWith(name: string | Blot, value?: any): Blot {
-    const replacement =
-      typeof name === 'string' ? this.scroll.create(name, value) : name;
-    if (this.parent != null) {
-      this.parent.insertBefore(replacement, this.next || undefined);
-      this.remove();
-    }
-    return replacement;
+  public replaceWith(name: string | Blot, value?: unknown): Blot {
+    return ShadowNodeBehavior.replaceWith(this, this.scroll, name, value);
   }
 
   public split(index: number, _force?: boolean): Blot | null {
@@ -163,24 +114,11 @@ class ShadowBlot implements Blot {
 
   public update(
     _mutations: MutationRecord[],
-    _context: { [key: string]: any },
-  ): void {
-    // Nothing to do by default
-  }
+    _context: Record<string, unknown>,
+  ): void {}
 
-  public wrap(name: string | Parent, value?: any): Parent {
-    const wrapper =
-      typeof name === 'string'
-        ? (this.scroll.create(name, value) as Parent)
-        : name;
-    if (this.parent != null) {
-      this.parent.insertBefore(wrapper, this.next || undefined);
-    }
-    if (typeof wrapper.appendChild !== 'function') {
-      throw new DomError(`Cannot wrap ${name}`);
-    }
-    wrapper.appendChild(this);
-    return wrapper;
+  public wrap(name: string | Parent, value?: unknown): Parent {
+    return ShadowNodeBehavior.wrap(this, this.scroll, name, value);
   }
 }
 
