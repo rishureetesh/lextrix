@@ -238,8 +238,6 @@ npm test
 
 Contributing: [.github/CONTRIBUTING.md](./.github/CONTRIBUTING.md) · Monorepo guide: [.github/DEVELOPMENT.md](./.github/DEVELOPMENT.md)
 
-Positioning notes: [docs/release/readme-review.md](./docs/release/readme-review.md)
-
 ---
 
 ## License
