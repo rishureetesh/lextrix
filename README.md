@@ -2,11 +2,11 @@
 
 Rich-text editor for the web. MIT licensed.
 
-Built by **[Reetesh Kumar](https://iamreetesh.com/me)** · [iamreetesh.com](https://iamreetesh.com) · [Documentation](https://iamreetesh.com/docs)
+Built by **[Reetesh Kumar](https://iamreetesh.com/me)** · [iamreetesh.com](https://iamreetesh.com) · [Playground](https://iamreetesh.com/lextrix) · [Documentation](https://iamreetesh.com/docs)
 
 Monorepo packages: `lextrix-change`, `lextrix-dom`, `lextrix-core`, `lextrix-formats`, `lextrix-modules`, `lextrix-serialize`, `lextrix-ui`, `lextrix-themes`. The `lextrix` npm package bundles them.
 
-[Site docs](https://iamreetesh.com/docs) · [GitHub docs](./docs/README.md) · [Quick start](./docs/getting-started/quick-start.md) · [Issues](https://github.com/rishureetesh/lextrix/issues)
+[Playground](https://iamreetesh.com/lextrix) · [Site docs](https://iamreetesh.com/docs) · [GitHub docs](./docs/README.md) · [Quick start](./docs/getting-started/quick-start.md) · [Issues](https://github.com/rishureetesh/lextrix/issues)
 
 ---
 

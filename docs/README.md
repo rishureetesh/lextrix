@@ -4,6 +4,7 @@
 
 | Guide | Description |
 |-------|-------------|
+| [Live playground](https://iamreetesh.com/lextrix) | Try Lextrix in the browser |
 | [Quick start](./getting-started/quick-start.md) | Install, themes, events |
 | [DOM mounting](./guides/dom-mounting.md) | **Read first** — toolbar placement & cleanup |
 | [Cookbook](./guides/cookbook.md) | Copy-paste recipes for every feature |

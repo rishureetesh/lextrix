@@ -1,5 +1,7 @@
 # Quick start
 
+**Try it:** [Live playground](https://iamreetesh.com/lextrix) — themes, import/export, and all modules in the browser.
+
 ## Install
 
 ```bash
