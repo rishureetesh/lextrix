@@ -73,5 +73,5 @@ const patch = diff(oldDoc, newDoc);
 ## Further reading
 
 - [API reference](../api/reference.md)
-- [Architecture — Change engine](../architecture/overview.md#change-engine)
+- [Architecture](../architecture/overview.md)
 - Tests: `packages/change/tests/`

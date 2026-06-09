@@ -1,15 +1,37 @@
 # Quick start
 
-## Snow theme (default toolbar)
+## Install
+
+```bash
+npm install lextrix
+```
+
+```javascript
+import Lextrix from 'lextrix';
+import 'lextrix/snow.css';
+```
+
+| Import | Purpose |
+|--------|---------|
+| `lextrix` | Full editor (UMD default export) |
+| `lextrix/core` | Core-only bundle (no formats/themes) |
+| `lextrix/lextrix.css` | Base editor styles |
+| `lextrix/snow.css` | Snow theme |
+| `lextrix/bubble.css` | Bubble theme |
+| `lextrix/slate.css` | Dark slate theme |
+| `lextrix/dawn.css` | Warm dawn theme |
+
+Optional peer dependencies: [highlight.js](https://highlightjs.org/) for syntax, [KaTeX](https://katex.org/) for formulas.
+
+For script-tag usage, build this repo and use files from `packages/lextrix/dist/dist/`.
+
+## Snow theme
 
 ```html
 <div id="editor"></div>
 ```
 
 ```javascript
-import Lextrix from 'lextrix';
-import 'lextrix/snow.css';
-
 const editor = new Lextrix('#editor', {
   theme: 'snow',
   placeholder: 'Start writing…',
@@ -31,7 +53,7 @@ editor.setContents([
 ]);
 ```
 
-## Bubble theme (floating toolbar)
+## Bubble theme
 
 ```javascript
 const editor = new Lextrix('#editor', {
@@ -57,9 +79,9 @@ const editor = new Lextrix('#editor', {
 ## Getting content
 
 ```javascript
-const json = editor.getContents();       // ChangeSet JSON
-const html = editor.root.innerHTML;      // semantic HTML from DOM
-const text = editor.getText();           // plain text
+const json = editor.getContents();       // ChangeSet
+const html = editor.exportContent('html');
+const text = editor.getText();
 ```
 
 ## Listening to changes
@@ -67,7 +89,7 @@ const text = editor.getText();           // plain text
 ```javascript
 editor.on('text-change', (delta, oldDelta, source) => {
   if (source === 'user') {
-    save(json);
+    save(editor.getContents());
   }
 });
 ```

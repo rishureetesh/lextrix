@@ -55,7 +55,7 @@ const updateSelectionDef = [
 ];
 
 export default class EditorPage {
-  constructor(protected readonly page: Page) {}
+  constructor(public readonly page: Page) {}
 
   get root() {
     return this.page.locator('.lxr-editor');
@@ -68,16 +68,13 @@ export default class EditorPage {
 
   async html(content: string, title = '') {
     await this.page.evaluate((html) => {
-      // @ts-expect-error
       const contents = window.lextrix.clipboard.convert({ html, text: '\n' });
-      // @ts-expect-error
       return window.lextrix.setContents(contents);
     }, `<p>${title}</p>${content}`);
   }
 
   getSelection() {
     return this.page.evaluate(() => {
-      // @ts-expect-error
       return window.lextrix.getSelection();
     });
   }
@@ -89,7 +86,6 @@ export default class EditorPage {
     length?: number,
   ) {
     await this.page.evaluate(
-      // @ts-expect-error
       (range) => window.lextrix.setSelection(range),
       typeof range === 'number' ? { index: range, length: length || 0 } : range,
     );
@@ -104,7 +100,6 @@ export default class EditorPage {
 
   async cutoffHistory() {
     await this.page.evaluate(() => {
-      // @ts-expect-error
       window.lextrix.history.cutoff();
     });
   }
@@ -112,7 +107,6 @@ export default class EditorPage {
   async updateContents(delta: Op[], source: 'api' | 'user' = 'api') {
     await this.page.evaluate(
       ({ delta, source }) => {
-        // @ts-expect-error
         window.lextrix.updateContents(delta, source);
       },
       { delta, source },
@@ -121,15 +115,45 @@ export default class EditorPage {
 
   async setContents(delta: Op[]) {
     await this.page.evaluate((delta) => {
-      // @ts-expect-error
       window.lextrix.setContents(delta);
     }, delta);
   }
 
   getContents(): Promise<Op[]> {
     return this.page.evaluate(() => {
-      // @ts-expect-error
-      return window.lextrix.getContents().ops;
+      return window.lextrix.getContents().ops as Op[];
+    });
+  }
+
+  exportContent(format: string, range?: { index: number; length: number }) {
+    return this.page.evaluate(
+      ({ format, range }) => {
+        return range
+          ? window.lextrix.exportContent({ format, ...range })
+          : window.lextrix.exportContent(format);
+      },
+      { format, range },
+    );
+  }
+
+  importContent(content: string, format: string) {
+    return this.page.evaluate(
+      ({ content, format }) => {
+        window.lextrix.importContent(content, format);
+      },
+      { content, format },
+    );
+  }
+
+  getSemanticHTML() {
+    return this.page.evaluate(() => {
+      return window.lextrix.getSemanticHTML();
+    });
+  }
+
+  getText() {
+    return this.page.evaluate(() => {
+      return window.lextrix.getText();
     });
   }
 

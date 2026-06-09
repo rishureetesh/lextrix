@@ -10,7 +10,7 @@ import BreakBlot from 'lextrix-core/blots/break.js';
 import CursorBlot from 'lextrix-core/blots/cursor.js';
 import TextBlot, { escapeText } from 'lextrix-core/blots/text.js';
 import CodeBlock, { CodeBlockContainer } from 'lextrix-formats/formats/code.js';
-import { traverse } from './clipboard.js';
+import { traverse } from '../html-import/index.js';
 
 const TokenAttributor = new ClassAttributor('code-token', 'hljs', {
   scope: Scope.INLINE,
@@ -84,6 +84,24 @@ class SyntaxCodeBlock extends CodeBlock {
   replaceWith(name: string | Blot, value?: any) {
     this.formatAt(0, this.length(), CodeToken.blotName, false);
     return super.replaceWith(name, value);
+  }
+
+  optimize(...args: unknown[]) {
+    const breaks: Blot[] = [];
+    let child = this.children.head;
+    while (child) {
+      if (child.statics.blotName === 'break') {
+        breaks.push(child);
+      }
+      child = child.next;
+    }
+    for (const breakBlot of breaks) {
+      const index = this.children.offset(breakBlot);
+      this.split(index, true);
+      breakBlot.remove();
+    }
+    // @ts-expect-error
+    super.optimize(...args);
   }
 }
 

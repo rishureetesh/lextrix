@@ -20,3 +20,33 @@ export type {
   LextrixOptions,
 } from './core/lextrix.js';
 export type { ThemeOptions } from './core/theme.js';
+export type {
+  ContentSerializer,
+  ExportInput,
+  ExportOptions,
+  SerializeFormat,
+  SerializerAdapter,
+  SerializerContext,
+} from 'lextrix-serialize';
+export {
+  SerializerHost,
+  SerializerRegistry,
+  registerSerializer,
+  unregisterSerializer,
+  getGlobalSerializerRegistry,
+  createDefaultSerializers,
+  createSerializerRegistry,
+  registerMdxComponent,
+  getGlobalMdxComponentRegistry,
+  MdxComponentRegistry,
+  jsonSerializer,
+  htmlSerializer,
+  markdownSerializer,
+  mdxSerializer,
+} from 'lextrix-serialize';
+export type {
+  MdxComponentHandler,
+  MdxComponentNode,
+  MdxSerializerOptions,
+  HtmlSerializerOptions,
+} from 'lextrix-serialize';

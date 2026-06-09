@@ -9,10 +9,9 @@ const redo = (page: Page) => page.keyboard.press(`${SHORTKEY}+Shift+z`);
 const setUserOnly = (page: Page, value: boolean) =>
   page.evaluate(
     (value) => {
-      // @ts-expect-error
       window.lextrix.history.options.userOnly = value;
     },
-    [value],
+    value,
   );
 
 test.describe('history', () => {

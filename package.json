@@ -1,6 +1,6 @@
 {
   "name": "lextrix",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Lextrix — modular rich-text editor monorepo",
   "private": true,
   "license": "MIT",
@@ -20,10 +20,13 @@
     "dev": "npm run dev -w lextrix-demo",
     "dev:bundle": "npm run start -w lextrix",
     "demo": "npm run dev -w lextrix-demo",
-    "test": "npm run test -w lextrix-change && npm run test:unit -w lextrix",
+    "test": "npm run test -w lextrix-change && npm run test -w lextrix-serialize && npm run test -w lextrix-core && npm run test:unit -w lextrix",
     "lint": "npm run lint -w lextrix",
     "typecheck": "tsc --noEmit -p tsconfig.json && npm run lint:tsc -w lextrix",
-    "publish:npm": "npm run build && npm publish --prefix packages/lextrix/dist/dist"
+    "prepublish:check": "node scripts/pre-publish.mjs",
+    "prepublish:check:dry-run": "node scripts/pre-publish.mjs --dry-run",
+    "publish:npm": "node scripts/pre-publish.mjs && npm publish --access public --prefix packages/lextrix/dist/dist",
+    "bench:serialize": "npx tsx scripts/bench-serialize.mjs"
   },
   "engines": {
     "node": ">=18",

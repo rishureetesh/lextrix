@@ -12,6 +12,7 @@ const packageRoots = [
   resolve(__dirname, '../themes/src'),
   resolve(__dirname, '../change/src'),
   resolve(__dirname, '../dom/src'),
+  resolve(__dirname, '../serialize/src'),
 ];
 
 const tsRules = {
@@ -83,6 +84,8 @@ module.exports = {
       'lextrix-ui': resolve(__dirname, '../ui/src'),
       'lextrix-themes$': resolve(__dirname, '../themes/src/index.ts'),
       'lextrix-themes': resolve(__dirname, '../themes/src'),
+      'lextrix-serialize$': resolve(__dirname, '../serialize/src/index.ts'),
+      'lextrix-serialize': resolve(__dirname, '../serialize/src'),
     },
   },
   module: {

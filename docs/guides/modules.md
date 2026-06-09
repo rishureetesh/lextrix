@@ -64,7 +64,7 @@ table.deleteColumn();
 table.deleteTable();
 ```
 
-No default toolbar button — add a custom handler if needed (icon exists in `lextrix-ui`).
+No default toolbar button — add a custom handler if needed.
 
 ### Image resize
 
@@ -79,6 +79,36 @@ Does not affect video or other embeds.
 
 ---
 
-## Internal
+## Authoring a module
 
-`input` and `uiNode` are loaded automatically for IME composition and blot UI attachment (e.g. syntax language picker). You rarely configure these directly.
+Modules extend `Module` from `lextrix-core` and register with `lxrPath.module()`:
+
+```javascript
+import Module from 'lextrix-core/core/module.js';
+import { lxrPath } from 'lextrix-core/registry-paths.js';
+import Lextrix from 'lextrix';
+
+class WordCountModule extends Module {
+  constructor(lextrix, options) {
+    super(lextrix, options);
+    lextrix.on('text-change', () => this.update());
+  }
+
+  update() {
+    console.log('Document length:', this.lextrix.getLength());
+  }
+}
+
+Lextrix.register({ [lxrPath.module('wordCount')]: WordCountModule });
+
+new Lextrix('#editor', {
+  theme: 'snow',
+  modules: { wordCount: true },
+});
+```
+
+Lifecycle: theme loads modules from options → `pluginHost.register()` → `pluginHost.bindAll(editor)`.
+
+Access instances with `editor.getModule('wordCount')`.
+
+Study existing modules in `packages/modules/src/modules/`. Source: `packages/core/src/core/plugins/plugin-host.ts`.

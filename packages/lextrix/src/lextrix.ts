@@ -17,6 +17,32 @@ export type {
   EmitterSource,
   ExpandedLextrixOptions,
   LextrixOptions,
+  ContentSerializer,
+  ExportInput,
+  ExportOptions,
+  SerializeFormat,
+  SerializerAdapter,
+  SerializerContext,
+  MdxComponentHandler,
+  MdxComponentNode,
+  MdxSerializerOptions,
+  HtmlSerializerOptions,
+} from 'lextrix-core';
+export {
+  SerializerHost,
+  SerializerRegistry,
+  MdxComponentRegistry,
+  registerSerializer,
+  unregisterSerializer,
+  getGlobalSerializerRegistry,
+  registerMdxComponent,
+  getGlobalMdxComponentRegistry,
+  createDefaultSerializers,
+  createSerializerRegistry,
+  jsonSerializer,
+  htmlSerializer,
+  markdownSerializer,
+  mdxSerializer,
 } from 'lextrix-core';
 export { ChangeAttributes, ChangeIterator, ChangeOp, ChangeSet, Dom, Range };
 

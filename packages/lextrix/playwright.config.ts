@@ -22,9 +22,10 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'Chrome',
+      name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        browserName: 'chromium',
         contextOptions: {
           permissions: ['clipboard-read', 'clipboard-write'],
         },
@@ -34,6 +35,7 @@ export default defineConfig({
   webServer: {
     command: `npx webpack serve --config test/e2e/__dev_server__/webpack.config.cjs --env port=${port}`,
     port,
+    timeout: 240 * 1000,
     ignoreHTTPSErrors: true,
     reuseExistingServer: !process.env.CI,
     stdout: 'ignore',

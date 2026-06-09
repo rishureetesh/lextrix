@@ -97,4 +97,4 @@ Lextrix.register({ [lxrPath.format('callout')]: CalloutBlot });
 Lextrix.register({ [lxrPath.module('mentions')]: MentionsModule });
 ```
 
-Bare paths like `formats/bold` or `parchment` throw — use `lxr/*` paths only. See the [Registry guide](../guides/registry.md).
+Bare paths like `formats/bold` or `parchment` throw — use `lxr/*` paths only. See the [Formats guide](../guides/formats.md#registration).

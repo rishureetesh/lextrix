@@ -13,6 +13,7 @@ node_modules
 packages/lextrix/dist/
 
 # Test artifacts
+packages/serialize/coverage/
 test-results/
 playwright-report/
 packages/lextrix/test-results/

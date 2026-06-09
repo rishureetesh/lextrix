@@ -20,6 +20,8 @@ export default defineConfig({
       'lextrix-ui': resolve(packageRoot, '../ui/src'),
       'lextrix-themes$': resolve(packageRoot, '../themes/src/index.ts'),
       'lextrix-themes': resolve(packageRoot, '../themes/src'),
+      'lextrix-serialize$': resolve(packageRoot, '../serialize/src/index.ts'),
+      'lextrix-serialize': resolve(packageRoot, '../serialize/src'),
     },
   },
   test: {
@@ -35,7 +37,8 @@ export default defineConfig({
     browser: {
       enabled: true,
       provider: 'playwright',
-      name: process.env.BROWSER || 'chromium',
+      headless: true,
+      instances: [{ browser: 'chromium' }],
     },
   },
 });

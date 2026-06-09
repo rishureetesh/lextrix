@@ -8,6 +8,7 @@ require('webpack-dev-server');
 
 module.exports = (env) =>
   merge(common, {
+    mode: 'development',
     plugins: [
       new HtmlWebpackPlugin({
         publicPath: '/',

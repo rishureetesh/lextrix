@@ -18,6 +18,8 @@
     "noUnusedLocals": true,
     "paths": {
       "lextrix-change": ["./packages/change/src/index.ts"],
+      "lextrix-serialize": ["./packages/serialize/src/index.ts"],
+      "lextrix-serialize/*": ["./packages/serialize/src/*"],
       "lextrix-dom": ["./packages/dom/src/index.ts"],
       "lextrix-core": ["./packages/core/src/index.ts"],
       "lextrix-core/core/*": ["./packages/core/src/core/*"],

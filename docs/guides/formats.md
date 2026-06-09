@@ -1,10 +1,31 @@
-# Format author guide
+# Formats
 
 Built-in formats live in `lextrix-formats`. Custom formats register a blot class and optional attributor metadata.
 
-## Inline tag format
+## Registration
 
-For simple tag-based inline formats (bold, italic, custom spans):
+Extensions register through `Lextrix.register()` using `lxr/*` paths:
+
+```javascript
+import { lxrPath } from 'lextrix-core/registry-paths.js';
+
+lxrPath.format('callout');           // lxr/formats/callout
+lxrPath.module('mentions');          // lxr/modules/mentions
+lxrPath.blot('scroll');              // lxr/blots/scroll
+lxrPath.theme('snow');               // lxr/themes/snow
+lxrPath.attributor('block', 'align'); // lxr/attributors/block/align
+```
+
+Bare paths like `formats/bold` or legacy keys like `parchment` throw at runtime.
+
+```javascript
+import Lextrix from 'lextrix';
+import { lxrPath } from 'lextrix-core/registry-paths.js';
+
+Lextrix.register({ [lxrPath.format('callout')]: CalloutBlot });
+```
+
+## Inline tag format
 
 ```javascript
 import { defineInlineTagFormat } from 'lextrix-formats/inline-format.js';
@@ -13,9 +34,9 @@ export const Highlight = defineInlineTagFormat({
   blotName: 'highlight',
   tagName: 'MARK',
 });
-```
 
-Register with `Lextrix.register({ [lxrPath.format('highlight')]: Highlight })`.
+Lextrix.register({ [lxrPath.format('highlight')]: Highlight });
+```
 
 ## Block format
 
@@ -47,7 +68,26 @@ const MarginClass = defineClassAttributorFormat('margin', 'lxr-margin', {
 defineAttributorGroup('margin', [MarginClass]);
 ```
 
-Attributors are indexed in `FormatDefinitionCatalog`. `AttributorStore` resolves from the catalog before querying the scroll registry.
+## Embeds
+
+Embeds are non-text leaf nodes (image, video, formula):
+
+```json
+{ "insert": { "image": "https://example.com/photo.png" } }
+```
+
+```javascript
+editor.insertEmbed(index, 'image', url, 'user');
+```
+
+Define an embed blot extending the embed base. Study built-ins in `packages/formats/src/formats/image.ts`, `video.ts`, `formula.ts`.
+
+| Kind | Behavior |
+|------|----------|
+| Inline embed | Single leaf in a line (image, formula) |
+| Block embed | Own block row (video) |
+
+Custom embeds may need clipboard matchers for non-standard pasted HTML. See `packages/modules/src/modules/clipboard.ts`.
 
 ## Format metadata hooks
 
@@ -58,22 +98,11 @@ Attributors are indexed in `FormatDefinitionCatalog`. `AttributorStore` resolves
 | `optimize` | Early in the optimize pass |
 | `postOptimize` | After structure enforcement |
 
-See `packages/dom/src/dom/format/format-definition.ts`.
-
 ## Scope
 
-Formats declare a **Scope** bitmask (block, inline, attribute, embed). Use the scope matching how the format applies in the document tree.
+Formats declare a **Scope** bitmask (block, inline, attribute, embed).
 
-## Checklist
+## Examples
 
-1. Define blot or attributor helper
-2. Register with `lxrPath.format()` or attributor group
-3. Add format name to toolbar/config if user-facing
-4. Add tests under `packages/lextrix/test/unit/formats/` or package-level tests
-
-## Further reading
-
-- [Custom embeds](./custom-embeds.md)
-- [Registry guide](./registry.md)
-- [Architecture — Format system](../architecture/overview.md#format-system)
-- Examples: `packages/formats/src/formats/bold.ts`, `align.ts`, `blockquote.ts`
+- `packages/formats/src/formats/bold.ts`, `align.ts`, `blockquote.ts`
+- Tests: `packages/lextrix/test/unit/formats/`

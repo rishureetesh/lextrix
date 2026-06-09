@@ -5,6 +5,8 @@ export default defineConfig({
   resolve: {
     alias: {
       'lextrix-core': resolve(__dirname, 'src/index.ts'),
+      'lextrix-change': resolve(__dirname, '../change/src/index.ts'),
+      'lextrix-serialize': resolve(__dirname, '../serialize/src/index.ts'),
     },
     extensions: ['.ts', '.js'],
   },

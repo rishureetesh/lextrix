@@ -174,4 +174,4 @@ registerUI(Lextrix);
 registerThemes(Lextrix);
 ```
 
-See [Modules](./modules.md) for per-module details.
+See [Modules](./modules.md) for per-module details and authoring.

@@ -23,6 +23,15 @@ import Composition from './composition.js';
 import Theme from './theme.js';
 import type { ThemeConstructor } from './theme.js';
 import { PluginHost } from './plugins/plugin-host.js';
+import {
+  SerializerHost,
+  createDefaultSerializers,
+  createSerializerRegistry,
+  getGlobalSerializerRegistry,
+  type ContentSerializer,
+  type ExportInput,
+  type SerializeFormat,
+} from 'lextrix-serialize';
 import scrollRectIntoView from './utils/scrollRectIntoView.js';
 import type {
   Rect,
@@ -67,6 +76,14 @@ export interface LextrixOptions {
    * @default null
    */
   formats?: string[] | null;
+
+  /**
+   * Content serializers for import/export.
+   * `true` or omitted registers built-in serializers (json, html, markdown, mdx).
+   * Pass an array to register custom serializers only.
+   * `false` disables serialization.
+   */
+  serializers?: ContentSerializer[] | boolean;
 }
 
 /**
@@ -81,6 +98,7 @@ export interface ExpandedLextrixOptions
   modules: Record<string, unknown>;
   bounds?: HTMLElement | null;
   readOnly: boolean;
+  serializers: ContentSerializer[] | false;
 }
 
 class Lextrix {
@@ -197,6 +215,7 @@ class Lextrix {
 
   theme: Theme;
   pluginHost: PluginHost;
+  serializerHost: SerializerHost;
   keyboard: Keyboard;
   clipboard: Clipboard;
   history: History;
@@ -235,6 +254,7 @@ class Lextrix {
     this.selection = new Selection(this.scroll, this.emitter);
     this.composition = new Composition(this.scroll, this.emitter);
     this.pluginHost = new PluginHost();
+    this.serializerHost = this.createSerializerHost();
     this.theme = new this.options.theme(this, this.options); // eslint-disable-line new-cap
     this.keyboard = this.theme.addModule('keyboard');
     this.clipboard = this.theme.addModule('clipboard');
@@ -244,6 +264,7 @@ class Lextrix {
     this.theme.addModule('uiNode');
     this.theme.init();
     this.pluginHost.bindAll(this);
+    this.serializerHost.setAdapter(this.createSerializerAdapter());
     this.emitter.on(Emitter.events.EDITOR_CHANGE, (type) => {
       if (type === Emitter.events.TEXT_CHANGE) {
         this.root.classList.toggle('lxr-blank', this.editor.isBlank());
@@ -562,6 +583,50 @@ class Lextrix {
     return this.editor.getHTML(index, length);
   }
 
+  /**
+   * Export document content to a registered serialization format.
+   */
+  export(input: ExportInput): string {
+    return this.serializerHost.export(input);
+  }
+
+  /**
+   * Import document content from a registered serialization format.
+   * Replaces the current document contents.
+   */
+  import(
+    content: string,
+    format: SerializeFormat,
+    source: EmitterSource = Emitter.sources.API,
+  ): ChangeSet {
+    const delta = this.serializerHost.import(content, format);
+    this.setContents(delta, source);
+    return delta;
+  }
+
+  /**
+   * Alias for {@link import} — avoids confusion with `Lextrix.import()` module loader.
+   */
+  importContent(
+    content: string,
+    format: SerializeFormat,
+    source: EmitterSource = Emitter.sources.API,
+  ): ChangeSet {
+    return this.import(content, format, source);
+  }
+
+  /**
+   * Alias for {@link export} — symmetric with {@link importContent}.
+   */
+  exportContent(input: ExportInput): string {
+    return this.export(input);
+  }
+
+  /** List serialization formats registered for this editor instance. */
+  listExportFormats(): SerializeFormat[] {
+    return this.serializerHost.listFormats();
+  }
+
   getText(range?: Range): string;
   getText(index?: number, length?: number): string;
   getText(index: Range | number = 0, length?: number): string {
@@ -777,6 +842,36 @@ class Lextrix {
       true,
     );
   }
+
+  private createSerializerHost(): SerializerHost {
+    const serializers = this.options.serializers;
+    const registry = createSerializerRegistry(
+      serializers === false ? [] : serializers,
+    );
+    if (serializers !== false) {
+      registry.mergeFrom(getGlobalSerializerRegistry());
+    }
+    return new SerializerHost(registry);
+  }
+
+  private createSerializerAdapter() {
+    return {
+      getChangeSet: (index = 0, length?: number) => {
+        const resolvedLength = length ?? this.getLength() - index;
+        return this.getContents(index, resolvedLength);
+      },
+      setChangeSet: (delta: ChangeSet) => {
+        this.setContents(delta);
+      },
+      convertHtml: (html: string) => {
+        return this.clipboard.convert({ html, text: '' });
+      },
+      exportHtml: (index = 0, length?: number) => {
+        const resolvedLength = length ?? this.getLength() - index;
+        return this.getSemanticHTML(index, resolvedLength);
+      },
+    };
+  }
 }
 
 function resolveSelector(selector: string | HTMLElement | null | undefined) {
@@ -887,7 +982,16 @@ function expandConfig(
       {},
     ),
     bounds: resolveSelector(config.bounds),
+    serializers: resolveSerializersOption(options.serializers),
   };
+}
+
+function resolveSerializersOption(
+  serializers: LextrixOptions['serializers'],
+): ExpandedLextrixOptions['serializers'] {
+  if (serializers === false) return false;
+  if (Array.isArray(serializers)) return serializers;
+  return createDefaultSerializers();
 }
 
 // Handle selection preservation and TEXT_CHANGE emission
