@@ -85,8 +85,7 @@ Modules extend `Module` from `lextrix-core` and register with `lxrPath.module()`
 
 ```javascript
 import Module from 'lextrix-core/core/module.js';
-import { lxrPath } from 'lextrix-core/registry-paths.js';
-import Lextrix from 'lextrix';
+import Lextrix, { lxrPath } from 'lextrix';
 
 class WordCountModule extends Module {
   constructor(lextrix, options) {

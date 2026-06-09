@@ -45,7 +45,9 @@ run('npm', ['run', 'typecheck']);
 run('npm', ['run', 'test', '-w', 'lextrix-change']);
 run('npm', ['run', 'test', '-w', 'lextrix-serialize']);
 run('npm', ['run', 'test', '-w', 'lextrix-core']);
+run('npm', ['run', 'test:unit', '-w', 'lextrix']);
 run('npm', ['run', 'build']);
+run('node', ['scripts/verify-markdown-escape.mjs']);
 
 const distPkgPath = join(distDir, 'package.json');
 if (!existsSync(distPkgPath)) {
@@ -61,7 +63,9 @@ if (distVersion !== rootVersion) {
 
 const requiredArtifacts = [
   'lextrix.js',
+  'lextrix.esm.js',
   'lextrix.core.js',
+  'lextrix.core.esm.js',
   'lextrix.core.css',
   'lextrix.snow.css',
   'README.md',

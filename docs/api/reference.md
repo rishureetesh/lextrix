@@ -10,6 +10,15 @@ const editor = new Lextrix(container, options);
 
 Static properties: `Lextrix.version`, `Lextrix.events`, `Lextrix.sources`, `Lextrix.import()`, `Lextrix.register()`.
 
+### Lifecycle
+
+| Method | Description |
+|--------|-------------|
+| `destroy()` | Remove toolbar, theme listeners, and editor DOM inside the mount container |
+| `getExportWarnings(format)` | Lossy/unsupported issues before Markdown/MDX export (does not throw) |
+
+See [DOM mounting](../guides/dom-mounting.md).
+
 ## Content
 
 | Method | Description |
@@ -91,10 +100,10 @@ Legacy name `Delta` is not supported — use `ChangeSet`. See the [ChangeSet gui
 Register custom formats or modules:
 
 ```javascript
-import { lxrPath } from 'lextrix-core/registry-paths.js';
+import Lextrix, { lxrPath } from 'lextrix';
 
 Lextrix.register({ [lxrPath.format('callout')]: CalloutBlot });
 Lextrix.register({ [lxrPath.module('mentions')]: MentionsModule });
 ```
 
-Bare paths like `formats/bold` or `parchment` throw — use `lxr/*` paths only. See the [Formats guide](../guides/formats.md#registration).
+Bare paths like `formats/bold` or `parchment` throw — use `lxr/*` paths only. See the [Formats guide](../guides/formats.md#registration). Advanced blot helpers (`defineInlineTagFormat`, …) require the monorepo — see [Framework integration](../guides/frameworks.md).

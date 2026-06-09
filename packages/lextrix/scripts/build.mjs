@@ -47,8 +47,11 @@ const publishPkg = {
   main: 'lextrix.js',
   type: 'module',
   exports: {
-    '.': { import: './lextrix.js', default: './lextrix.js' },
-    './core': { import: './lextrix.core.js', default: './lextrix.core.js' },
+    '.': { import: './lextrix.esm.js', default: './lextrix.js' },
+    './core': {
+      import: './lextrix.core.esm.js',
+      default: './lextrix.core.js',
+    },
     './lextrix.css': './lextrix.core.css',
     './snow.css': './lextrix.snow.css',
     './bubble.css': './lextrix.bubble.css',
@@ -57,7 +60,9 @@ const publishPkg = {
   },
   files: [
     'lextrix.js',
+    'lextrix.esm.js',
     'lextrix.core.js',
+    'lextrix.core.esm.js',
     'lextrix.core.css',
     'lextrix.snow.css',
     'lextrix.bubble.css',

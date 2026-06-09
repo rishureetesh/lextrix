@@ -28,8 +28,10 @@ import {
   createDefaultSerializers,
   createSerializerRegistry,
   getGlobalSerializerRegistry,
+  getMarkdownExportWarnings,
   type ContentSerializer,
   type ExportInput,
+  type SafetyIssue,
   type SerializeFormat,
 } from 'lextrix-serialize';
 import scrollRectIntoView from './utils/scrollRectIntoView.js';
@@ -222,6 +224,7 @@ class Lextrix {
   uploader: Uploader;
 
   options: ExpandedLextrixOptions;
+  private destroyed = false;
 
   constructor(container: HTMLElement | string, options: LextrixOptions = {}) {
     this.options = expandConfig(container, options);
@@ -562,6 +565,42 @@ class Lextrix {
 
   getModule(name: string) {
     return this.pluginHost.get(name);
+  }
+
+  /**
+   * Tear down this editor instance: remove auto-created toolbar, theme listeners,
+   * and editor DOM inside the mount container. Safe to call multiple times.
+   */
+  destroy() {
+    if (this.destroyed) return;
+    this.destroyed = true;
+
+    const toolbar = this.getModule('toolbar') as { destroy?: () => void } | null;
+    toolbar?.destroy?.();
+
+    const theme = this.theme as { destroy?: () => void };
+    theme?.destroy?.();
+
+    this.pluginHost.unbindAll(this);
+    this.emitter.clearDOMListeners();
+    this.emitter.removeAllListeners();
+    instances.delete(this.container);
+    this.container.replaceChildren();
+  }
+
+  /**
+   * Warnings for markdown/MDX export (lossy formats, native tables). Does not throw.
+   * Call before exportContent('markdown'|'mdx') to show users what will be lost.
+   */
+  getExportWarnings(input: ExportInput): SafetyIssue[] {
+    const options = typeof input === 'string' ? { format: input } : input;
+    if (options.format !== 'markdown' && options.format !== 'mdx') {
+      return [];
+    }
+    const index = options.index ?? 0;
+    const length =
+      options.length ?? Math.max(0, this.getLength() - Math.max(0, index));
+    return getMarkdownExportWarnings(this.getContents(index, length));
   }
 
   getSelection(focus: true): Range;

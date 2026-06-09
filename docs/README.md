@@ -5,11 +5,15 @@
 | Guide | Description |
 |-------|-------------|
 | [Quick start](./getting-started/quick-start.md) | Install, themes, events |
+| [DOM mounting](./guides/dom-mounting.md) | **Read first** — toolbar placement & cleanup |
+| [Cookbook](./guides/cookbook.md) | Copy-paste recipes for every feature |
+| [Framework integration](./guides/frameworks.md) | React, Next.js, Vue, script tag |
 
 ## Guides
 
 | Guide | Description |
 |-------|-------------|
+| [Themes](./guides/themes.md) | Snow, bubble, slate, dawn + safe theme switching |
 | [Configuration](./guides/configuration.md) | Modules, formats, themes, upload |
 | [Modules](./guides/modules.md) | Built-in modules and authoring |
 | [ChangeSet](./guides/change-set.md) | OT and JSON wire format |

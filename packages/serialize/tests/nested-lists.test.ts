@@ -34,6 +34,20 @@ describe('nested lists', () => {
     expect(changeSetToMarkdown(delta)).toBe('- Parent\n  - Child');
   });
 
+  test('exports nested ordered list with per-level numbering', () => {
+    const delta = new ChangeSet([
+      { insert: 'First' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+      { insert: 'Nested' },
+      { insert: '\n', attributes: { list: 'ordered', indent: 1 } },
+      { insert: 'Second' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+    ]);
+    expect(changeSetToMarkdown(delta)).toBe(
+      '1. First\n  1. Nested\n2. Second',
+    );
+  });
+
   test('parses nested ordered list', () => {
     const source = '1. First\n   1. Nested\n2. Second';
     const delta = markdown.import(source);

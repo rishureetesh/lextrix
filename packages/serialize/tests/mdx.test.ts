@@ -100,6 +100,17 @@ describe('mdx serializer', () => {
     expect(delta.ops).toEqual([{ insert: 'test' }, { insert: '\n' }]);
   });
 
+  test('exports ordered lists with sequential numbering like markdown', () => {
+    const delta = new ChangeSet([
+      { insert: 'First' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+      { insert: '\n' },
+      { insert: 'Second' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+    ]);
+    expect(changeSetToMdx(delta)).toBe('1. First\n2. Second');
+  });
+
   test('strips frontmatter', () => {
     const source = '---\ntitle: Hello\n---\n\n# Content';
     const delta = mdxSerializer().import(source);

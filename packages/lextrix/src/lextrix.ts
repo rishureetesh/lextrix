@@ -27,6 +27,7 @@ export type {
   MdxComponentNode,
   MdxSerializerOptions,
   HtmlSerializerOptions,
+  SafetyIssue,
 } from 'lextrix-core';
 export {
   SerializerHost,
@@ -39,11 +40,13 @@ export {
   getGlobalMdxComponentRegistry,
   createDefaultSerializers,
   createSerializerRegistry,
+  getMarkdownExportWarnings,
   jsonSerializer,
   htmlSerializer,
   markdownSerializer,
   mdxSerializer,
 } from 'lextrix-core';
+export { lxrPath } from 'lextrix-core/registry-paths.js';
 export { ChangeAttributes, ChangeIterator, ChangeOp, ChangeSet, Dom, Range };
 
 registerBlots(Lextrix);

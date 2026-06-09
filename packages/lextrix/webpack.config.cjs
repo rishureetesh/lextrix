@@ -1,11 +1,11 @@
 /*eslint-env node*/
 
 const { BannerPlugin, DefinePlugin } = require('webpack');
-const common = require('./webpack.common.cjs');
 const { merge } = require('webpack-merge');
-require('webpack-dev-server');
 const { readFileSync } = require('fs');
 const { join, resolve } = require('path');
+const { shared, umdEntries, esmEntries, distPath } = require('./webpack.shared.cjs');
+require('webpack-dev-server');
 
 const pkg = JSON.parse(readFileSync(join(__dirname, 'package.json'), 'utf8'));
 
@@ -22,11 +22,29 @@ const constantPack = new DefinePlugin({
   LEXTRIX_VERSION: JSON.stringify(pkg.version),
 });
 
-module.exports = (env) =>
-  merge(common, {
-    mode: env.production ? 'production' : 'development',
+const buildPlugins = [bannerPack, constantPack];
+
+module.exports = (env = {}, argv = {}) => {
+  const mode =
+    argv.mode || (env.production || env?.WEBPACK_BUILD === 'production'
+      ? 'production'
+      : 'development');
+
+  const umdConfig = merge(shared, {
+    mode,
     devtool: 'source-map',
-    plugins: [bannerPack, constantPack],
+    entry: umdEntries,
+    output: {
+      filename: '[name].js',
+      library: {
+        name: 'Lextrix',
+        type: 'umd',
+        export: 'default',
+      },
+      path: distPath,
+      clean: true,
+    },
+    plugins: buildPlugins,
     devServer: {
       static: {
         directory: resolve(__dirname, '../demo'),
@@ -40,3 +58,29 @@ module.exports = (env) =>
     },
     stats: 'minimal',
   });
+
+  const esmConfig = merge(shared, {
+    mode,
+    devtool: 'source-map',
+    experiments: {
+      outputModule: true,
+    },
+    entry: esmEntries,
+    output: {
+      filename: '[name].js',
+      path: distPath,
+      module: true,
+      library: {
+        type: 'module',
+      },
+      environment: {
+        module: true,
+      },
+      clean: false,
+    },
+    plugins: buildPlugins,
+    stats: 'minimal',
+  });
+
+  return [umdConfig, esmConfig];
+};

@@ -240,9 +240,14 @@ class Syntax extends Module<SyntaxOptions> {
   constructor(lextrix: Lextrix, options: Partial<SyntaxOptions>) {
     super(lextrix, options);
     if (this.options.hljs == null) {
-      throw new Error(
-        'Syntax module requires highlight.js. Please include the library on the page before lextrix.',
-      );
+      this.options.hljs =
+        typeof window !== 'undefined'
+          ? (window as Window & { hljs?: unknown }).hljs ?? null
+          : null;
+    }
+    if (this.options.hljs == null) {
+      this.languages = {};
+      return;
     }
     // @ts-expect-error Fix me later
     this.languages = this.options.languages.reduce(

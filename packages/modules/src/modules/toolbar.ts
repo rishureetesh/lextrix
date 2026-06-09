@@ -25,6 +25,8 @@ class Toolbar extends Module<ToolbarProps> {
   static DEFAULTS: ToolbarProps;
 
   container?: HTMLElement | null;
+  /** True when this module created the toolbar element (safe to remove on destroy). */
+  autoCreated = false;
   controls: [string, HTMLElement][];
   handlers: Record<string, Handler>;
 
@@ -34,8 +36,13 @@ class Toolbar extends Module<ToolbarProps> {
       const container = document.createElement('div');
       container.setAttribute('role', 'toolbar');
       addControls(container, this.options.container);
-      lextrix.container?.parentNode?.insertBefore(container, lextrix.container);
+      if (lextrix.container?.firstChild) {
+        lextrix.container.insertBefore(container, lextrix.container.firstChild);
+      } else {
+        lextrix.container?.appendChild(container);
+      }
       this.container = container;
+      this.autoCreated = true;
     } else if (typeof this.options.container === 'string') {
       this.container = document.querySelector(this.options.container);
     } else {
@@ -66,6 +73,14 @@ class Toolbar extends Module<ToolbarProps> {
       const [range] = this.lextrix.selection.getRange(); // lextrix.getSelection triggers update
       this.update(range);
     });
+  }
+
+  destroy() {
+    if (this.autoCreated && this.container?.isConnected) {
+      this.container.remove();
+    }
+    this.container = null;
+    this.controls = [];
   }
 
   addHandler(format: string, handler: Handler) {
@@ -186,6 +201,14 @@ class Toolbar extends Module<ToolbarProps> {
 Toolbar.DEFAULTS = {};
 
 function addButton(container: HTMLElement, format: string, value?: string) {
+  if (
+    format === 'formula' &&
+    typeof window !== 'undefined' &&
+    // @ts-expect-error optional peer
+    window.katex == null
+  ) {
+    return;
+  }
   const input = document.createElement('button');
   input.setAttribute('type', 'button');
   input.classList.add(`lxr-${format}`);

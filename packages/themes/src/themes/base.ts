@@ -63,6 +63,7 @@ const SIZES = ['small', false, 'large', 'huge'];
 class BaseTheme extends Theme {
   pickers: Picker[];
   tooltip?: Tooltip;
+  protected bodyClickListener?: (e: MouseEvent) => void;
 
   constructor(lextrix: Lextrix, options: ThemeOptions) {
     super(lextrix, options);
@@ -90,7 +91,20 @@ class BaseTheme extends Theme {
         });
       }
     };
+    this.bodyClickListener = listener;
     lextrix.emitter.listenDOM('click', document.body, listener);
+  }
+
+  destroy() {
+    if (this.bodyClickListener) {
+      this.lextrix.emitter.unlistenDOM(
+        'click',
+        document.body,
+        this.bodyClickListener,
+      );
+      this.bodyClickListener = undefined;
+    }
+    this.tooltip?.hide();
   }
 
   addModule(name: 'clipboard'): Clipboard;
@@ -298,22 +312,36 @@ class BaseTooltip extends Tooltip {
       }
       case 'video': {
         value = extractVideoUrl(value);
-      } // eslint-disable-next-line no-fallthrough
+        if (!value) break;
+        const videoRange = this.lextrix.getSelection(true);
+        if (videoRange != null) {
+          const index = videoRange.index + videoRange.length;
+          this.lextrix.insertEmbed(
+            index,
+            'video',
+            value,
+            Emitter.sources.USER,
+          );
+          this.lextrix.setSelection(index + 1, Emitter.sources.USER);
+        }
+        break;
+      }
       case 'formula': {
         if (!value) break;
+        // @ts-expect-error optional peer
+        if (window.katex == null) {
+          break;
+        }
         const range = this.lextrix.getSelection(true);
         if (range != null) {
           const index = range.index + range.length;
           this.lextrix.insertEmbed(
             index,
-            // @ts-expect-error Fix me later
-            this.root.getAttribute('data-mode'),
+            'formula',
             value,
             Emitter.sources.USER,
           );
-          if (this.root.getAttribute('data-mode') === 'formula') {
-            this.lextrix.insertText(index + 1, ' ', Emitter.sources.USER);
-          }
+          this.lextrix.insertText(index + 1, ' ', Emitter.sources.USER);
           this.lextrix.setSelection(index + 2, Emitter.sources.USER);
         }
         break;

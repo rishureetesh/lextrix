@@ -49,6 +49,31 @@ describe('markdown serializer', () => {
     ]);
   });
 
+  test('continues ordered numbering across empty spacer blocks', () => {
+    const delta = new ChangeSet([
+      { insert: 'First' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+      { insert: '\n' },
+      { insert: 'Second' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+    ]);
+    expect(changeSetToMarkdown(delta)).toBe('1. First\n2. Second');
+  });
+
+  test('exports sequential ordered list numbering', () => {
+    const delta = new ChangeSet([
+      { insert: 'First' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+      { insert: 'Second' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+      { insert: 'Third' },
+      { insert: '\n', attributes: { list: 'ordered' } },
+    ]);
+    expect(changeSetToMarkdown(delta)).toBe(
+      '1. First\n2. Second\n3. Third',
+    );
+  });
+
   test('parses lists', () => {
     const delta = markdownSerializer().import('- Item 1\n- Item 2');
     expect(delta.ops).toEqual([
@@ -87,6 +112,27 @@ describe('markdown serializer', () => {
       ['A', 'B'],
       ['1', '2'],
     ]);
+  });
+
+  test('does not escape sentence-ending punctuation in markdown or mdx', () => {
+    const delta = new ChangeSet()
+      .insert('Try ')
+      .insert('links', { link: 'https://iamreetesh.com/lextrix' })
+      .insert('.')
+      .insert('\n', { blockquote: true });
+    const md = changeSetToMarkdown(delta);
+    expect(md).toContain('[links](https://iamreetesh.com/lextrix).');
+    expect(md).not.toContain('\\.');
+
+    const quote = new ChangeSet()
+      .insert('A quote block.')
+      .insert('\n', { blockquote: true });
+    expect(changeSetToMarkdown(quote)).toBe('> A quote block.');
+  });
+
+  test('still escapes inline markdown metacharacters', () => {
+    const delta = new ChangeSet([{ insert: 'a * b _ c ` d' }, { insert: '\n' }]);
+    expect(changeSetToMarkdown(delta)).toBe('a \\* b \\_ c \\` d');
   });
 
   test('markdownBlocksToChangeSet produces valid ops', () => {

@@ -3,6 +3,7 @@ import ChangeSet from 'lextrix-change';
 import {
   SerializationError,
   findLossyMarkdownIssues,
+  getMarkdownExportWarnings,
   findNativeTableCells,
   markdownSerializer,
   mdxSerializer,
@@ -59,6 +60,17 @@ describe('serialization safety', () => {
     ]);
     const issues = findLossyMarkdownIssues(delta);
     expect(issues.some((i) => i.feature === 'bold+italic')).toBe(true);
+  });
+
+  test('warns when color is present for markdown export', () => {
+    const delta = new ChangeSet([
+      { insert: 'red', attributes: { color: '#f00' } },
+      { insert: '\n' },
+    ]);
+    const issues = getMarkdownExportWarnings(delta);
+    expect(issues.some((i) => i.feature === 'color' && i.safety === 'lossy')).toBe(
+      true,
+    );
   });
 
   test('validateMarkdownExport passes for flat lists', () => {

@@ -11,9 +11,12 @@ const FORMAT_MARKERS: Record<string, [string, string]> = {
   underline: ['<u>', '</u>'],
 };
 
-/** Escapes markdown special characters in plain text. */
+/**
+ * Escapes characters that would break inline markdown emphasis, code, or links.
+ * Punctuation such as `.` and `!` is left unescaped (valid in MDX/Markdown prose).
+ */
 export function escapeMarkdown(text: string): string {
-  return text.replace(/([\\`*_{}[\]()#+\-.!|])/g, '\\$1');
+  return text.replace(/([\\`*_[\]])/g, '\\$1');
 }
 
 /** Converts inline ChangeSet ops to markdown text. */

@@ -173,7 +173,7 @@ describe('Toolbar', () => {
 
     test('toggle button', () => {
       const { container, editor } = setup();
-      const boldButton = container.parentNode?.querySelector(
+      const boldButton = container.querySelector(
         'button.lxr-bold',
       ) as HTMLButtonElement;
       editor.setSelection(7);
@@ -186,7 +186,7 @@ describe('Toolbar', () => {
 
     test('link', () => {
       const { container, editor } = setup();
-      const linkButton = container.parentNode?.querySelector(
+      const linkButton = container.querySelector(
         'button.lxr-link',
       ) as HTMLButtonElement;
       editor.setSelection(12);
@@ -199,7 +199,7 @@ describe('Toolbar', () => {
 
     test('dropdown', () => {
       const { container, editor } = setup();
-      const sizeSelect = container.parentNode?.querySelector(
+      const sizeSelect = container.querySelector(
         'select.lxr-size',
       ) as HTMLSelectElement;
       editor.setSelection(21);
@@ -214,7 +214,7 @@ describe('Toolbar', () => {
 
     test('custom button', () => {
       const { container, editor } = setup();
-      const centerButton = container.parentNode?.querySelector(
+      const centerButton = container.querySelector(
         'button.lxr-align[value="center"]',
       ) as HTMLButtonElement;
       const leftButton = container.parentNode?.querySelector(

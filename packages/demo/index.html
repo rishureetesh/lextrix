@@ -3,56 +3,277 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lextrix Demo</title>
+    <title>Lextrix Playground</title>
     <link id="theme-css" rel="stylesheet" href="/lextrix.snow.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js"
+    ></script>
     <style>
+      :root {
+        color-scheme: light;
+        --border: #e2e8f0;
+        --muted: #64748b;
+        --error-bg: #fef2f2;
+        --error-fg: #b91c1c;
+        --warn-bg: #fffbeb;
+        --warn-fg: #b45309;
+        --panel-bg: #f8fafc;
+      }
+      * {
+        box-sizing: border-box;
+      }
       body {
-        font-family: system-ui, sans-serif;
-        max-width: 900px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        background: #fff;
+        color: #0f172a;
+      }
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 3rem;
       }
       header {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
       }
       h1 {
         font-size: 1.5rem;
         margin: 0;
       }
-      label {
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.25rem;
+        align-items: center;
         font-size: 0.875rem;
-        color: #64748b;
+        color: var(--muted);
+      }
+      label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      select,
+      button,
+      textarea {
+        font: inherit;
       }
       select {
-        margin-left: 0.5rem;
         padding: 0.35rem 0.5rem;
         border-radius: 6px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border);
+      }
+      button {
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: #fff;
+        cursor: pointer;
+      }
+      button:hover {
+        background: var(--panel-bg);
+      }
+      button.primary {
+        background: #0f172a;
+        color: #fff;
+        border-color: #0f172a;
       }
       #editor-mount .lxr-container {
-        min-height: 280px;
+        min-height: 320px;
+      }
+      .panels {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.25rem;
+      }
+      @media (max-width: 800px) {
+        .panels {
+          grid-template-columns: 1fr;
+        }
+      }
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .panel h2 {
+        margin: 0;
+        padding: 0.65rem 0.85rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: var(--panel-bg);
+        border-bottom: 1px solid var(--border);
+        color: var(--muted);
+      }
+      .panel-body {
+        padding: 0.85rem;
+      }
+      textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 0.6rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        resize: vertical;
+        font-family: ui-monospace, monospace;
+        font-size: 0.8rem;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.65rem;
+        align-items: center;
+      }
+      .tabs {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.65rem;
+      }
+      .tabs button.active {
+        background: #0f172a;
+        color: #fff;
+        border-color: #0f172a;
+      }
+      #export-output {
+        min-height: 140px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: ui-monospace, monospace;
+        font-size: 0.8rem;
+        background: var(--panel-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.6rem;
+      }
+      .banner {
+        margin-top: 1rem;
+        padding: 0.65rem 0.85rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+      }
+      .banner.error {
+        background: var(--error-bg);
+        color: var(--error-fg);
+        border: 1px solid #fecaca;
+      }
+      .banner.warn {
+        background: var(--warn-bg);
+        color: var(--warn-fg);
+        border: 1px solid #fde68a;
+      }
+      .banner.hidden {
+        display: none;
+      }
+      .meta {
+        margin-top: 0.75rem;
+        font-size: 0.8rem;
+        color: var(--muted);
       }
     </style>
   </head>
   <body>
-    <header>
-      <h1>Lextrix Demo</h1>
-      <label>
-        Theme
-        <select id="theme-select">
-          <option value="snow" selected>Snow</option>
-          <option value="bubble">Bubble</option>
-          <option value="slate">Slate</option>
-          <option value="dawn">Dawn</option>
-        </select>
-      </label>
-    </header>
-    <div id="editor-mount"></div>
-    <script src="/lextrix.js"></script>
+    <div class="page">
+      <header>
+        <h1>Lextrix Playground</h1>
+        <div class="controls">
+          <label>
+            Theme
+            <select id="theme-select">
+              <option value="snow" selected>Snow</option>
+              <option value="bubble">Bubble</option>
+              <option value="slate">Slate</option>
+              <option value="dawn">Dawn</option>
+            </select>
+          </label>
+          <label>
+            <input type="checkbox" id="read-only" />
+            Read-only
+          </label>
+          <span id="doc-meta">Length: —</span>
+        </div>
+      </header>
+
+      <div id="editor-mount"></div>
+
+      <div id="error-banner" class="banner error hidden" role="alert"></div>
+      <div id="warn-banner" class="banner warn hidden" role="status"></div>
+
+      <div class="panels">
+        <section class="panel">
+          <h2>Import</h2>
+          <div class="panel-body">
+            <label>
+              Format
+              <select id="import-format">
+                <option value="html">HTML</option>
+                <option value="markdown">Markdown</option>
+                <option value="mdx">MDX</option>
+                <option value="json">JSON</option>
+              </select>
+            </label>
+            <textarea
+              id="import-input"
+              placeholder="Paste content to import…"
+            ></textarea>
+            <div class="row">
+              <button type="button" class="primary" id="import-btn">
+                Import
+              </button>
+              <button type="button" id="reset-btn">Reset sample</button>
+              <button type="button" id="insert-table-btn">Insert table</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Export</h2>
+          <div class="panel-body">
+            <div class="tabs" id="export-tabs">
+              <button type="button" data-format="html" class="active">
+                HTML
+              </button>
+              <button type="button" data-format="markdown">Markdown</button>
+              <button type="button" data-format="mdx">MDX</button>
+              <button type="button" data-format="json">JSON</button>
+            </div>
+            <pre id="export-output">(edit the document to see exports)</pre>
+            <div class="row">
+              <button type="button" id="refresh-export-btn">Refresh export</button>
+              <button type="button" id="copy-export-btn">Copy</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <p class="meta">
+        Full toolbar: headers, lists, align, color, font, code, table, image,
+        video, formula (KaTeX), syntax (highlight.js), image resize. Uses ESM
+        <code>import Lextrix from 'lextrix'</code> — same path as Next.js/Vite
+        apps.
+      </p>
+    </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>

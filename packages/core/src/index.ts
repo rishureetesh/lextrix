@@ -39,11 +39,13 @@ export {
   registerMdxComponent,
   getGlobalMdxComponentRegistry,
   MdxComponentRegistry,
+  getMarkdownExportWarnings,
   jsonSerializer,
   htmlSerializer,
   markdownSerializer,
   mdxSerializer,
 } from 'lextrix-serialize';
+export type { SafetyIssue } from 'lextrix-serialize';
 export type {
   MdxComponentHandler,
   MdxComponentNode,

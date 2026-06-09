@@ -7,18 +7,20 @@ class Formula extends Embed {
   static tagName = 'SPAN';
 
   static create(value: string) {
-    // @ts-expect-error
-    if (window.katex == null) {
-      throw new Error('Formula module requires KaTeX.');
-    }
     const node = super.create(value) as Element;
     if (typeof value === 'string') {
-      // @ts-expect-error
-      window.katex.render(value, node, {
-        throwOnError: false,
-        errorColor: '#f00',
-      });
       node.setAttribute('data-value', value);
+      // @ts-expect-error optional peer — render when KaTeX is loaded
+      if (window.katex != null) {
+        // @ts-expect-error
+        window.katex.render(value, node, {
+          throwOnError: false,
+          errorColor: '#f00',
+        });
+      } else {
+        node.textContent = value;
+        node.classList.add('lxr-formula-fallback');
+      }
     }
     return node;
   }

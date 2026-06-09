@@ -5,7 +5,7 @@ Lextrix represents document changes as **ChangeSets** — arrays of **ChangeOps*
 ## Basic usage
 
 ```javascript
-import { ChangeSet } from 'lextrix';
+import { ChangeSet } from 'lextrix'; // ESM build (bundlers); or editor.getContents() / updateContents()
 
 const change = new ChangeSet()
   .retain(5)

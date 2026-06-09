@@ -1,6 +1,6 @@
 {
   "name": "lextrix-themes",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Snow and Bubble themes for Lextrix",
   "type": "module",
   "license": "MIT",
@@ -11,10 +11,10 @@
     "./assets/*": "./src/assets/*"
   },
   "dependencies": {
-    "lextrix-core": "2.0.0",
-    "lextrix-formats": "2.0.0",
-    "lextrix-modules": "2.0.0",
-    "lextrix-ui": "2.0.0",
+    "lextrix-core": "2.0.1",
+    "lextrix-formats": "2.0.1",
+    "lextrix-modules": "2.0.1",
+    "lextrix-ui": "2.0.1",
     "lodash-es": "^4.18.1"
   }
 }

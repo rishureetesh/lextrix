@@ -7,7 +7,7 @@ Built-in formats live in `lextrix-formats`. Custom formats register a blot class
 Extensions register through `Lextrix.register()` using `lxr/*` paths:
 
 ```javascript
-import { lxrPath } from 'lextrix-core/registry-paths.js';
+import Lextrix, { lxrPath } from 'lextrix';
 
 lxrPath.format('callout');           // lxr/formats/callout
 lxrPath.module('mentions');          // lxr/modules/mentions
@@ -19,13 +19,12 @@ lxrPath.attributor('block', 'align'); // lxr/attributors/block/align
 Bare paths like `formats/bold` or legacy keys like `parchment` throw at runtime.
 
 ```javascript
-import Lextrix from 'lextrix';
-import { lxrPath } from 'lextrix-core/registry-paths.js';
-
 Lextrix.register({ [lxrPath.format('callout')]: CalloutBlot });
 ```
 
-## Inline tag format
+`defineInlineTagFormat` and other format helpers are available when developing **inside the monorepo** (`lextrix-formats`). npm consumers implement a blot class and register it as above. See [Framework integration](./frameworks.md).
+
+## Inline tag format (monorepo)
 
 ```javascript
 import { defineInlineTagFormat } from 'lextrix-formats/inline-format.js';

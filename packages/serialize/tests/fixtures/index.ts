@@ -149,8 +149,8 @@ export const FIXTURES: SerializationFixture[] = [
       { insert: '\n', attributes: { list: 'ordered' } },
     ]),
     html: '<ol><li data-list="ordered">First</li><li data-list="ordered">Second</li></ol>',
-    markdown: '1. First\n\n1. Second',
-    mdx: '1. First\n\n1. Second',
+    markdown: '1. First\n2. Second',
+    mdx: '1. First\n2. Second',
     json: JSON.stringify(
       [
         { insert: 'First' },

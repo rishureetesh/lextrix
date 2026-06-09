@@ -119,6 +119,30 @@ describe('Lextrix serialization', () => {
     expect(editor.getText()).toContain('Hello world');
   });
 
+  test('ordered list in one ol exports 1. 2. numbering', () => {
+    const editor = createEditor(`
+      <ol>
+        <li data-list="ordered">cgnfgn</li>
+        <li data-list="ordered">bdfgb</li>
+      </ol>
+    `);
+    const md = editor.export('markdown');
+    expect(md).toContain('1. cgnfgn');
+    expect(md).toContain('2. bdfgb');
+    expect(md).not.toMatch(/\n1\. bdfgb/);
+  });
+
+  test('ordered lists separated by empty line still number sequentially', () => {
+    const editor = createEditor(`
+      <ol><li data-list="ordered">First</li></ol>
+      <p><br></p>
+      <ol><li data-list="ordered">Second</li></ol>
+    `);
+    const md = editor.export('markdown');
+    expect(md).toContain('1. First');
+    expect(md).toContain('2. Second');
+  });
+
   test('markdown ChangeSet round-trip via editor', () => {
     const editor = createEditor();
     editor.import('# Heading\n\n- Item A\n- Item B', 'markdown');

@@ -68,6 +68,18 @@ class Emitter extends EventEmitter<string> {
     }
     this.domListeners[eventName].push({ node, handler });
   }
+
+  unlistenDOM(eventName: string, node: Node, handler: EventListener) {
+    const list = this.domListeners[eventName];
+    if (!list) return;
+    this.domListeners[eventName] = list.filter(
+      (entry) => !(entry.node === node && entry.handler === handler),
+    );
+  }
+
+  clearDOMListeners() {
+    this.domListeners = {};
+  }
 }
 
 export type EmitterSource =

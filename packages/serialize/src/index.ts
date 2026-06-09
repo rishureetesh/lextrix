@@ -39,6 +39,8 @@ export {
   validateMarkdownExport,
   findNativeTableCells,
   findLossyMarkdownIssues,
+  findBlockedMarkdownExportIssues,
+  getMarkdownExportWarnings,
   type ConversionSafety,
   type SafetyIssue,
 } from './safety.js';

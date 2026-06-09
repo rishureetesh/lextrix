@@ -39,6 +39,8 @@ npm run test:e2e -w lextrix
 
 Unit tests run in Vitest’s Chromium browser (`packages/lextrix/test/unit/vitest.config.ts`). E2E tests use Playwright’s `chromium` project with a local webpack dev server (`packages/lextrix/playwright.config.ts`).
 
+Published npm bundle: UMD (`lextrix.js`) for script tags + ESM (`lextrix.esm.js`) for bundlers. Framework guides: [docs/guides/frameworks.md](../docs/guides/frameworks.md).
+
 ## npm publish
 
 Run pre-publish checks (typecheck, tests, build, pack validation):

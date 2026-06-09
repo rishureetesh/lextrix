@@ -2,9 +2,11 @@
 
 Rich-text editor for the web. MIT licensed.
 
+Built by **[Reetesh Kumar](https://iamreetesh.com/me)** · [iamreetesh.com](https://iamreetesh.com) · [Documentation](https://iamreetesh.com/docs)
+
 Monorepo packages: `lextrix-change`, `lextrix-dom`, `lextrix-core`, `lextrix-formats`, `lextrix-modules`, `lextrix-serialize`, `lextrix-ui`, `lextrix-themes`. The `lextrix` npm package bundles them.
 
-[Documentation](./docs/README.md) · [Quick start](./docs/getting-started/quick-start.md) · [Issues](https://github.com/rishureetesh/lextrix/issues)
+[Site docs](https://iamreetesh.com/docs) · [GitHub docs](./docs/README.md) · [Quick start](./docs/getting-started/quick-start.md) · [Issues](https://github.com/rishureetesh/lextrix/issues)
 
 ---
 
@@ -57,7 +59,7 @@ editor.on('text-change', (changeSet, oldChangeSet, source) => {
 });
 ```
 
-More: [quick-start.md](./docs/getting-started/quick-start.md)
+More: [cookbook](./docs/guides/cookbook.md) · [DOM mounting](./docs/guides/dom-mounting.md) · [React / Next.js](./docs/guides/frameworks.md)
 
 ### Serialization
 
@@ -86,7 +88,7 @@ Native editor tables cannot export to Markdown/MDX — throws `SerializationErro
 
 | Package | Role |
 |---------|------|
-| `lextrix` | Published bundle (UMD + CSS) |
+| `lextrix` | Published bundle (ESM + UMD + CSS) |
 | `lextrix-change` | ChangeSet / OT |
 | `lextrix-dom` | Blots, registry, DOM sync |
 | `lextrix-core` | Editor shell, selection |
@@ -102,17 +104,17 @@ Architecture: [overview.md](./docs/architecture/overview.md)
 
 ## Extending
 
-Register formats, modules, or themes:
+**React / Next.js:** Lextrix is a class mounted with `useEffect` — not a JSX component. See [frameworks.md](./docs/guides/frameworks.md).
+
+Register formats from npm:
 
 ```javascript
-import { lxrPath } from 'lextrix-core/registry-paths.js';
-import { defineInlineTagFormat } from 'lextrix-formats/inline-format.js';
+import Lextrix, { lxrPath } from 'lextrix';
 
-const Highlight = defineInlineTagFormat({ blotName: 'highlight', tagName: 'MARK' });
-Lextrix.register({ [lxrPath.format('highlight')]: Highlight });
+Lextrix.register({ [lxrPath.format('my-format')]: MyFormatBlot });
 ```
 
-Guides: [formats](./docs/guides/formats.md) · [modules](./docs/guides/modules.md) · [configuration](./docs/guides/configuration.md)
+Format helpers (`defineInlineTagFormat`, …) require the monorepo. Guides: [formats](./docs/guides/formats.md) · [modules](./docs/guides/modules.md) · [configuration](./docs/guides/configuration.md)
 
 ---
 
@@ -123,7 +125,7 @@ git clone https://github.com/rishureetesh/lextrix.git
 cd lextrix
 npm install
 npm run build
-npm run dev          # http://localhost:5173
+npm run dev          # full playground at http://localhost:5173 (packages/demo)
 npm test
 ```
 
@@ -133,4 +135,4 @@ Contributing: [.github/CONTRIBUTING.md](./.github/CONTRIBUTING.md) · [.github/D
 
 ## License
 
-MIT © [Reetesh Kumar](https://github.com/rishureetesh). See [LICENSE](./LICENSE). Runtime dependencies: [NOTICE.md](./NOTICE.md).
+MIT © [Reetesh Kumar](https://iamreetesh.com/me) · [iamreetesh.com](https://iamreetesh.com). See [LICENSE](./LICENSE). Runtime dependencies: [NOTICE.md](./NOTICE.md).

@@ -1,5 +1,7 @@
 # Configuration
 
+> **Integrating in React or switching themes?** Call `editor.destroy()` on teardown — see [DOM mounting](./dom-mounting.md).
+
 ## Editor options
 
 ```typescript
@@ -60,6 +62,8 @@ Or point to existing DOM:
 ```javascript
 modules: { toolbar: '#my-toolbar' }
 ```
+
+When `toolbar` is an **array**, Lextrix creates `div.lxr-toolbar` as the **first child** of your mount element. Call `editor.destroy()` when tearing down — see [DOM mounting](./dom-mounting.md).
 
 Custom handlers override theme defaults:
 

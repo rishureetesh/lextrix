@@ -13,7 +13,7 @@ import 'lextrix/snow.css';
 
 | Import | Purpose |
 |--------|---------|
-| `lextrix` | Full editor (UMD default export) |
+| `lextrix` | Full editor — ESM (`lextrix.esm.js`) for bundlers, UMD (`lextrix.js`) for script tags |
 | `lextrix/core` | Core-only bundle (no formats/themes) |
 | `lextrix/lextrix.css` | Base editor styles |
 | `lextrix/snow.css` | Snow theme |
@@ -21,9 +21,13 @@ import 'lextrix/snow.css';
 | `lextrix/slate.css` | Dark slate theme |
 | `lextrix/dawn.css` | Warm dawn theme |
 
+Named imports (`ChangeSet`, `registerSerializer`, `lxrPath`, …) work from `lextrix` in bundlers (2.0.1+). Script-tag UMD exposes `window.Lextrix` only.
+
 Optional peer dependencies: [highlight.js](https://highlightjs.org/) for syntax, [KaTeX](https://katex.org/) for formulas.
 
-For script-tag usage, build this repo and use files from `packages/lextrix/dist/dist/`.
+**React, Next.js, Vue:** [Framework integration](../guides/frameworks.md) · [Cookbook](../guides/cookbook.md) · [DOM mounting](../guides/dom-mounting.md) (toolbar cleanup)
+
+For script-tag usage, use `lextrix.js` from `packages/lextrix/dist/dist/` after `npm run build`.
 
 ## Snow theme
 
