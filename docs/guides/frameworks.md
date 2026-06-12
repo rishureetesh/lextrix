@@ -196,6 +196,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  editor?.destroy();
   wrapper.value?.replaceChildren();
   editor = null;
 });
@@ -210,18 +211,31 @@ onBeforeUnmount(() => {
 
 ## Script tag (no bundler)
 
-Build the repo or use files from the npm package `dist` after `npm pack`:
+Use the published package from **npm** or a **CDN**. After `npm install lextrix`, files are in `node_modules/lextrix/dist/dist/`.
+
+**From npm (local static server):**
 
 ```html
-<link rel="stylesheet" href="lextrix.snow.css" />
+<link rel="stylesheet" href="node_modules/lextrix/dist/dist/lextrix.snow.css" />
 <div id="editor"></div>
-<script src="lextrix.js"></script>
+<script src="node_modules/lextrix/dist/dist/lextrix.js"></script>
 <script>
   const editor = new Lextrix('#editor', { theme: 'snow' });
 </script>
 ```
 
-UMD exposes `window.Lextrix` only. Named exports require a bundler and the ESM entry.
+**From jsDelivr CDN** (replace `2.0.2` with the version you want):
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lextrix@2.0.2/dist/dist/lextrix.snow.css" />
+<div id="editor"></div>
+<script src="https://cdn.jsdelivr.net/npm/lextrix@2.0.2/dist/dist/lextrix.js"></script>
+<script>
+  const editor = new Lextrix('#editor', { theme: 'snow' });
+</script>
+```
+
+UMD exposes `window.Lextrix` only. Named exports (`ChangeSet`, `registerSerializer`, …) require a bundler and the ESM entry (`import Lextrix from 'lextrix'`).
 
 ---
 

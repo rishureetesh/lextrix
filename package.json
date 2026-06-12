@@ -1,6 +1,6 @@
 {
   "name": "lextrix",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Lextrix — modular rich-text editor monorepo",
   "private": true,
   "license": "MIT",
@@ -13,13 +13,16 @@
     "url": "https://github.com/rishureetesh/lextrix/issues"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "scripts": {
     "build": "npm run build -w lextrix",
     "dev": "npm run dev -w lextrix-demo",
     "dev:bundle": "npm run start -w lextrix",
     "demo": "npm run dev -w lextrix-demo",
+    "example:vanilla": "npm run dev -w lextrix-example-vanilla",
+    "example:react": "npm run dev -w lextrix-example-react",
     "test": "npm run test -w lextrix-change && npm run test -w lextrix-serialize && npm run test -w lextrix-core && npm run test:unit -w lextrix",
     "lint": "npm run lint -w lextrix",
     "typecheck": "tsc --noEmit -p tsconfig.json && npm run lint:tsc -w lextrix",

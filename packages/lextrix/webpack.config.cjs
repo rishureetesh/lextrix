@@ -42,7 +42,7 @@ module.exports = (env = {}, argv = {}) => {
         export: 'default',
       },
       path: distPath,
-      clean: true,
+      clean: false,
     },
     plugins: buildPlugins,
     devServer: {

@@ -1,14 +1,23 @@
 # Lextrix documentation
 
+**Canonical source:** this folder in the GitHub repo (`docs/`). It matches each release. The [site docs](https://iamreetesh.com/docs) mirror this content and may lag briefly after a release.
+
 ## Getting started
 
-| Guide | Description |
-|-------|-------------|
-| [Live playground](https://iamreetesh.com/lextrix) | Try Lextrix in the browser |
-| [Quick start](./getting-started/quick-start.md) | Install, themes, events |
-| [DOM mounting](./guides/dom-mounting.md) | **Read first** — toolbar placement & cleanup |
-| [Cookbook](./guides/cookbook.md) | Copy-paste recipes for every feature |
-| [Framework integration](./guides/frameworks.md) | React, Next.js, Vue, script tag |
+Follow this order if you are evaluating Lextrix for the first time:
+
+| # | Guide | Description |
+|---|-------|-------------|
+| 1 | [Quick start](./getting-started/quick-start.md) | Install, themes, events |
+| 2 | [Evaluation guide](./getting-started/evaluation.md) | Linear path: playground → install → export |
+| 3 | [Cookbook](./guides/cookbook.md) | Copy-paste recipes for every feature |
+| 4 | [Framework integration](./guides/frameworks.md) | React, Next.js, Vue, script tag |
+| [TypeScript](./guides/typescript.md) | Published `.d.ts` and setup |
+| 5 | [DOM mounting](./guides/dom-mounting.md) | Toolbar placement and cleanup (React remounts) |
+| 6 | [Serialization](./guides/serialization.md) | Import/export HTML, Markdown, MDX, JSON |
+| 7 | [API reference](./api/reference.md) | Editor methods and events |
+
+Also: [Live playground](https://iamreetesh.com/lextrix) — try Lextrix in the browser without installing.
 
 ## Guides
 
@@ -18,14 +27,7 @@
 | [Configuration](./guides/configuration.md) | Modules, formats, themes, upload |
 | [Modules](./guides/modules.md) | Built-in modules and authoring |
 | [ChangeSet](./guides/change-set.md) | OT and JSON wire format |
-| [Serialization](./guides/serialization.md) | Import/export HTML, Markdown, MDX, JSON |
 | [Formats](./guides/formats.md) | Custom formats, embeds, registration |
-
-## API
-
-| Guide | Description |
-|-------|-------------|
-| [API reference](./api/reference.md) | Editor methods and events |
 
 ## Architecture
 

@@ -62,6 +62,8 @@ if (distVersion !== rootVersion) {
 }
 
 const requiredArtifacts = [
+  'lextrix.d.ts',
+  'lextrix.core.d.ts',
   'lextrix.js',
   'lextrix.esm.js',
   'lextrix.core.js',

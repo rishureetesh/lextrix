@@ -1,10 +1,11 @@
 {
   "name": "lextrix",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Modular TypeScript rich-text editor engine with themes, plugins, ChangeSet OT, and a familiar web API.",
   "author": "Reetesh Kumar (https://iamreetesh.com/me)",
   "homepage": "https://iamreetesh.com/lextrix",
-  "main": "lextrix.js",
+  "main": "./dist/dist/lextrix.js",
+  "types": "./types/lextrix.d.ts",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -17,10 +18,12 @@
   },
   "exports": {
     ".": {
+      "types": "./types/lextrix.d.ts",
       "import": "./dist/dist/lextrix.esm.js",
       "default": "./dist/dist/lextrix.js"
     },
     "./core": {
+      "types": "./types/lextrix.core.d.ts",
       "import": "./dist/dist/lextrix.core.esm.js",
       "default": "./dist/dist/lextrix.core.js"
     },
@@ -32,14 +35,14 @@
   },
   "dependencies": {
     "eventemitter3": "^5.0.4",
-    "lextrix-change": "2.0.1",
-    "lextrix-core": "2.0.1",
-    "lextrix-dom": "2.0.1",
-    "lextrix-formats": "2.0.1",
-    "lextrix-modules": "2.0.1",
-    "lextrix-serialize": "2.0.1",
-    "lextrix-themes": "2.0.1",
-    "lextrix-ui": "2.0.1",
+    "lextrix-change": "2.0.2",
+    "lextrix-core": "2.0.2",
+    "lextrix-dom": "2.0.2",
+    "lextrix-formats": "2.0.2",
+    "lextrix-modules": "2.0.2",
+    "lextrix-serialize": "2.0.2",
+    "lextrix-themes": "2.0.2",
+    "lextrix-ui": "2.0.2",
     "lodash-es": "^4.18.1"
   },
   "devDependencies": {

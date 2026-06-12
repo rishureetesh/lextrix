@@ -10,6 +10,9 @@ const repoRoot = join(packageRoot, '../..');
 const distDir = join(packageRoot, 'dist', 'dist');
 const mode = process.argv[2] || 'production';
 
+rmSync(distDir, { recursive: true, force: true });
+mkdirSync(distDir, { recursive: true });
+
 const require = createRequire(join(packageRoot, 'package.json'));
 const webpackCli = require.resolve('webpack-cli/bin/cli.js');
 
@@ -46,9 +49,15 @@ const publishPkg = {
   bugs: sourcePkg.bugs,
   main: 'lextrix.js',
   type: 'module',
+  types: 'lextrix.d.ts',
   exports: {
-    '.': { import: './lextrix.esm.js', default: './lextrix.js' },
+    '.': {
+      types: './lextrix.d.ts',
+      import: './lextrix.esm.js',
+      default: './lextrix.js',
+    },
     './core': {
+      types: './lextrix.core.d.ts',
       import: './lextrix.core.esm.js',
       default: './lextrix.core.js',
     },
@@ -59,6 +68,8 @@ const publishPkg = {
     './dawn.css': './lextrix.dawn.css',
   },
   files: [
+    'lextrix.d.ts',
+    'lextrix.core.d.ts',
     'lextrix.js',
     'lextrix.esm.js',
     'lextrix.core.js',
@@ -90,6 +101,10 @@ writeFileSync(
 
 for (const file of ['README.md', 'LICENSE', 'NOTICE.md']) {
   cpSync(join(repoRoot, file), join(distDir, file));
+}
+
+for (const file of ['lextrix.d.ts', 'lextrix.core.d.ts']) {
+  cpSync(join(packageRoot, 'types', file), join(distDir, file));
 }
 
 console.log(`built ${mode} → dist/dist/`);

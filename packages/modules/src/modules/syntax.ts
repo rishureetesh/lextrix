@@ -85,24 +85,6 @@ class SyntaxCodeBlock extends CodeBlock {
     this.formatAt(0, this.length(), CodeToken.blotName, false);
     return super.replaceWith(name, value);
   }
-
-  optimize(...args: unknown[]) {
-    const breaks: Blot[] = [];
-    let child = this.children.head;
-    while (child) {
-      if (child.statics.blotName === 'break') {
-        breaks.push(child);
-      }
-      child = child.next;
-    }
-    for (const breakBlot of breaks) {
-      const index = this.children.offset(breakBlot);
-      this.split(index, true);
-      breakBlot.remove();
-    }
-    // @ts-expect-error
-    super.optimize(...args);
-  }
 }
 
 class SyntaxCodeBlockContainer extends CodeBlockContainer {
@@ -229,10 +211,18 @@ const highlight = (lib: any, language: string, text: string) => {
 class Syntax extends Module<SyntaxOptions> {
   static DEFAULTS: SyntaxOptions & { hljs: any };
 
-  static register() {
+  private static blotsRegistered = false;
+
+  /** Called by Lextrix.registerModules — must not swap CodeBlock at bundle import. */
+  static register() {}
+
+  /** Register syntax blots only when the syntax module is active (hljs available). */
+  static registerBlots() {
+    if (Syntax.blotsRegistered) return;
     Lextrix.register(CodeToken, true);
     Lextrix.register(SyntaxCodeBlock, true);
     Lextrix.register(SyntaxCodeBlockContainer, true);
+    Syntax.blotsRegistered = true;
   }
 
   languages: Record<string, true>;
@@ -249,6 +239,7 @@ class Syntax extends Module<SyntaxOptions> {
       this.languages = {};
       return;
     }
+    Syntax.registerBlots();
     // @ts-expect-error Fix me later
     this.languages = this.options.languages.reduce(
       (memo: Record<string, unknown>, { key }) => {
@@ -302,7 +293,8 @@ class Syntax extends Module<SyntaxOptions> {
 
   highlight(blot: SyntaxCodeBlockContainer | null = null, force = false) {
     if (this.lextrix.selection.composing) return;
-    this.lextrix.update(Lextrix.sources.USER);
+    // SILENT: USER would emit text-change and re-enter export/highlight loops in hosts.
+    this.lextrix.update(Lextrix.sources.SILENT);
     const range = this.lextrix.getSelection();
     const blots =
       blot == null

@@ -256,3 +256,18 @@ const lextrix = new Lextrix('#editor');
   assertType<(BlockEmbed | Block)[]>(lextrix.getLines(0));
   assertType<(BlockEmbed | Block)[]>(lextrix.getLines(0, 10));
 }
+
+{
+  assertType<ChangeSet>(lextrix.importContent('# Hi\n', 'markdown'));
+  assertType<string>(lextrix.exportContent('html'));
+  assertType<string>(lextrix.exportContent('markdown'));
+  assertType<string>(lextrix.exportContent({ format: 'html', index: 0, length: 5 }));
+  assertType<string[]>(lextrix.listExportFormats());
+  assertType<import('../../types/lextrix.js').SafetyIssue[]>(
+    lextrix.getExportWarnings('markdown'),
+  );
+}
+
+{
+  lextrix.destroy();
+}

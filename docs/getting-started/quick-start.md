@@ -2,6 +2,8 @@
 
 **Try it:** [Live playground](https://iamreetesh.com/lextrix) — themes, import/export, and all modules in the browser.
 
+New here? Follow the [Evaluation guide](./evaluation.md) for a linear install → export walkthrough.
+
 ## Install
 
 ```bash
@@ -27,9 +29,9 @@ Named imports (`ChangeSet`, `registerSerializer`, `lxrPath`, …) work from `lex
 
 Optional peer dependencies: [highlight.js](https://highlightjs.org/) for syntax, [KaTeX](https://katex.org/) for formulas.
 
-**React, Next.js, Vue:** [Framework integration](../guides/frameworks.md) · [Cookbook](../guides/cookbook.md) · [DOM mounting](../guides/dom-mounting.md) (toolbar cleanup)
+**React, Next.js, Vue:** [Framework integration](../guides/frameworks.md) · [Evaluation guide](./evaluation.md) · [Cookbook](../guides/cookbook.md) · [DOM mounting](../guides/dom-mounting.md) (toolbar cleanup)
 
-For script-tag usage, use `lextrix.js` from `packages/lextrix/dist/dist/` after `npm run build`.
+Script-tag setup (npm paths or CDN): [Framework integration — Script tag](../guides/frameworks.md#script-tag-no-bundler).
 
 ## Snow theme
 

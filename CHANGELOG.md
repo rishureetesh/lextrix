@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.2 (2026-06-09)
+
+### Fixed
+
+- **Enter in syntax-highlighted code blocks no longer freezes the editor** — removed `SyntaxCodeBlock.optimize()` that fought `Block.defaultChild` Break insertion in an infinite normalize loop
+- Syntax blots (`SyntaxCodeBlock`, `CodeToken`) register only when the syntax module is active and highlight.js is available (not at bundle import)
+- Syntax `highlight()` uses `SILENT` source so re-highlighting does not re-trigger `text-change` loops in host apps
+
 ## 2.0.1 (2026-06-09)
 
 ### Added
@@ -74,6 +82,7 @@
 - Themes: snow, bubble, slate, dawn
 - Image resize module (`modules.imageResize`)
 
+[2.0.2]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.2
 [2.0.1]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.1
 [2.0.0]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.0
 [1.0.2]: https://github.com/rishureetesh/lextrix/releases/tag/v1.0.2

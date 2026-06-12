@@ -13,7 +13,7 @@ const HIGHLIGHT_INTERVAL = 10;
 describe('Syntax', () => {
   beforeAll(() => {
     Lextrix.register({ [lxrPath.module('syntax')]: Syntax }, true);
-    Syntax.register();
+    Syntax.registerBlots();
     Syntax.DEFAULTS.languages = [
       { key: 'javascript', label: 'JavaScript' },
       { key: 'ruby', label: 'Ruby' },

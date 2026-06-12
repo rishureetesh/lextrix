@@ -15,9 +15,68 @@ Static properties: `Lextrix.version`, `Lextrix.events`, `Lextrix.sources`, `Lext
 | Method | Description |
 |--------|-------------|
 | `destroy()` | Remove toolbar, theme listeners, and editor DOM inside the mount container |
-| `getExportWarnings(format)` | Lossy/unsupported issues before Markdown/MDX export (does not throw) |
+| `getExportWarnings(input)` | Lossy/unsupported issues before Markdown/MDX export (does not throw) |
 
 See [DOM mounting](../guides/dom-mounting.md).
+
+## Serialization
+
+Import and export whole documents or slices. Prefer **`importContent`** / **`exportContent`** in application code — not `Lextrix.import()`, which loads internal modules.
+
+Full limitations (tables, lossy formats): [Serialization guide](../guides/serialization.md).
+
+### `importContent(content, format, source?)`
+
+| | |
+|---|---|
+| **Parameters** | `content` — string to parse · `format` — `'html'` \| `'markdown'` \| `'mdx'` \| `'json'` · `source` — optional `'user'` \| `'api'` \| `'silent'` (default `'api'`) |
+| **Returns** | `ChangeSet` applied to the editor (document replaced) |
+
+```javascript
+editor.importContent('# Hello\n\n**bold**', 'markdown');
+editor.importContent('<p>Hello <strong>world</strong></p>', 'html');
+```
+
+### `exportContent(input)`
+
+| | |
+|---|---|
+| **Parameters** | `input` — format string (`'html'`, `'markdown'`, `'mdx'`, `'json'`) **or** `{ format, index?, length? }` for a slice |
+| **Returns** | `string` — serialized content |
+| **Throws** | `SerializationError` when export is unsupported (e.g. native editor table → Markdown/MDX) |
+
+```javascript
+const md = editor.exportContent('markdown');
+const html = editor.exportContent('html');
+const slice = editor.exportContent({ format: 'html', index: 0, length: 50 });
+```
+
+Aliases: `editor.import()` / `editor.export()` — same behavior.
+
+### `listExportFormats()`
+
+| | |
+|---|---|
+| **Returns** | `string[]` — formats registered for this editor (default includes `html`, `markdown`, `mdx`, `json`) |
+
+```javascript
+editor.listExportFormats(); // ['html', 'markdown', 'mdx', 'json', …]
+```
+
+### `getExportWarnings(input)`
+
+| | |
+|---|---|
+| **Parameters** | Same shape as `exportContent` — format string or `{ format, index?, length? }`. Only **`markdown`** and **`mdx`** produce warnings. |
+| **Returns** | `SafetyIssue[]` — `{ feature, safety: 'lossy' \| 'unsupported', message }`. Does **not** throw. |
+
+```javascript
+const warnings = editor.getExportWarnings('markdown');
+if (warnings.some((w) => w.safety === 'unsupported')) {
+  // e.g. native editor table — use exportContent('html') instead
+}
+const md = editor.exportContent('markdown'); // throws if unsupported content remains
+```
 
 ## Content
 
