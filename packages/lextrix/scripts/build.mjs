@@ -34,6 +34,28 @@ for (const name of readdirSync(distDir)) {
   }
 }
 
+// Published tarball excludes *.map (.npmignore) — strip references so Vite/bundlers
+// do not warn about missing lextrix.snow.css.map etc.
+const stripSourceMapReferences = (content) =>
+  content
+    .replace(/\n?\/\*# sourceMappingURL=[^*]*\*\/\s*/g, '')
+    .replace(/\n?\/\/# sourceMappingURL=.*$/gm, '');
+
+for (const name of readdirSync(distDir)) {
+  const path = join(distDir, name);
+  if (name.endsWith('.map')) {
+    rmSync(path, { force: true });
+    continue;
+  }
+  if (/\.(css|js)$/.test(name)) {
+    const raw = readFileSync(path, 'utf8');
+    const stripped = stripSourceMapReferences(raw);
+    if (stripped !== raw) {
+      writeFileSync(path, stripped, 'utf8');
+    }
+  }
+}
+
 const sourcePkg = JSON.parse(
   readFileSync(join(packageRoot, 'package.json'), 'utf8'),
 );

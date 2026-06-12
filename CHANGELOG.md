@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.3 (2026-06-11)
+
+### Fixed
+
+- Strip source map references from published CSS and JS so Vite and other bundlers no longer warn about missing `lextrix.snow.css.map` (maps are excluded from the npm tarball)
+
 ## 2.0.2 (2026-06-09)
 
 ### Fixed
@@ -82,6 +88,7 @@
 - Themes: snow, bubble, slate, dawn
 - Image resize module (`modules.imageResize`)
 
+[2.0.3]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.3
 [2.0.2]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.2
 [2.0.1]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.1
 [2.0.0]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.0

@@ -211,25 +211,25 @@ onBeforeUnmount(() => {
 
 ## Script tag (no bundler)
 
-Use the published package from **npm** or a **CDN**. After `npm install lextrix`, files are in `node_modules/lextrix/dist/dist/`.
+Use the published package from **npm** or a **CDN**. After `npm install lextrix`, files are at the package root (e.g. `node_modules/lextrix/lextrix.snow.css`).
 
 **From npm (local static server):**
 
 ```html
-<link rel="stylesheet" href="node_modules/lextrix/dist/dist/lextrix.snow.css" />
+<link rel="stylesheet" href="node_modules/lextrix/lextrix.snow.css" />
 <div id="editor"></div>
-<script src="node_modules/lextrix/dist/dist/lextrix.js"></script>
+<script src="node_modules/lextrix/lextrix.js"></script>
 <script>
   const editor = new Lextrix('#editor', { theme: 'snow' });
 </script>
 ```
 
-**From jsDelivr CDN** (replace `2.0.2` with the version you want):
+**From jsDelivr CDN** (replace `2.0.3` with the version you want):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lextrix@2.0.2/dist/dist/lextrix.snow.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lextrix@2.0.3/lextrix.snow.css" />
 <div id="editor"></div>
-<script src="https://cdn.jsdelivr.net/npm/lextrix@2.0.2/dist/dist/lextrix.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lextrix@2.0.3/lextrix.js"></script>
 <script>
   const editor = new Lextrix('#editor', { theme: 'snow' });
 </script>
