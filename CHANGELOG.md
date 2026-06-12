@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.0.4 (2026-06-12)
+
+### Fixed
+
+- **Image resize overlay misaligned** — `reposition()` no longer double-subtracts the container offset; positions from the image DOM rect relative to `.lxr-editor`
+- **Image resize overlay outside editor** — overlay repositioned from the image DOM rect (single offset); mounts on `.lxr-container` because `.lxr-editor` is the scroll blot and cannot host foreign DOM nodes
+- **`getBounds()` width 0 on image embeds** — `getClientBounds()` returns `rect.width` for element nodes (images, etc.)
+- **Orphan resize overlays on remount** — `imageResize.destroy()` removes listeners and DOM; `editor.destroy()` calls it (fixes duplicate borders in React Strict Mode)
+- Image resize listeners use arrow handlers so `reposition` can be patched after init without stale bound references
+
+### Added
+
+- Public TypeScript types for module config: `LextrixModulesConfig`, `ImageResizeOptions`, `TableModule`, `ContentSerializer`, and related interfaces
+- Runnable examples: `examples/vite-vanilla`, `examples/vite-react`
+- Docs: expanded [API reference](./docs/api/reference.md) (modules, serializers, editor options), [evaluation guide](./docs/getting-started/evaluation.md) (optional modules step), [TypeScript guide](./docs/guides/typescript.md)
+
+### Changed
+
+- `.lxr-editor` is `position: relative` so absolute resize overlay positioning is correct inside the scroll area
+
 ## 2.0.3 (2026-06-11)
 
 ### Fixed
@@ -88,6 +108,7 @@
 - Themes: snow, bubble, slate, dawn
 - Image resize module (`modules.imageResize`)
 
+[2.0.4]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.4
 [2.0.3]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.3
 [2.0.2]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.2
 [2.0.1]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.1

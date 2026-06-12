@@ -52,6 +52,100 @@ export interface ChangeOp {
   attributes?: ChangeAttributes;
 }
 
+export type ToolbarConfig = Array<
+  string[] | Array<string | Record<string, unknown>>
+>;
+
+export interface ToolbarModuleOptions {
+  container?: HTMLElement | ToolbarConfig | string | null;
+  handlers?: Record<
+    string,
+    (this: { lextrix: Lextrix }, value?: unknown) => void
+  >;
+}
+
+export interface ImageResizeOptions {
+  minWidth?: number;
+  maxWidth?: number | null;
+}
+
+export interface HistoryModuleOptions {
+  delay?: number;
+  maxStack?: number;
+  userOnly?: boolean;
+}
+
+export interface UploaderModuleOptions {
+  mimetypes?: string[];
+  handler?: (
+    this: { lextrix: Lextrix },
+    range: Range,
+    files: File[],
+  ) => void | Promise<void>;
+}
+
+export interface SyntaxLanguageOption {
+  key: string;
+  label: string;
+}
+
+export interface SyntaxModuleOptions {
+  hljs?: unknown;
+  interval?: number;
+  languages?: SyntaxLanguageOption[];
+}
+
+export type ClipboardMatcher = (
+  node: Node,
+  delta: ChangeSet,
+) => ChangeSet;
+
+export interface ClipboardModuleOptions {
+  matchers?: Array<[string, ClipboardMatcher]>;
+}
+
+export interface TableModule {
+  insertTable(rows: number, columns: number): void;
+  insertRowAbove(): void;
+  insertRowBelow(): void;
+  insertColumnLeft(): void;
+  insertColumnRight(): void;
+  deleteRow(): void;
+  deleteColumn(): void;
+}
+
+export interface HistoryModule {
+  undo(): void;
+  redo(): void;
+  clear(): void;
+  cutoff(): void;
+}
+
+export interface LextrixModulesConfig {
+  toolbar?: ToolbarConfig | ToolbarModuleOptions | string;
+  table?: boolean;
+  syntax?: boolean | SyntaxModuleOptions;
+  imageResize?: boolean | ImageResizeOptions;
+  history?: HistoryModuleOptions;
+  uploader?: UploaderModuleOptions;
+  clipboard?: ClipboardModuleOptions;
+  keyboard?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface SerializerContext {
+  adapter?: unknown;
+  exportRange?: { index: number; length: number };
+  extensions?: Record<string, unknown>;
+}
+
+export interface ContentSerializer {
+  readonly format: SerializeFormat;
+  readonly extends?: readonly SerializeFormat[];
+  import(content: string, context?: SerializerContext): ChangeSet;
+  export(changeSet: ChangeSet, context?: SerializerContext): string;
+}
+
 export declare class ChangeSet {
   ops: ChangeOp[];
   constructor(ops?: ChangeOp[] | { ops: ChangeOp[] });
@@ -81,7 +175,7 @@ export interface LextrixOptions {
   readOnly?: boolean;
   placeholder?: string;
   bounds?: HTMLElement | string | null;
-  modules?: Record<string, unknown>;
+  modules?: LextrixModulesConfig;
   formats?: string[] | null;
   serializers?: boolean | unknown[];
 }
@@ -134,12 +228,7 @@ export declare class Lextrix {
   emitter: unknown;
   editor: unknown;
   selection: unknown;
-  history: {
-    undo(): void;
-    redo(): void;
-    clear(): void;
-    cutoff(): void;
-  };
+  history: HistoryModule;
   clipboard: unknown;
   keyboard: unknown;
   uploader: unknown;
@@ -256,6 +345,10 @@ export declare class Lextrix {
   off(event: string, handler: (...args: unknown[]) => void): void;
   once(event: string, handler: (...args: unknown[]) => void): void;
 
+  getModule(name: 'table'): TableModule | undefined;
+  getModule(name: 'imageResize'): unknown;
+  getModule(name: 'toolbar'): unknown;
+  getModule(name: 'syntax'): unknown;
   getModule(name: string): unknown;
   enable(enabled?: boolean): void;
   disable(): void;
@@ -270,8 +363,8 @@ export declare const lxrPath: {
   core: { module: string; theme: string };
 };
 
-export function registerSerializer(serializer: unknown): void;
-export function unregisterSerializer(format: SerializeFormat): void;
+export function registerSerializer(serializer: ContentSerializer): void;
+export function unregisterSerializer(format: SerializeFormat): boolean;
 export function registerMdxComponent(name: string, handler: unknown): void;
 export function getMarkdownExportWarnings(delta: ChangeSet): SafetyIssue[];
 

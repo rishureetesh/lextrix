@@ -658,6 +658,7 @@ describe('Selection', () => {
       );
       const bounds = selection.getBounds(1);
       expect(bounds?.left).approximately(reference.left + 32, 1);
+      expect(bounds?.width).approximately(32, 1);
       expect(bounds?.height).approximately(32, 1);
       expect(bounds?.top).approximately(reference.top, 3);
     });

@@ -1,6 +1,6 @@
 {
   "name": "lextrix-ui",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Toolbar UI components and icons for Lextrix",
   "type": "module",
   "license": "MIT",
@@ -11,6 +11,6 @@
     "./ui/*": "./src/ui/*"
   },
   "dependencies": {
-    "lextrix-core": "2.0.3"
+    "lextrix-core": "2.0.4"
   }
 }

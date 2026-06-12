@@ -9,13 +9,13 @@ Follow this order if you are evaluating Lextrix for the first time:
 | # | Guide | Description |
 |---|-------|-------------|
 | 1 | [Quick start](./getting-started/quick-start.md) | Install, themes, events |
-| 2 | [Evaluation guide](./getting-started/evaluation.md) | Linear path: playground → install → export |
+| 2 | [Evaluation guide](./getting-started/evaluation.md) | Linear path: install → export → modules (upload, syntax, tables) |
 | 3 | [Cookbook](./guides/cookbook.md) | Copy-paste recipes for every feature |
 | 4 | [Framework integration](./guides/frameworks.md) | React, Next.js, Vue, script tag |
 | [TypeScript](./guides/typescript.md) | Published `.d.ts` and setup |
 | 5 | [DOM mounting](./guides/dom-mounting.md) | Toolbar placement and cleanup (React remounts) |
 | 6 | [Serialization](./guides/serialization.md) | Import/export HTML, Markdown, MDX, JSON |
-| 7 | [API reference](./api/reference.md) | Editor methods and events |
+| 7 | [API reference](./api/reference.md) | Editor methods, modules (`imageResize`, …), events |
 
 Also: [Live playground](https://iamreetesh.com/lextrix) — try Lextrix in the browser without installing.
 

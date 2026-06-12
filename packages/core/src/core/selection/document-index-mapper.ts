@@ -104,7 +104,7 @@ export class DocumentIndexMapper {
       left: rect[side],
       right: rect[side],
       top: rect.top,
-      width: 0,
+      width: rect.width,
     };
   }
 }

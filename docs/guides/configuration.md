@@ -123,6 +123,8 @@ Programmatic resize:
 editor.formatText(index, 1, { width: '400', height: '300' }, 'user');
 ```
 
+See also: [API reference — imageResize](../api/reference.md#image-resize-imageresize) · [Modules — Image resize](./modules.md#image-resize)
+
 ## Format whitelist
 
 Restrict allowed formats:

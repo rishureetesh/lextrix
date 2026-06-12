@@ -19,20 +19,21 @@ class ImageResize extends Module<ImageResizeOptions> {
   handle: HTMLDivElement | null = null;
   activeIndex: number | null = null;
   activeBlot: Blot | null = null;
+  private imageLoadCleanup: (() => void) | null = null;
+  private destroyed = false;
 
   constructor(lextrix: Lextrix, options: Partial<ImageResizeOptions>) {
     super(lextrix, options);
-    this.onSelectionChange = this.onSelectionChange.bind(this);
-    this.reposition = this.reposition.bind(this);
     this.lextrix.on(Lextrix.events.SELECTION_CHANGE, this.onSelectionChange);
-    this.lextrix.on(Lextrix.events.SCROLL_OPTIMIZE, this.reposition);
-    this.lextrix.on(Lextrix.events.TEXT_CHANGE, this.reposition);
-    this.lextrix.root.addEventListener('scroll', this.reposition, {
+    this.lextrix.on(Lextrix.events.SCROLL_OPTIMIZE, this.onScrollOptimize);
+    this.lextrix.on(Lextrix.events.TEXT_CHANGE, this.onTextChange);
+    this.lextrix.root.addEventListener('scroll', this.onRootScroll, {
       passive: true,
     });
   }
 
-  onSelectionChange(range: Range | null) {
+  onSelectionChange = (range: Range | null) => {
+    if (this.destroyed) return;
     if (
       range == null ||
       range.length !== 1 ||
@@ -50,22 +51,72 @@ class ImageResize extends Module<ImageResizeOptions> {
       return;
     }
     this.show(blot, range.index);
-  }
+  };
+
+  private onScrollOptimize = () => {
+    if (this.destroyed) return;
+    this.reposition();
+  };
+
+  private onTextChange = () => {
+    if (this.destroyed) return;
+    this.reposition();
+  };
+
+  private onRootScroll = () => {
+    if (this.destroyed) return;
+    this.reposition();
+  };
 
   show(blot: Blot, index: number) {
+    this.clearImageLoadListener();
     this.activeBlot = blot;
     this.activeIndex = index;
     if (this.overlay == null) {
       this.createOverlay();
     }
     this.overlay!.classList.remove('lxr-hidden');
+    this.watchImageLoad(blot);
     this.reposition();
   }
 
   hide() {
+    this.clearImageLoadListener();
     this.activeBlot = null;
     this.activeIndex = null;
     this.overlay?.classList.add('lxr-hidden');
+  }
+
+  destroy() {
+    this.destroyed = true;
+    this.hide();
+    this.lextrix.off(Lextrix.events.SELECTION_CHANGE, this.onSelectionChange);
+    this.lextrix.off(Lextrix.events.SCROLL_OPTIMIZE, this.onScrollOptimize);
+    this.lextrix.off(Lextrix.events.TEXT_CHANGE, this.onTextChange);
+    this.lextrix.root.removeEventListener('scroll', this.onRootScroll);
+    this.overlay?.remove();
+    this.overlay = null;
+    this.handle = null;
+  }
+
+  watchImageLoad(blot: Blot) {
+    const img = blot.domNode;
+    if (!(img instanceof HTMLImageElement) || img.complete) {
+      return;
+    }
+    const onLoad = () => {
+      if (this.destroyed) return;
+      this.reposition();
+    };
+    img.addEventListener('load', onLoad, { once: true });
+    this.imageLoadCleanup = () => {
+      img.removeEventListener('load', onLoad);
+    };
+  }
+
+  clearImageLoadListener() {
+    this.imageLoadCleanup?.();
+    this.imageLoadCleanup = null;
   }
 
   createOverlay() {
@@ -75,6 +126,7 @@ class ImageResize extends Module<ImageResizeOptions> {
     handle.className = 'lxr-image-resize-handle';
     handle.setAttribute('aria-label', 'Resize image');
     overlay.appendChild(handle);
+    // Mount on container, not root — root is the scroll blot; foreign nodes break reconcile.
     this.lextrix.container.appendChild(overlay);
     this.overlay = overlay;
     this.handle = handle;
@@ -139,25 +191,27 @@ class ImageResize extends Module<ImageResizeOptions> {
     return this.lextrix.root.clientWidth || Number.MAX_SAFE_INTEGER;
   }
 
-  reposition() {
+  reposition = () => {
     if (
+      this.destroyed ||
       this.overlay == null ||
       this.activeIndex == null ||
       this.activeBlot == null
     ) {
       return;
     }
-    const bounds = this.lextrix.getBounds(this.activeIndex, 1);
-    if (bounds == null) {
-      this.hide();
-      return;
-    }
+    const imageRect = (
+      this.activeBlot.domNode as HTMLImageElement
+    ).getBoundingClientRect();
     const containerRect = this.lextrix.container.getBoundingClientRect();
-    this.overlay.style.left = `${bounds.left - containerRect.left}px`;
-    this.overlay.style.top = `${bounds.top - containerRect.top}px`;
-    this.overlay.style.width = `${bounds.width}px`;
-    this.overlay.style.height = `${bounds.height}px`;
-  }
+    if (this.overlay.parentElement !== this.lextrix.container) {
+      this.lextrix.container.appendChild(this.overlay);
+    }
+    this.overlay.style.left = `${imageRect.left - containerRect.left}px`;
+    this.overlay.style.top = `${imageRect.top - containerRect.top}px`;
+    this.overlay.style.width = `${imageRect.width}px`;
+    this.overlay.style.height = `${imageRect.height}px`;
+  };
 }
 
 export default ImageResize;

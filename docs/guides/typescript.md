@@ -10,15 +10,29 @@ npm install lextrix
 
 ```typescript
 import Lextrix, { ChangeSet, lxrPath } from 'lextrix';
-import type { LextrixOptions, SafetyIssue, Range } from 'lextrix';
+import type {
+  LextrixOptions,
+  LextrixModulesConfig,
+  ImageResizeOptions,
+  TableModule,
+  ContentSerializer,
+  SafetyIssue,
+  Range,
+} from 'lextrix';
 import 'lextrix/snow.css';
 
-const options: LextrixOptions = {
-  theme: 'snow',
-  modules: { toolbar: [['bold', 'italic']] },
+const modules: LextrixModulesConfig = {
+  toolbar: [['bold', 'italic'], ['link', 'image']],
+  table: true,
+  imageResize: { minWidth: 48 } satisfies ImageResizeOptions,
+  syntax: { hljs: globalThis.hljs, languages: [{ key: 'javascript', label: 'JS' }] },
 };
 
+const options: LextrixOptions = { theme: 'snow', modules };
+
 const editor = new Lextrix('#editor', options);
+const table = editor.getModule('table') as TableModule | undefined;
+table?.insertTable(3, 3);
 ```
 
 No `@types/lextrix` package is required.
@@ -26,10 +40,12 @@ No `@types/lextrix` package is required.
 ## Covered APIs
 
 - `Lextrix` class and `LextrixOptions`
+- Module config types: `LextrixModulesConfig`, `ImageResizeOptions`, `ToolbarModuleOptions`, `SyntaxModuleOptions`, `UploaderModuleOptions`, `HistoryModuleOptions`, `ClipboardModuleOptions`
+- `TableModule` and `getModule('table')`
 - `importContent`, `exportContent`, `listExportFormats`, `getExportWarnings`
 - `text-change` and `selection-change` handler signatures
-- `ChangeSet`, `Range`, `SafetyIssue`, serialization types
-- Named exports: `ChangeSet`, `lxrPath`, `registerSerializer`, …
+- `ChangeSet`, `Range`, `SafetyIssue`, `ContentSerializer`, serialization types
+- Named exports: `ChangeSet`, `lxrPath`, `registerSerializer`, `getMarkdownExportWarnings`, …
 
 ## Gaps
 

@@ -104,7 +104,108 @@ Native editor tables **cannot** export to Markdown/MDX — export throws `Serial
 
 ---
 
-## 7. React / Next.js next steps
+## 7. Image resize
+
+Enable the opt-in **`imageResize`** module and include **`image`** in the toolbar (or insert an image programmatically). Select a single image — a corner handle appears; drag to resize. Aspect ratio is preserved.
+
+```javascript
+const editor = new Lextrix('#editor', {
+  theme: 'snow',
+  modules: {
+    toolbar: [
+      ['bold', 'italic'],
+      ['link', 'image'],
+      ['clean'],
+    ],
+    imageResize: {
+      minWidth: 48,
+      maxWidth: null, // null = editor width
+    },
+  },
+});
+
+// Insert via toolbar, drag-and-drop, or API:
+editor.insertEmbed(0, 'image', 'https://example.com/photo.jpg');
+```
+
+**Programmatic resize** (sets the same `width` / `height` attributes as the handle):
+
+```javascript
+editor.formatText(imageIndex, 1, { width: '400', height: '300' }, 'user');
+```
+
+Does not apply to video or other embeds. Details: [Configuration — Image resize](../guides/configuration.md#image-resize) · [API reference — imageResize](../api/reference.md#image-resize-imageresize)
+
+---
+
+## 8. Optional modules
+
+These features are opt-in or configured via `modules`. Full API: [API reference — Modules](../api/reference.md#modules).
+
+### Undo / redo
+
+Always available via `editor.history`. Keyboard: `Ctrl+Z` / `Ctrl+Shift+Z`.
+
+```javascript
+editor.history.undo();
+editor.history.redo();
+```
+
+### Image upload
+
+Override the default base64 handler to upload to your server:
+
+```javascript
+modules: {
+  toolbar: [['bold', 'italic'], ['link', 'image'], ['clean']],
+  uploader: {
+    mimetypes: ['image/png', 'image/jpeg', 'image/webp'],
+    async handler(range, files) {
+      for (const file of files) {
+        const body = new FormData();
+        body.append('file', file);
+        const res = await fetch('/api/upload', { method: 'POST', body });
+        const { url } = await res.json();
+        this.lextrix.insertEmbed(range.index, 'image', url, 'user');
+        range.index += 1;
+      }
+    },
+  },
+}
+```
+
+Toolbar **image** and drag-and-drop both use this handler.
+
+### Syntax highlighting
+
+Load [highlight.js](https://highlightjs.org/) first, then enable the module:
+
+```javascript
+modules: {
+  toolbar: [['bold', 'italic'], ['code-block'], ['clean']],
+  syntax: {
+    hljs: window.hljs,
+    languages: [{ key: 'javascript', label: 'JavaScript' }],
+  },
+}
+```
+
+### Tables
+
+```javascript
+modules: {
+  toolbar: [['bold', 'italic'], ['table'], ['clean']],
+  table: true,
+}
+
+editor.getModule('table')?.insertTable(3, 4);
+```
+
+Remember: native tables cannot export to Markdown/MDX — use HTML export.
+
+---
+
+## 9. React / Next.js next steps
 
 Lextrix is a class, not a React component. Mount it in `useEffect`, call `editor.destroy()` on unmount, and import theme CSS on the client.
 
@@ -114,7 +215,7 @@ Lextrix is a class, not a React component. Mount it in `useEffect`, call `editor
 
 ---
 
-## 8. Troubleshooting
+## 10. Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
@@ -122,6 +223,9 @@ Lextrix is a class, not a React component. Mount it in `useEffect`, call `editor
 | `document is not defined` | Client-only — see [Frameworks](../guides/frameworks.md) |
 | Duplicate toolbars | Call `editor.destroy()` on unmount — [DOM mounting](../guides/dom-mounting.md) |
 | Markdown export throws | Native table in document — use HTML export or check [Serialization](../guides/serialization.md) |
+| No image resize handle | Enable `modules.imageResize` and select a **single** image — [Image resize](../guides/configuration.md#image-resize) |
+| Code blocks not highlighted | Load highlight.js and enable `modules.syntax` — [API reference](../api/reference.md#syntax-highlighting-syntax) |
+| Upload does nothing | Check `uploader.mimetypes` matches file type — [API reference](../api/reference.md#uploader-uploader) |
 
 More recipes: [Cookbook](../guides/cookbook.md) · Full API: [API reference](../api/reference.md)
 
@@ -133,5 +237,8 @@ More recipes: [Cookbook](../guides/cookbook.md) · Full API: [API reference](../
 |------|-------|
 | Copy-paste recipes | [Cookbook](../guides/cookbook.md) |
 | Save on change, uploads, tables | [Cookbook](../guides/cookbook.md) |
+| Image resize | [Configuration — Image resize](../guides/configuration.md#image-resize) · [API reference](../api/reference.md#image-resize-imageresize) |
+| Upload, syntax, tables | [Optional modules](#8-optional-modules) · [API reference — Modules](../api/reference.md#modules) |
+| Custom serializers | [API reference — registerSerializer](../api/reference.md#registerserializerserializer) |
 | All import/export formats | [Serialization](../guides/serialization.md) |
 | Module and toolbar options | [Configuration](../guides/configuration.md) |

@@ -578,6 +578,11 @@ class Lextrix {
     const toolbar = this.getModule('toolbar') as { destroy?: () => void } | null;
     toolbar?.destroy?.();
 
+    const imageResize = this.getModule('imageResize') as {
+      destroy?: () => void;
+    } | null;
+    imageResize?.destroy?.();
+
     const theme = this.theme as { destroy?: () => void };
     theme?.destroy?.();
 
