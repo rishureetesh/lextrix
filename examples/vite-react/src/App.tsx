@@ -1,57 +1,35 @@
-import { useEffect, useRef, useState } from 'react';
-import Lextrix from 'lextrix';
+import { useState } from 'react';
+import { LextrixEditor } from '@lextrix/react';
 import 'lextrix/snow.css';
 
 const INITIAL_MARKDOWN = `# Hello Lextrix
 
-Edit this document in React. Export updates below.`;
+Edit this document in React via **@lextrix/react**. Export updates below.`;
 
 export default function App() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const [exported, setExported] = useState('');
-
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
-    const mount = document.createElement('div');
-    wrapper.appendChild(mount);
-
-    const editor = new Lextrix(mount, {
-      theme: 'snow',
-      placeholder: 'Start writing…',
-      modules: {
-        toolbar: [
-          ['bold', 'italic', 'underline'],
-          [{ header: [1, 2, false] }],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          ['link', 'clean'],
-        ],
-      },
-    });
-
-    editor.importContent(INITIAL_MARKDOWN, 'markdown');
-
-    const refresh = () => {
-      editor.getExportWarnings('markdown');
-      setExported(editor.exportContent('markdown'));
-    };
-
-    const onChange = () => refresh();
-    editor.on('text-change', onChange);
-    refresh();
-
-    return () => {
-      editor.off('text-change', onChange);
-      editor.destroy();
-      wrapper.replaceChildren();
-    };
-  }, []);
+  const [exported, setExported] = useState(INITIAL_MARKDOWN);
 
   return (
     <main style={{ maxWidth: 720, margin: '2rem auto', padding: '0 1rem' }}>
       <h1>Lextrix React example</h1>
-      <div ref={wrapperRef} />
+      <LextrixEditor
+        theme="snow"
+        format="markdown"
+        defaultValue={INITIAL_MARKDOWN}
+        onChange={setExported}
+        options={{
+          placeholder: 'Start writing…',
+          modules: {
+            toolbar: [
+              ['bold', 'italic', 'underline'],
+              [{ header: [1, 2, false] }],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              ['link', 'clean'],
+            ],
+          },
+        }}
+        style={{ minHeight: 240 }}
+      />
       <h2>Exported Markdown</h2>
       <pre
         style={{

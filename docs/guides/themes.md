@@ -79,32 +79,23 @@ Duplicate toolbars = cleanup skipped on parent wrapper. Not a Lextrix race bug; 
 
 ## React example
 
-```tsx
-'use client';
+Prefer [`@lextrix/react`](./react.md) — remount with `key` when the theme changes:
 
-import { useEffect, useRef, useState } from 'react';
-import Lextrix from 'lextrix';
-import 'lextrix/snow.css';
+```tsx
+import { LextrixEditor } from '@lextrix/react';
+import 'lextrix/snow.css'; // or dynamically swap theme CSS in your app
 
 export function ThemedEditor({ theme }: { theme: 'snow' | 'bubble' | 'slate' | 'dawn' }) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
-    void import(`lextrix/${theme}.css`); // ensure CSS loaded in bundler
-
-    const mount = document.createElement('div');
-    wrapper.appendChild(mount);
-
-    const editor = new Lextrix(mount, { theme, modules: { toolbar: [['bold', 'italic']] } });
-
-    return () => wrapper.replaceChildren();
-  }, [theme]);
-
-  return <div ref={wrapperRef} />;
+  return (
+    <LextrixEditor
+      key={theme}
+      theme={theme}
+      options={{ modules: { toolbar: [['bold', 'italic']] } }}
+    />
+  );
 }
 ```
 
-Load theme CSS globally in your app if dynamic `import()` is awkward — swap a single `<link id="lextrix-theme">` in layout.
+Load the matching `lextrix/{theme}.css` when switching themes (global `<link>` or bundler import).
+
+Manual mount pattern (without `@lextrix/react`): [Frameworks](./frameworks.md) · [DOM mounting](./dom-mounting.md).

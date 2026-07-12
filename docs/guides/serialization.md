@@ -32,7 +32,7 @@ Use `importContent` / `exportContent` instead of `import` / `export`. `Lextrix.i
 | Ordered lists | Numbering is sequential (`1.`, `2.`, …); nested lists restart at `1.` per indent level |
 | Combined bold+italic | May export as bold only |
 | Align, color, font | HTML/JSON only — not exported to Markdown/MDX |
-| Video embed | Markdown/MDX export as `[video](url)` |
+| Video embed | Markdown/MDX export as \`[video](url)\` |
 | Horizontal rule | Literal `---` paragraph exports as `\-\-\-` so it does not become a thematic break |
 | Inline escaping | Only `\*`, `` \` ``, `\_`, `\[`, `\]` — not `.` or `!` at end of sentences |
 
@@ -113,42 +113,21 @@ const slice = editor.exportContent({ format: 'html', index: 0, length: 100 });
 
 ### React / Next.js
 
-Use a client-only **wrapper** — see [Framework integration](./frameworks.md) and [DOM mounting](./dom-mounting.md). Minimal pattern:
+Prefer **[`@lextrix/react`](./react.md)** so mount/teardown and `format` are handled for you:
 
 ```tsx
-'use client';
-
-import { useEffect, useRef } from 'react';
-import Lextrix from 'lextrix';
+import { LextrixEditor } from '@lextrix/react';
 import 'lextrix/snow.css';
 
-export default function Editor() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
-    const mount = document.createElement('div');
-    wrapper.appendChild(mount);
-
-    const editor = new Lextrix(mount, { theme: 'snow' });
-    if (initialMdx) editor.importContent(initialMdx, 'mdx');
-
-    const onChange = () => save(editor.exportContent('mdx'));
-    editor.on('text-change', onChange);
-    return () => {
-      editor.off('text-change', onChange);
-      wrapper.replaceChildren();
-    };
-  }, []);
-
-  return <div ref={wrapperRef} />;
-}
+<LextrixEditor
+  theme="snow"
+  format="mdx"
+  value={initialMdx}
+  onChange={(mdx) => save(mdx)}
+/>
 ```
 
-In Next.js App Router, also load the component with `dynamic(..., { ssr: false })`.
-
+Manual mount pattern: [Frameworks](./frameworks.md) · [DOM mounting](./dom-mounting.md).
 ### Migration from older patterns
 
 | Before | After |

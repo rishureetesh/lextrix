@@ -1,6 +1,6 @@
 # Lextrix — React Vite example
 
-Minimal React integration: wrapper ref, `destroy()` on unmount, Markdown import/export.
+Uses **`@lextrix/react`** (`LextrixEditor`) with Markdown import/export.
 
 ## From the monorepo
 
@@ -13,11 +13,10 @@ npm run example:react
 
 ## What it demonstrates
 
-- Default import: `import Lextrix from 'lextrix'`
+- `npm install lextrix @lextrix/react` (workspace links both)
+- `import { LextrixEditor } from '@lextrix/react'`
 - Theme CSS: `import 'lextrix/snow.css'`
-- Wrapper ref + inner mount div
-- `editor.destroy()` on unmount
-- `importContent` / `exportContent` / `getExportWarnings`
-- TypeScript autocomplete via published `lextrix.d.ts`
+- Controlled export via `onChange` + `format="markdown"`
+- `editor.destroy()` handled by the component on unmount
 
-For Next.js App Router, see [Framework integration](../../docs/guides/frameworks.md).
+For Next.js App Router, see [React guide](../../docs/guides/react.md).

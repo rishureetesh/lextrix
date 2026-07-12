@@ -320,7 +320,7 @@ editor.formatText(index, 1, { width: '400', height: '300' }, 'user');
 
 Requires theme CSS (included in `lextrix/snow.css`, etc.) for `.lxr-image-resize` overlay styles.
 
-The overlay is a child of `.lxr-container` (not `.lxr-editor`, which is the scroll blot). Always call `editor.destroy()` on unmount.
+The overlay mounts on `.lxr-container` and repositions after layout settles (selection, scroll, and resize). Always call `editor.destroy()` on unmount.
 
 More: [Configuration — Image resize](../guides/configuration.md#image-resize) · [Modules](../guides/modules.md#image-resize)
 

@@ -28,8 +28,13 @@ const workspacePackages = readdirSync(join(repoRoot, 'packages'), { withFileType
   .filter((path) => existsSync(path));
 
 const mismatched = workspacePackages
-  .map((path) => ({ path, version: readJson(path).version }))
-  .filter(({ version }) => version !== rootVersion);
+  .map((path) => ({ path, pkg: readJson(path) }))
+  .filter(({ pkg }) => {
+    // Core packages share the root version; scoped framework packages (e.g. @lextrix/react) version independently.
+    if (pkg.name?.startsWith('@')) return false;
+    return pkg.version !== rootVersion;
+  })
+  .map(({ path, pkg }) => ({ path, version: pkg.version }));
 
 if (mismatched.length) {
   console.error('Version mismatch across workspace packages:');

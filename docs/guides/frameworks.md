@@ -1,45 +1,63 @@
 # Framework integration
 
-Lextrix is a **DOM-based editor class**, not a React/Vue component. Mount it on an element with `new Lextrix(container, options)` inside a client-only lifecycle hook.
+Lextrix is a **DOM-based editor**. Vanilla apps call `new Lextrix(container, options)`. React apps should use **[`@lextrix/react`](./react.md)** (`LextrixEditor`).
 
 ## npm package layout
 
-| Import | When to use |
-|--------|-------------|
-| `import Lextrix from 'lextrix'` | Default — bundlers (Vite, Next, webpack) resolve the **ESM** build |
-| `import { ChangeSet, registerSerializer, lxrPath } from 'lextrix'` | Named APIs (ESM build, 2.0.1+) |
+| Package / import | When to use |
+|------------------|-------------|
+| `lextrix` | Core editor (required for everyone) |
+| `@lextrix/react` | Official React component — install **with** `lextrix` |
+| `import Lextrix from 'lextrix'` | Bundlers resolve the **ESM** build |
+| `import { ChangeSet, registerSerializer, lxrPath } from 'lextrix'` | Named APIs |
 | `import 'lextrix/snow.css'` | Theme stylesheet (required) |
-| Script tag `lextrix.js` | UMD global `window.Lextrix` — no named imports |
+| Script tag `lextrix.js` | UMD global `window.Lextrix` |
 
 Always import a theme CSS file. The editor does not inject styles.
 
 ### npm vs monorepo
 
-| Need | npm (`lextrix`) | Monorepo (clone repo) |
-|------|-----------------|------------------------|
-| Editor + themes + serialization | Yes | Yes |
-| `ChangeSet`, `registerSerializer`, `lxrPath` | `import { … } from 'lextrix'` | Same, or `lextrix-change` / `lextrix-core` |
-| `defineInlineTagFormat`, custom blots | Register your own blot class + `Lextrix.register()` | Import from `lextrix-formats` |
-| Headless serialize only | Use editor APIs, or clone repo for `lextrix-serialize` | `import from 'lextrix-serialize'` |
+| Need | npm | Monorepo (clone repo) |
+|------|-----|------------------------|
+| Editor + themes + serialization | `lextrix` | Same |
+| React component | `lextrix` + `@lextrix/react` | `packages/react` |
+| `ChangeSet`, `registerSerializer`, `lxrPath` | `import { … } from 'lextrix'` | Same |
+| Custom blots | `Lextrix.register()` | Or import from `lextrix-formats` |
+| Headless serialize only | Editor APIs, or clone for `lextrix-serialize` | `lextrix-serialize` |
 
-Lextrix requires a browser (`document`). Do not import it in server components or SSR routes without a client-only wrapper.
+Lextrix requires a browser (`document`). Do not import it in Server Components without a client-only boundary.
 
-**Toolbar / theme bugs?** Read [DOM mounting](./dom-mounting.md) first — call `editor.destroy()` on remount; the auto toolbar lives **inside** the mount element (2.0.1+).
+**Toolbar / remount bugs?** Read [DOM mounting](./dom-mounting.md) — call `editor.destroy()` (or use `@lextrix/react`, which does this for you).
 
 ---
 
-## React (Vite, CRA, etc.)
+## React
 
-Use a **wrapper ref** you clear on teardown. Pass a **fresh inner div** to `new Lextrix()`.
+**Recommended:** [`@lextrix/react`](./react.md)
+
+```bash
+npm install lextrix @lextrix/react
+```
 
 ```tsx
-'use client'; // Next.js App Router only — omit in plain Vite/React SPA
+import { LextrixEditor } from '@lextrix/react';
+import 'lextrix/snow.css';
+
+<LextrixEditor theme="snow" defaultValue="# Hello\n" format="markdown" />;
+```
+
+### Manual mount (advanced)
+
+Only if you cannot use `@lextrix/react`. Use a **wrapper ref**, a **fresh inner div**, and `destroy()` on teardown.
+
+```tsx
+'use client'; // Next.js App Router only
 
 import { useEffect, useRef } from 'react';
 import Lextrix from 'lextrix';
 import 'lextrix/snow.css';
 
-export default function LextrixEditor() {
+export default function ManualEditor() {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,101 +94,39 @@ export default function LextrixEditor() {
 
 **Do not** render `<Lextrix />` — `Lextrix` is a class, not a React component.
 
-### Theme switch (same wrapper pattern)
+For theme switching and controlled Markdown, prefer [`LextrixEditor`](./react.md) with a remount `key` instead of hand-rolling effects.
 
-```tsx
-useEffect(() => {
-  const wrapper = wrapperRef.current;
-  if (!wrapper) return;
-
-  const mount = document.createElement('div');
-  wrapper.appendChild(mount);
-
-  const editor = new Lextrix(mount, { theme, modules: { toolbar: [...] } });
-  if (initialContents) editor.setContents(initialContents);
-
-  return () => {
-    editor.destroy();
-    wrapper.replaceChildren();
-  };
-}, [theme]);
-```
-
-See [Themes](./themes.md).
-
-### Controlled content / serialization
-
-```tsx
-useEffect(() => {
-  const wrapper = wrapperRef.current;
-  if (!wrapper) return;
-
-  const mount = document.createElement('div');
-  wrapper.appendChild(mount);
-
-  const editor = new Lextrix(mount, { theme: 'snow' });
-  if (initialMarkdown) editor.importContent(initialMarkdown, 'markdown');
-
-  const onChange = () => onSave(editor.exportContent('markdown'));
-  editor.on('text-change', onChange);
-
-  return () => {
-    editor.off('text-change', onChange);
-    editor.destroy();
-    wrapper.replaceChildren();
-  };
-}, []);
-```
+See [Themes](./themes.md) · [React guide](./react.md).
 
 ---
 
-## Next.js (App Router)
+## Next.js App Router
 
-1. Put the editor in a **`'use client'`** component (see above).
-2. Load it with **`dynamic` and `ssr: false`** so Lextrix never runs on the server.
+Use `@lextrix/react` from a **client** component (it includes `'use client'`):
 
 ```tsx
-// app/playground/page.tsx
-import dynamic from 'next/dynamic';
+'use client';
 
-const LextrixEditor = dynamic(() => import('@/components/lextrix-editor'), {
-  ssr: false,
-  loading: () => <p>Loading editor…</p>,
-});
+import { LextrixEditor } from '@lextrix/react';
+import 'lextrix/snow.css';
 
-export default function PlaygroundPage() {
-  return (
-    <main>
-      <h1>Lextrix playground</h1>
-      <LextrixEditor />
-    </main>
-  );
+export default function PageEditor() {
+  return <LextrixEditor theme="snow" format="markdown" />;
 }
 ```
 
-### Common Next.js mistakes
-
-| Mistake | Result |
-|---------|--------|
-| `import Lextrix from 'lextrix'` in a Server Component | `document is not defined` |
-| `import { Lextrix } from 'lextrix'` | `undefined` — use **default** import |
-| `<Lextrix />` or `<LextrixEditor />` when import failed | “Element type is invalid… got: undefined” |
-| Forgetting theme CSS | Unstyled / broken toolbar |
-| Clearing only mount div on teardown | Duplicate toolbars — [DOM mounting](./dom-mounting.md) |
-
-### MDX docs / playgrounds
-
-Register your wrapper in the MDX provider:
+Optional lazy load:
 
 ```tsx
-import LextrixEditor from '@/components/lextrix-editor';
+import dynamic from 'next/dynamic';
 
-const components = { LextrixEditor };
-
-<MDXProvider components={components}>{children}</MDXProvider>
+const LextrixEditor = dynamic(
+  () => import('@lextrix/react').then((m) => m.LextrixEditor),
+  { ssr: false },
+);
 ```
 
-Then use `<LextrixEditor />` in MDX — not `<Lextrix />`.
+Do not import `lextrix` or `@lextrix/react` in Server Components.
 
 ---
 
@@ -178,27 +134,25 @@ Then use `<LextrixEditor />` in MDX — not `<Lextrix />`.
 
 ```vue
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import Lextrix from 'lextrix';
 import 'lextrix/snow.css';
 
 const wrapper = ref(null);
-let editor = null;
+let editor;
 
 onMounted(() => {
-  if (!wrapper.value) return;
   const mount = document.createElement('div');
   wrapper.value.appendChild(mount);
   editor = new Lextrix(mount, {
     theme: 'snow',
-    modules: { toolbar: [['bold', 'italic'], ['clean']] },
+    modules: { toolbar: [['bold', 'italic'], ['link']] },
   });
 });
 
 onBeforeUnmount(() => {
   editor?.destroy();
   wrapper.value?.replaceChildren();
-  editor = null;
 });
 </script>
 
@@ -224,12 +178,12 @@ Use the published package from **npm** or a **CDN**. After `npm install lextrix`
 </script>
 ```
 
-**From jsDelivr CDN** (replace `2.0.3` with the version you want):
+**From jsDelivr CDN** (pin the version you use):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lextrix@2.0.3/lextrix.snow.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lextrix@2.0.5/lextrix.snow.css" />
 <div id="editor"></div>
-<script src="https://cdn.jsdelivr.net/npm/lextrix@2.0.3/lextrix.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lextrix@2.0.5/lextrix.js"></script>
 <script>
   const editor = new Lextrix('#editor', { theme: 'snow' });
 </script>

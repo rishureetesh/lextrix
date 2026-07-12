@@ -1,6 +1,6 @@
 {
   "name": "lextrix-change",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Lextrix change-set / operational transform layer",
   "type": "module",
   "license": "MIT",

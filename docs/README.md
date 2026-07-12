@@ -9,13 +9,14 @@ Follow this order if you are evaluating Lextrix for the first time:
 | # | Guide | Description |
 |---|-------|-------------|
 | 1 | [Quick start](./getting-started/quick-start.md) | Install, themes, events |
-| 2 | [Evaluation guide](./getting-started/evaluation.md) | Linear path: install → export → modules (upload, syntax, tables) |
-| 3 | [Cookbook](./guides/cookbook.md) | Copy-paste recipes for every feature |
-| 4 | [Framework integration](./guides/frameworks.md) | React, Next.js, Vue, script tag |
-| [TypeScript](./guides/typescript.md) | Published `.d.ts` and setup |
-| 5 | [DOM mounting](./guides/dom-mounting.md) | Toolbar placement and cleanup (React remounts) |
-| 6 | [Serialization](./guides/serialization.md) | Import/export HTML, Markdown, MDX, JSON |
-| 7 | [API reference](./api/reference.md) | Editor methods, modules (`imageResize`, …), events |
+| 2 | [Evaluation guide](./getting-started/evaluation.md) | Linear path: install → export → modules |
+| 3 | [Cookbook](./guides/cookbook.md) | Copy-paste recipes |
+| 4 | [React (`@lextrix/react`)](./guides/react.md) | Official React component |
+| 5 | [Framework integration](./guides/frameworks.md) | Next.js, Vue, script tag, manual mount |
+| 6 | [TypeScript](./guides/typescript.md) | Published `.d.ts` and setup |
+| 7 | [DOM mounting](./guides/dom-mounting.md) | Toolbar placement and cleanup |
+| 8 | [Serialization](./guides/serialization.md) | HTML, Markdown, MDX, JSON |
+| 9 | [API reference](./api/reference.md) | Editor methods, modules, events |
 
 Also: [Live playground](https://iamreetesh.com/lextrix) — try Lextrix in the browser without installing.
 

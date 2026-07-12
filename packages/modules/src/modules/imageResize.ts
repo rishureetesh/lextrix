@@ -20,6 +20,8 @@ class ImageResize extends Module<ImageResizeOptions> {
   activeIndex: number | null = null;
   activeBlot: Blot | null = null;
   private imageLoadCleanup: (() => void) | null = null;
+  private resizeObserver: ResizeObserver | null = null;
+  private repositionRaf: number | null = null;
   private destroyed = false;
 
   constructor(lextrix: Lextrix, options: Partial<ImageResizeOptions>) {
@@ -30,6 +32,11 @@ class ImageResize extends Module<ImageResizeOptions> {
     this.lextrix.root.addEventListener('scroll', this.onRootScroll, {
       passive: true,
     });
+    document.addEventListener('scroll', this.onLayoutChange, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener('resize', this.onLayoutChange, { passive: true });
   }
 
   onSelectionChange = (range: Range | null) => {
@@ -55,21 +62,27 @@ class ImageResize extends Module<ImageResizeOptions> {
 
   private onScrollOptimize = () => {
     if (this.destroyed) return;
-    this.reposition();
+    this.scheduleReposition();
   };
 
   private onTextChange = () => {
     if (this.destroyed) return;
-    this.reposition();
+    this.scheduleReposition();
   };
 
   private onRootScroll = () => {
     if (this.destroyed) return;
-    this.reposition();
+    this.scheduleReposition();
+  };
+
+  private onLayoutChange = () => {
+    if (this.destroyed) return;
+    this.scheduleReposition();
   };
 
   show(blot: Blot, index: number) {
     this.clearImageLoadListener();
+    this.clearResizeObserver();
     this.activeBlot = blot;
     this.activeIndex = index;
     if (this.overlay == null) {
@@ -77,11 +90,15 @@ class ImageResize extends Module<ImageResizeOptions> {
     }
     this.overlay!.classList.remove('lxr-hidden');
     this.watchImageLoad(blot);
-    this.reposition();
+    this.watchLayout(blot);
+    // Defer until after layout settles (selection + nested scroll/transform).
+    this.scheduleReposition();
   }
 
   hide() {
     this.clearImageLoadListener();
+    this.clearResizeObserver();
+    this.cancelScheduledReposition();
     this.activeBlot = null;
     this.activeIndex = null;
     this.overlay?.classList.add('lxr-hidden');
@@ -94,6 +111,8 @@ class ImageResize extends Module<ImageResizeOptions> {
     this.lextrix.off(Lextrix.events.SCROLL_OPTIMIZE, this.onScrollOptimize);
     this.lextrix.off(Lextrix.events.TEXT_CHANGE, this.onTextChange);
     this.lextrix.root.removeEventListener('scroll', this.onRootScroll);
+    document.removeEventListener('scroll', this.onLayoutChange, true);
+    window.removeEventListener('resize', this.onLayoutChange);
     this.overlay?.remove();
     this.overlay = null;
     this.handle = null;
@@ -106,7 +125,7 @@ class ImageResize extends Module<ImageResizeOptions> {
     }
     const onLoad = () => {
       if (this.destroyed) return;
-      this.reposition();
+      this.scheduleReposition();
     };
     img.addEventListener('load', onLoad, { once: true });
     this.imageLoadCleanup = () => {
@@ -114,9 +133,55 @@ class ImageResize extends Module<ImageResizeOptions> {
     };
   }
 
+  watchLayout(blot: Blot) {
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+    const img = blot.domNode;
+    if (!(img instanceof HTMLImageElement)) {
+      return;
+    }
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.destroyed) return;
+      this.scheduleReposition();
+    });
+    this.resizeObserver.observe(img);
+    this.resizeObserver.observe(this.lextrix.container);
+  }
+
   clearImageLoadListener() {
     this.imageLoadCleanup?.();
     this.imageLoadCleanup = null;
+  }
+
+  clearResizeObserver() {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+  }
+
+  cancelScheduledReposition() {
+    if (this.repositionRaf != null) {
+      cancelAnimationFrame(this.repositionRaf);
+      this.repositionRaf = null;
+    }
+  }
+
+  scheduleReposition() {
+    if (
+      this.destroyed ||
+      this.overlay == null ||
+      this.activeIndex == null ||
+      this.activeBlot == null
+    ) {
+      return;
+    }
+    this.cancelScheduledReposition();
+    this.repositionRaf = requestAnimationFrame(() => {
+      this.repositionRaf = requestAnimationFrame(() => {
+        this.repositionRaf = null;
+        this.reposition();
+      });
+    });
   }
 
   createOverlay() {
@@ -167,7 +232,7 @@ class ImageResize extends Module<ImageResizeOptions> {
       imageBlot.format('width', String(width));
       imageBlot.format('height', String(height));
       this.lextrix.update(Emitter.sources.USER);
-      this.reposition();
+      this.scheduleReposition();
     };
 
     handle.addEventListener('mousedown', (event: MouseEvent) => {

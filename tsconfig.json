@@ -43,5 +43,5 @@
     "packages/lextrix/test/**/*.ts",
     "packages/change/tests/**/*.ts"
   ],
-  "exclude": ["**/node_modules", "**/dist", "**/storybook-static"]
+  "exclude": ["**/node_modules", "**/dist", "**/storybook-static", "packages/react"]
 }

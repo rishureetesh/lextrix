@@ -29,7 +29,7 @@ Named imports (`ChangeSet`, `registerSerializer`, `lxrPath`, …) work from `lex
 
 Optional peer dependencies: [highlight.js](https://highlightjs.org/) for syntax, [KaTeX](https://katex.org/) for formulas.
 
-**React, Next.js, Vue:** [Framework integration](../guides/frameworks.md) · [Evaluation guide](./evaluation.md) · [Cookbook](../guides/cookbook.md) · [DOM mounting](../guides/dom-mounting.md) (toolbar cleanup)
+**React / Next.js:** [`@lextrix/react`](../guides/react.md) · [Frameworks](../guides/frameworks.md) · [Evaluation](./evaluation.md) · [Cookbook](../guides/cookbook.md)
 
 Script-tag setup (npm paths or CDN): [Framework integration — Script tag](../guides/frameworks.md#script-tag-no-bundler).
 

@@ -1,6 +1,6 @@
 {
   "name": "lextrix-serialize",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Lextrix content serialization — import/export between ChangeSet and HTML, Markdown, MDX, JSON",
   "type": "module",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "./equivalence": "./src/equivalence.ts"
   },
   "dependencies": {
-    "lextrix-change": "2.0.4"
+    "lextrix-change": "2.0.5"
   },
   "scripts": {
     "test": "vitest run",
@@ -24,10 +24,10 @@
   "devDependencies": {
     "@vitest/coverage-v8": "^3.2.6",
     "jsdom": "^26.1.0",
-    "lextrix-core": "2.0.4",
-    "lextrix-dom": "2.0.4",
-    "lextrix-formats": "2.0.4",
-    "lextrix-modules": "2.0.4",
+    "lextrix-core": "2.0.5",
+    "lextrix-dom": "2.0.5",
+    "lextrix-formats": "2.0.5",
+    "lextrix-modules": "2.0.5",
     "vitest": "^3.2.4"
   }
 }

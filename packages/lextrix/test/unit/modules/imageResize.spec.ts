@@ -19,6 +19,30 @@ describe('imageResize module', () => {
     return editor;
   };
 
+  const flushReposition = () =>
+    new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+
+  const expectOverlayAligned = (
+    editor: Lextrix,
+    img: HTMLImageElement,
+    overlay: HTMLDivElement,
+  ) => {
+    const containerRect = editor.container.getBoundingClientRect();
+    const imageRect = img.getBoundingClientRect();
+    expect(parseFloat(overlay.style.left)).approximately(
+      imageRect.left - containerRect.left,
+      1,
+    );
+    expect(parseFloat(overlay.style.top)).approximately(
+      imageRect.top - containerRect.top,
+      1,
+    );
+    expect(parseFloat(overlay.style.width)).approximately(imageRect.width, 1);
+    expect(parseFloat(overlay.style.height)).approximately(imageRect.height, 1);
+  };
+
   beforeEach(() => {
     registerBlots(Lextrix, true);
     registerFormats(Lextrix, true);
@@ -38,7 +62,7 @@ describe('imageResize module', () => {
     const editor = createEditor();
     editor.insertEmbed(0, 'image', testImageSrc);
     editor.setSelection(0, 1);
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await flushReposition();
     const overlay = container.querySelector('.lxr-image-resize');
     expect(overlay).toBeTruthy();
     expect(overlay?.classList.contains('lxr-hidden')).toBe(false);
@@ -55,7 +79,7 @@ describe('imageResize module', () => {
     editor.setSelection(6, 1);
     await new Promise((resolve) => setTimeout(resolve, 10));
     editor.setSelection(0, 1);
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await flushReposition();
     const overlay = container.querySelector('.lxr-image-resize');
     expect(overlay?.classList.contains('lxr-hidden')).toBe(true);
   });
@@ -73,30 +97,35 @@ describe('imageResize module', () => {
     editor.setSelection(0, 1);
     const img = container.querySelector('img') as HTMLImageElement;
     await img.decode();
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await flushReposition();
     const overlay = editor.container.querySelector(
       '.lxr-image-resize',
     ) as HTMLDivElement;
     expect(overlay).toBeTruthy();
     expect(overlay.classList.contains('lxr-hidden')).toBe(false);
-    const containerRect = editor.container.getBoundingClientRect();
-    const imageRect = img.getBoundingClientRect();
-    expect(parseFloat(overlay.style.left)).approximately(
-      imageRect.left - containerRect.left,
-      1,
-    );
-    expect(parseFloat(overlay.style.top)).approximately(
-      imageRect.top - containerRect.top,
-      1,
-    );
-    expect(parseFloat(overlay.style.width)).approximately(imageRect.width, 1);
-    expect(parseFloat(overlay.style.height)).approximately(imageRect.height, 1);
+    expectOverlayAligned(editor, img, overlay);
     const bounds = editor.getBounds(0, 1);
     expect(bounds).toBeTruthy();
+    const containerRect = editor.container.getBoundingClientRect();
     expect(parseFloat(overlay.style.top)).not.approximately(
       bounds!.top - containerRect.top,
       1,
     );
+  });
+
+  test('repositions after layout shifts post-selection', async () => {
+    const editor = createEditor();
+    editor.insertEmbed(0, 'image', testImageSrc);
+    editor.setSelection(0, 1);
+    const img = container.querySelector('img') as HTMLImageElement;
+    await img.decode();
+    await flushReposition();
+    container.style.marginTop = '96px';
+    await flushReposition();
+    const overlay = editor.container.querySelector(
+      '.lxr-image-resize',
+    ) as HTMLDivElement;
+    expectOverlayAligned(editor, img, overlay);
   });
 
   test('destroy removes overlay', async () => {

@@ -77,7 +77,7 @@ Shows a resize handle when a single image embed is selected.
 
 Does not affect video or other embeds.
 
-The resize overlay mounts on `.lxr-container` (sibling of the scroll surface) and tracks the image via DOM coordinates. Call `editor.destroy()` when unmounting the editor to avoid orphan overlays in SPA remounts.
+The overlay mounts on `.lxr-container` (sibling of the scroll surface) and tracks the image via DOM coordinates after layout settles. Call `editor.destroy()` when unmounting the editor to avoid orphan overlays in SPA remounts.
 
 API details: [API reference — imageResize](../../api/reference.md#image-resize-imageresize)
 

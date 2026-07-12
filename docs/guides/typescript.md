@@ -42,6 +42,8 @@ No `@types/lextrix` package is required.
 - `Lextrix` class and `LextrixOptions`
 - Module config types: `LextrixModulesConfig`, `ImageResizeOptions`, `ToolbarModuleOptions`, `SyntaxModuleOptions`, `UploaderModuleOptions`, `HistoryModuleOptions`, `ClipboardModuleOptions`
 - `TableModule` and `getModule('table')`
+- `ImageResizeModule` and `getModule('imageResize')`
+- `setText`, `getLeaf`, `getLine`, `getLines`, `getIndex`, `scrollSelectionIntoView`
 - `importContent`, `exportContent`, `listExportFormats`, `getExportWarnings`
 - `text-change` and `selection-change` handler signatures
 - `ChangeSet`, `Range`, `SafetyIssue`, `ContentSerializer`, serialization types

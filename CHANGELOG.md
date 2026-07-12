@@ -1,24 +1,51 @@
 # Changelog
 
+## 2.0.5 (2026-07-12)
+
+### Fixed
+
+- **Image resize overlay lag on first select** — defer reposition until after layout (double `requestAnimationFrame`); listen for document scroll, window resize, and `ResizeObserver` on the image and container
+- **`getModule('imageResize')` typing** — export `ImageResizeModule` with `reposition()` and `destroy()`
+
+### Added
+
+- TypeScript declarations for `setText`, `getLeaf`, `getLine`, `getLines`, `getIndex`, `scrollSelectionIntoView`, `scrollRectIntoView`, `focus({ preventScroll })`, `getBounds(Range)`, and `setSelection(null)`
+- npm keywords for discoverability (`lextrix`, `markdown`, `image-resize`, …)
+
+## @lextrix/react 0.1.0 (2026-07-12)
+
+### Added
+
+- New package **`@lextrix/react`** — official React bindings (`LextrixEditor`)
+- Controlled / uncontrolled content via `value`, `defaultValue`, `format`, `onChange`
+- Imperative ref: `getEditor()`, `focus`, `blur`, `exportContent`, `importContent`
+- `'use client'` for Next.js App Router
+- Docs: [React guide](./docs/guides/react.md)
+- Example: `examples/vite-react` uses `@lextrix/react`
+
+Install: `npm install lextrix @lextrix/react`
+
+Requires peer **`lextrix@^2.0.5`**.
+
 ## 2.0.4 (2026-06-12)
 
 ### Fixed
 
-- **Image resize overlay misaligned** — `reposition()` no longer double-subtracts the container offset; positions from the image DOM rect relative to `.lxr-editor`
-- **Image resize overlay outside editor** — overlay repositioned from the image DOM rect (single offset); mounts on `.lxr-container` because `.lxr-editor` is the scroll blot and cannot host foreign DOM nodes
-- **`getBounds()` width 0 on image embeds** — `getClientBounds()` returns `rect.width` for element nodes (images, etc.)
-- **Orphan resize overlays on remount** — `imageResize.destroy()` removes listeners and DOM; `editor.destroy()` calls it (fixes duplicate borders in React Strict Mode)
-- Image resize listeners use arrow handlers so `reposition` can be patched after init without stale bound references
+- **Image resize overlay misaligned** — `reposition()` uses the image DOM rect minus the container rect (no double offset from `getBounds()`)
+- Overlay mounts on `.lxr-container` (not `.lxr-editor` / scroll blot) so foreign DOM does not break reconcile
+- **`getBounds()` width 0 on image embeds** — `getClientBounds()` returns `rect.width` for element nodes
+- **Orphan resize overlays on remount** — `imageResize.destroy()` removes listeners and DOM; `editor.destroy()` calls it
+- Image resize listeners use arrow handlers so `reposition` can be patched after init
 
 ### Added
 
 - Public TypeScript types for module config: `LextrixModulesConfig`, `ImageResizeOptions`, `TableModule`, `ContentSerializer`, and related interfaces
 - Runnable examples: `examples/vite-vanilla`, `examples/vite-react`
-- Docs: expanded [API reference](./docs/api/reference.md) (modules, serializers, editor options), [evaluation guide](./docs/getting-started/evaluation.md) (optional modules step), [TypeScript guide](./docs/guides/typescript.md)
+- Docs: expanded [API reference](./docs/api/reference.md), [evaluation guide](./docs/getting-started/evaluation.md), [TypeScript guide](./docs/guides/typescript.md)
 
 ### Changed
 
-- `.lxr-editor` is `position: relative` so absolute resize overlay positioning is correct inside the scroll area
+- `.lxr-editor` is `position: relative` for absolute overlay positioning inside the scroll area
 
 ## 2.0.3 (2026-06-11)
 
@@ -89,7 +116,6 @@
 - HTML round-trip is partial (DOM-backed export)
 - MDX components are experimental
 - Markdown is a subset, not full GFM/CommonMark
-- Ordered list export always uses `1.`
 
 ## 1.0.2 (2026-05-31)
 
@@ -108,6 +134,7 @@
 - Themes: snow, bubble, slate, dawn
 - Image resize module (`modules.imageResize`)
 
+[2.0.5]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.5
 [2.0.4]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.4
 [2.0.3]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.3
 [2.0.2]: https://github.com/rishureetesh/lextrix/releases/tag/v2.0.2

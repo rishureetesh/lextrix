@@ -18,11 +18,17 @@ Built by **[Reetesh Kumar](https://iamreetesh.com/me)** · [iamreetesh.com](http
 
 Install only **`lextrix`**. The other packages listed under [Packages](#packages) are for contributors and internal architecture — you do not need them to use the editor.
 
-**Using React or Next.js?** Start with the [Frameworks guide](./docs/guides/frameworks.md).
+**Using React or Next.js?**
+
+```bash
+npm install lextrix @lextrix/react
+```
+
+See the [React guide](./docs/guides/react.md) · [Frameworks](./docs/guides/frameworks.md).
 
 Full walkthrough: [evaluation.md](./docs/getting-started/evaluation.md)
 
-**Runnable examples:** [Vanilla Vite](./examples/vite-vanilla) · [React Vite](./examples/vite-react)
+**Runnable examples:** [Vanilla Vite](./examples/vite-vanilla) · [React Vite](./examples/vite-react) (`@lextrix/react`)
 
 ---
 
@@ -75,7 +81,7 @@ editor.on('text-change', (changeSet, oldChangeSet, source) => {
 });
 ```
 
-More: [cookbook](./docs/guides/cookbook.md) · [DOM mounting](./docs/guides/dom-mounting.md) · [React / Next.js](./docs/guides/frameworks.md)
+More: [cookbook](./docs/guides/cookbook.md) · [DOM mounting](./docs/guides/dom-mounting.md) · [React](./docs/guides/react.md) · [Frameworks](./docs/guides/frameworks.md)
 
 ### Serialization
 

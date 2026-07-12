@@ -2,7 +2,7 @@
 
 A linear path for trying Lextrix for the first time. No setup beyond a bundler or static HTML page.
 
-**Using React or Next.js?** Skip to [Framework integration](../guides/frameworks.md) after step 5.
+**Using React or Next.js?** Prefer [`@lextrix/react`](../guides/react.md). See [Frameworks](../guides/frameworks.md) after step 5.
 
 ---
 
@@ -207,11 +207,16 @@ Remember: native tables cannot export to Markdown/MDX — use HTML export.
 
 ## 9. React / Next.js next steps
 
-Lextrix is a class, not a React component. Mount it in `useEffect`, call `editor.destroy()` on unmount, and import theme CSS on the client.
+Prefer the official wrapper:
 
-- [Framework integration](../guides/frameworks.md) — React, Next.js App Router, Vue, script tag
-- [DOM mounting](../guides/dom-mounting.md) — toolbar placement and cleanup when remounting
-- Runnable starters: [vite-vanilla](../../examples/vite-vanilla) · [vite-react](../../examples/vite-react)
+```bash
+npm install lextrix @lextrix/react
+```
+
+- [React guide](../guides/react.md) — `LextrixEditor` (recommended)
+- [Frameworks](../guides/frameworks.md) — Next.js, Vue, script tag, manual mount
+- [DOM mounting](../guides/dom-mounting.md) — if you mount Lextrix yourself
+- Examples: [vite-vanilla](../../examples/vite-vanilla) · [vite-react](../../examples/vite-react)
 
 ---
 

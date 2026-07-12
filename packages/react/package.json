@@ -1,0 +1,71 @@
+{
+  "name": "@lextrix/react",
+  "version": "0.1.0",
+  "description": "Official React bindings for the Lextrix rich-text editor",
+  "type": "module",
+  "license": "MIT",
+  "author": "Reetesh Kumar (https://iamreetesh.com/me)",
+  "homepage": "https://iamreetesh.com/lextrix",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rishureetesh/lextrix.git",
+    "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/rishureetesh/lextrix/issues"
+  },
+  "keywords": [
+    "lextrix",
+    "react",
+    "rich-text",
+    "rich-text-editor",
+    "wysiwyg",
+    "editor",
+    "react-component",
+    "contenteditable",
+    "typescript"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "peerDependencies": {
+    "lextrix": "^2.0.5",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "lextrix": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "jsdom": "^26.1.0",
+    "lextrix": "2.0.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "scripts": {
+    "build": "node ./scripts/build.mjs",
+    "lint:tsc": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -121,6 +121,16 @@ export interface HistoryModule {
   cutoff(): void;
 }
 
+/** Public surface of the opt-in image resize module (`getModule('imageResize')`). */
+export interface ImageResizeModule {
+  reposition(): void;
+  destroy(): void;
+}
+
+export interface ScrollRectIntoViewOptions {
+  smooth?: boolean;
+}
+
 export interface LextrixModulesConfig {
   toolbar?: ToolbarConfig | ToolbarModuleOptions | string;
   table?: boolean;
@@ -332,9 +342,22 @@ export declare class Lextrix {
     length?: number | EmitterSource,
     source?: EmitterSource,
   ): void;
-  setSelection(range: Range, source?: EmitterSource): void;
+  setSelection(range: Range | null, source?: EmitterSource): void;
   getBounds(index: number, length?: number): Bounds | null;
-  focus(): void;
+  getBounds(range: Range): Bounds | null;
+  getLeaf(index: number): [unknown, number];
+  getLine(index: number): [unknown, number];
+  getLines(index?: number, length?: number): unknown[];
+  getLines(range: Range): unknown[];
+  getIndex(blot: unknown): number;
+  setText(text: string, source?: EmitterSource): ChangeSet;
+  scrollSelectionIntoView(options?: ScrollRectIntoViewOptions): void;
+  scrollRectIntoView(bounds: Bounds, options?: ScrollRectIntoViewOptions): void;
+  scrollRectIntoView(
+    rect: DOMRect,
+    options?: ScrollRectIntoViewOptions,
+  ): void;
+  focus(options?: { preventScroll?: boolean }): void;
   blur(): void;
   hasFocus(): boolean;
 
@@ -346,7 +369,8 @@ export declare class Lextrix {
   once(event: string, handler: (...args: unknown[]) => void): void;
 
   getModule(name: 'table'): TableModule | undefined;
-  getModule(name: 'imageResize'): unknown;
+  getModule(name: 'imageResize'): ImageResizeModule | undefined;
+  getModule(name: 'history'): HistoryModule | undefined;
   getModule(name: 'toolbar'): unknown;
   getModule(name: 'syntax'): unknown;
   getModule(name: string): unknown;

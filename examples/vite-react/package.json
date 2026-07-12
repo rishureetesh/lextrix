@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lextrix/react": "*",
     "lextrix": "file:../../packages/lextrix/dist/dist",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

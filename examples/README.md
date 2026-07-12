@@ -5,7 +5,7 @@ Runnable starters for evaluating Lextrix. Each example uses current APIs (`impor
 | Example | Stack | Port |
 |---------|-------|------|
 | [vite-vanilla](./vite-vanilla) | Vanilla JS + Vite | 5174 |
-| [vite-react](./vite-react) | React + TypeScript + Vite | 5175 |
+| [vite-react](./vite-react) | React + `@lextrix/react` + Vite | 5175 |
 
 ## Run from the monorepo
 
@@ -21,4 +21,9 @@ Or from an example folder: `cd examples/vite-vanilla` then `npm run dev` (ports 
 
 ## Run with npm only
 
-After `lextrix` is published, copy an example into your project and set `"lextrix": "^2.0.3"` in `package.json` instead of the `file:../../packages/lextrix/dist/dist` dev dependency.
+After `lextrix` is published, copy an example into your project:
+
+```bash
+npm install lextrix @lextrix/react   # React example
+npm install lextrix                  # vanilla example
+```
