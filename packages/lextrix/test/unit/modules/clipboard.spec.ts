@@ -2,6 +2,7 @@ import ChangeSet from 'lextrix-change';
 import { describe, expect, test, vitest } from 'vitest';
 import Lextrix from '../../../src/core.js';
 import { Range } from 'lextrix-core/core/selection.js';
+import type Clipboard from 'lextrix-modules/modules/clipboard.js';
 import Bold from 'lextrix-formats/formats/bold.js';
 import Header from 'lextrix-formats/formats/header.js';
 import Image from 'lextrix-formats/formats/image.js';
@@ -25,6 +26,10 @@ import {
 } from 'lextrix-formats/formats/direction.js';
 import CodeBlock from 'lextrix-formats/formats/code.js';
 import { ColorClass, ColorStyle } from 'lextrix-formats/formats/color.js';
+
+function clipboardOf(editor: Lextrix): Clipboard {
+  return editor.clipboard as Clipboard;
+}
 
 describe('Clipboard', () => {
   describe('events', () => {
@@ -50,7 +55,7 @@ describe('Clipboard', () => {
 
       test('pastes html data', async () => {
         const editor = createLextrix();
-        editor.clipboard.onCapturePaste(clipboardEvent);
+        clipboardOf(editor).onCapturePaste(clipboardEvent);
         expect(editor.root).toEqualHTML(
           '<p>01<strong>|</strong><em>7</em>8</p>',
         );
@@ -64,7 +69,7 @@ describe('Clipboard', () => {
           { insert: '\n' },
         ]);
         editor.setSelection(3, 0);
-        editor.clipboard.onCapturePaste({
+        clipboardOf(editor).onCapturePaste({
           clipboardData: {
             getData: (type: string) =>
               type === 'text/plain' ? 'def' : undefined,
@@ -80,7 +85,7 @@ describe('Clipboard', () => {
       test('pastes links from iOS share sheets', async () => {
         const editor = createLextrix();
         editor.setContents(new ChangeSet().insert('\n'));
-        editor.clipboard.onCapturePaste({
+        clipboardOf(editor).onCapturePaste({
           clipboardData: {
             getData: (type: string) =>
               type === 'text/uri-list' ? 'https://example.com' : undefined,
@@ -93,7 +98,7 @@ describe('Clipboard', () => {
 
         // Ignore comments
         editor.setContents(new ChangeSet().insert('\n'));
-        editor.clipboard.onCapturePaste({
+        clipboardOf(editor).onCapturePaste({
           clipboardData: {
             getData: (type: string) =>
               type === 'text/uri-list'
@@ -111,14 +116,13 @@ describe('Clipboard', () => {
       test('pastes html data if present with file', async () => {
         const editor = createLextrix();
         const upload = vitest.spyOn(editor.uploader, 'upload');
-        editor.clipboard.onCapturePaste({
+        clipboardOf(editor).onCapturePaste({
           ...clipboardEvent,
           clipboardData: {
             ...clipboardEvent.clipboardData,
-            // @ts-expect-error
-            files: ['file'],
+            files: ['file'] as unknown as FileList,
           },
-        });
+        } as ClipboardEvent);
         expect(upload).not.toHaveBeenCalled();
         expect(editor.root).toEqualHTML(
           '<p>01<strong>|</strong><em>7</em>8</p>',
@@ -129,17 +133,16 @@ describe('Clipboard', () => {
       test('pastes image file if present with image only html', async () => {
         const editor = createLextrix();
         const upload = vitest.spyOn(editor.uploader, 'upload');
-        editor.clipboard.onCapturePaste({
+        clipboardOf(editor).onCapturePaste({
           ...clipboardEvent,
           clipboardData: {
-            getData: (type) =>
+            getData: (type: string) =>
               type === 'text/html'
                 ? `<meta charset='utf-8'><img src="/assets/favicon.png"/>`
                 : '|',
-            // @ts-expect-error
-            files: ['file'],
+            files: ['file'] as unknown as FileList,
           },
-        });
+        } as ClipboardEvent);
         expect(upload).toHaveBeenCalled();
       });
 
@@ -147,7 +150,7 @@ describe('Clipboard', () => {
         const editor = createLextrix();
         const change = vitest.fn();
         editor.on('selection-change', change);
-        editor.clipboard.onCapturePaste(clipboardEvent);
+        clipboardOf(editor).onCapturePaste(clipboardEvent);
         expect(change).not.toHaveBeenCalled();
       });
     });
@@ -157,7 +160,7 @@ describe('Clipboard', () => {
         const clipboardData: Record<string, string> = {};
         const clipboardEvent = {
           clipboardData: {
-            setData: (type, data) => {
+            setData: (type: string, data: string) => {
               clipboardData[type] = data;
             },
           },
@@ -169,7 +172,7 @@ describe('Clipboard', () => {
       test('keeps formats of first line', async () => {
         const editor = createLextrix();
         const { clipboardData, clipboardEvent } = setup();
-        editor.clipboard.onCaptureCopy(clipboardEvent, true);
+        clipboardOf(editor).onCaptureCopy(clipboardEvent, true);
         expect(editor.root).toEqualHTML('<h1>01<em>7</em>8</h1>');
         expect(editor.getSelection()).toEqual(new Range(2));
         expect(clipboardData['text/plain']).toEqual('23\n56');
@@ -181,13 +184,13 @@ describe('Clipboard', () => {
 
     test('dangerouslyPasteHTML(html)', () => {
       const editor = createLextrix();
-      editor.clipboard.dangerouslyPasteHTML('<i>ab</i><b>cd</b>');
+      clipboardOf(editor).dangerouslyPasteHTML('<i>ab</i><b>cd</b>');
       expect(editor.root).toEqualHTML('<p><em>ab</em><strong>cd</strong></p>');
     });
 
     test('dangerouslyPasteHTML(index, html)', () => {
       const editor = createLextrix();
-      editor.clipboard.dangerouslyPasteHTML(2, '<b>ab</b>');
+      clipboardOf(editor).dangerouslyPasteHTML(2, '<b>ab</b>');
       expect(editor.root).toEqualHTML(`
         <h1>01<strong>ab</strong>23</h1>
         <p>5<em>67</em>8</p>
@@ -218,7 +221,7 @@ describe('Clipboard', () => {
       ]);
       const editor = new Lextrix(container, { registry });
       editor.setSelection(2, 5);
-      return editor.clipboard;
+      return editor.clipboard as Clipboard;
     };
 
     test('text with adjacent spaces', () => {

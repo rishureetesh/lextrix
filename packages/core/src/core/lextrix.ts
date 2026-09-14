@@ -1291,7 +1291,7 @@ function expandConfig(
     ),
     bounds: resolveSelector(config.bounds),
     serializers: resolveSerializersOption(options.serializers),
-    experimentalDocument: config.experimentalDocument !== false,
+    experimentalDocument: (config as LextrixOptions).experimentalDocument !== false,
   };
 }
 

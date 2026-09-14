@@ -2,7 +2,7 @@
 
 **Version 3.0.0** — a programmable **document engine** with a rich-text **editor projection**.
 
-Built by **[Reetesh Kumar](https://iamreetesh.com/me)** · [Playground](https://iamreetesh.com/lextrix) · [Docs](https://iamreetesh.com/docs) · [Repo docs](./docs/README.md)
+Built by **[Reetesh Kumar](https://iamreetesh.com/me)** · [Playground](https://iamreetesh.com/lextrix#playground) · [Docs](https://iamreetesh.com/docs) · [Repo docs](./docs/README.md)
 
 Lextrix is more than a WYSIWYG editor. ChangeSets are the canonical transitions; Documents and Versions are immutable state; the browser editor projects that state. Collaboration, persistence, and intelligence plug in through stable ports — without putting Auth, billing, or LLM vendors inside the core engine.
 

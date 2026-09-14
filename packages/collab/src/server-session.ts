@@ -32,6 +32,7 @@ import type {
   AckFrame,
   CollabControlFrame,
   CollabObserver,
+  EnvelopeFrame,
   RejectCode,
   RejectFrame,
   SyncRequestFrame,

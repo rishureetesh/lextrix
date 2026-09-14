@@ -4,6 +4,7 @@
 import ChangeSet from 'lextrix-change';
 import { describe, expect, test } from 'vitest';
 import Lextrix from '../../../src/core.js';
+import type History from 'lextrix-modules/modules/history.js';
 import { createRegistry } from '../__helpers__/factory.js';
 import Bold from 'lextrix-formats/formats/bold.js';
 import { normalizeHTML } from '../__helpers__/utils.js';
@@ -89,10 +90,10 @@ describe('Hybrid B+ Document → Editor projection (Phase 5B)', () => {
   test('history transforms on remote; undo stack not polluted as user entry', () => {
     const lex = createLextrix('<p>Hi</p>');
     lex.insertText(2, '!', 'user');
-    const undoBefore = lex.history.stack.undo.length;
+    const undoBefore = (lex.history as History).stack.undo.length;
     lex.applyExternalChange(new ChangeSet().retain(0).insert('Z'));
     // Remote should transform existing undo entries, not add a user record.
-    expect(lex.history.stack.undo.length).toBe(undoBefore);
+    expect((lex.history as History).stack.undo.length).toBe(undoBefore);
     expectContentsEqual(
       lex.getContents(),
       lex.getExperimentalDocument()!.getContents(),

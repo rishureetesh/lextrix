@@ -39,7 +39,7 @@ export function parseStructuredEdit(
       value = JSON.parse(trimmed) as unknown;
     } catch {
       if (allowBareString) {
-        return { kind: 'replace-range', text: value };
+        return { kind: 'replace-range', text: trimmed };
       }
       throw new IntelligenceParseError(
         'Expected JSON structured edit, got non-JSON string',

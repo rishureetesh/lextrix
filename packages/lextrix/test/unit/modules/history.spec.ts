@@ -2,6 +2,7 @@ import ChangeSet from 'lextrix-change';
 import { describe, expect, test, vitest } from 'vitest';
 import Lextrix from '../../../src/core.js';
 import { getLastChangeIndex } from 'lextrix-modules/modules/history.js';
+import type History from 'lextrix-modules/modules/history.js';
 import type { HistoryOptions } from 'lextrix-modules/modules/history.js';
 import { createRegistry, createScroll } from '../__helpers__/factory.js';
 import { sleep } from '../__helpers__/utils.js';
@@ -9,6 +10,10 @@ import Bold from 'lextrix-formats/formats/bold.js';
 import Image from 'lextrix-formats/formats/image.js';
 import Link from 'lextrix-formats/formats/link.js';
 import { AlignClass } from 'lextrix-formats/formats/align.js';
+
+function historyOf(editor: Lextrix): History {
+  return editor.history as History;
+}
 
 describe('History', () => {
   const scroll = createScroll(
@@ -90,7 +95,7 @@ describe('History', () => {
       ['A', 'B', 'C'].forEach((text) => {
         editor.insertText(0, text);
       });
-      expect(editor.history.stack.undo.length).toEqual(2);
+      expect(historyOf(editor).stack.undo.length).toEqual(2);
     });
 
     test('emits selection changes', () => {
@@ -98,7 +103,7 @@ describe('History', () => {
       editor.insertText(0, 'foo');
       const change = vitest.fn();
       editor.on('selection-change', change);
-      editor.history.undo();
+      historyOf(editor).undo();
 
       expect(change).toHaveBeenCalledOnce();
       expect(change).toHaveBeenCalledWith(expect.anything(), null, 'user');
@@ -110,67 +115,67 @@ describe('History', () => {
       editor.update();
       const changed = editor.getContents();
       expect(changed).not.toEqual(original);
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getContents()).toEqual(original);
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getContents()).toEqual(changed);
     });
 
     test('merge changes', () => {
       const { editor, original } = setup();
-      expect(editor.history.stack.undo.length).toEqual(0);
+      expect(historyOf(editor).stack.undo.length).toEqual(0);
       editor.updateContents(new ChangeSet().retain(12).insert('e'));
-      expect(editor.history.stack.undo.length).toEqual(1);
+      expect(historyOf(editor).stack.undo.length).toEqual(1);
       editor.updateContents(new ChangeSet().retain(13).insert('s'));
-      expect(editor.history.stack.undo.length).toEqual(1);
-      editor.history.undo();
+      expect(historyOf(editor).stack.undo.length).toEqual(1);
+      historyOf(editor).undo();
       expect(editor.getContents()).toEqual(original);
-      expect(editor.history.stack.undo.length).toEqual(0);
+      expect(historyOf(editor).stack.undo.length).toEqual(0);
     });
 
     test('dont merge changes', async () => {
       const { editor } = setup();
-      expect(editor.history.stack.undo.length).toEqual(0);
+      expect(historyOf(editor).stack.undo.length).toEqual(0);
       editor.updateContents(new ChangeSet().retain(12).insert('e'));
-      expect(editor.history.stack.undo.length).toEqual(1);
-      await sleep((editor.history.options.delay as number) * 1.25);
+      expect(historyOf(editor).stack.undo.length).toEqual(1);
+      await sleep((historyOf(editor).options.delay as number) * 1.25);
       editor.updateContents(new ChangeSet().retain(13).insert('s'));
-      expect(editor.history.stack.undo.length).toEqual(2);
+      expect(historyOf(editor).stack.undo.length).toEqual(2);
     });
 
     test('multiple undos', async () => {
       const { editor, original } = setup();
-      expect(editor.history.stack.undo.length).toEqual(0);
+      expect(historyOf(editor).stack.undo.length).toEqual(0);
       editor.updateContents(new ChangeSet().retain(12).insert('e'));
       const contents = editor.getContents();
-      await sleep((editor.history.options.delay as number) * 1.25);
+      await sleep((historyOf(editor).options.delay as number) * 1.25);
       editor.updateContents(new ChangeSet().retain(13).insert('s'));
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getContents()).toEqual(contents);
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getContents()).toEqual(original);
     });
 
     test('transform api change', () => {
       const { editor } = setup();
-      editor.history.options.userOnly = true;
+      historyOf(editor).options.userOnly = true;
       editor.updateContents(
         new ChangeSet().retain(12).insert('es'),
         Lextrix.sources.USER,
       );
-      editor.history.lastRecorded = 0;
+      historyOf(editor).lastRecorded = 0;
       editor.updateContents(
         new ChangeSet().retain(14).insert('!'),
         Lextrix.sources.USER,
       );
-      editor.history.undo();
+      historyOf(editor).undo();
       editor.updateContents(new ChangeSet().retain(4).delete(5), Lextrix.sources.API);
       expect(editor.getContents()).toEqual(new ChangeSet().insert('The foxes\n'));
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getContents()).toEqual(new ChangeSet().insert('The fox\n'));
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getContents()).toEqual(new ChangeSet().insert('The foxes\n'));
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getContents()).toEqual(new ChangeSet().insert('The foxes!\n'));
     });
 
@@ -181,25 +186,25 @@ describe('History', () => {
         new ChangeSet().insert(url, { link: url }),
         Lextrix.sources.USER,
       );
-      editor.history.lastRecorded = 0;
+      historyOf(editor).lastRecorded = 0;
       editor.updateContents(
         new ChangeSet().delete(url.length).insert('Google', { link: url }),
         Lextrix.sources.API,
       );
-      editor.history.lastRecorded = 0;
+      historyOf(editor).lastRecorded = 0;
       editor.updateContents(
         new ChangeSet().retain(editor.getLength() - 1).insert('!'),
         Lextrix.sources.USER,
       );
-      editor.history.lastRecorded = 0;
+      historyOf(editor).lastRecorded = 0;
       expect(editor.getContents()).toEqual(
         new ChangeSet().insert('Google', { link: url }).insert('The lazy fox!\n'),
       );
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getContents()).toEqual(
         new ChangeSet().insert('Google', { link: url }).insert('The lazy fox\n'),
       );
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getContents()).toEqual(
         new ChangeSet().insert('Google', { link: url }).insert('The lazy fox\n'),
       );
@@ -207,21 +212,21 @@ describe('History', () => {
 
     test('ignore remote changes', () => {
       const { editor } = setup();
-      editor.history.options.delay = 0;
-      editor.history.options.userOnly = true;
+      historyOf(editor).options.delay = 0;
+      historyOf(editor).options.userOnly = true;
       editor.setText('\n');
       editor.insertText(0, 'a', Lextrix.sources.USER);
       editor.insertText(1, 'b', Lextrix.sources.API);
       editor.insertText(2, 'c', Lextrix.sources.USER);
       editor.insertText(3, 'd', Lextrix.sources.API);
       expect(editor.getText()).toEqual('abcd\n');
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getText()).toEqual('abd\n');
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getText()).toEqual('bd\n');
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getText()).toEqual('abd\n');
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getText()).toEqual('abcd\n');
     });
 
@@ -232,13 +237,13 @@ describe('History', () => {
       editor.insertText(0, 'a', Lextrix.sources.USER);
       editor.insertText(2, 'c', Lextrix.sources.API);
       expect(editor.getText()).toEqual('abcd\n');
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getText()).toEqual('bcd\n');
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getText()).toEqual('bc\n');
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getText()).toEqual('bcd\n');
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getText()).toEqual('abcd\n');
     });
 
@@ -251,13 +256,13 @@ describe('History', () => {
       editor.insertText(1, '2', Lextrix.sources.API);
       editor.insertText(0, '1', Lextrix.sources.API);
       expect(editor.getText()).toEqual('1A2B3C4\n');
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getText()).toEqual('1234\n');
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getText()).toEqual('1A2B3C4\n');
-      editor.history.undo();
+      historyOf(editor).undo();
       expect(editor.getText()).toEqual('1234\n');
-      editor.history.redo();
+      historyOf(editor).redo();
       expect(editor.getText()).toEqual('1A2B3C4\n');
     });
   });

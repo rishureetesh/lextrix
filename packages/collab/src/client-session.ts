@@ -207,7 +207,6 @@ export class AuthoritativeClientSession {
    * After sync response applied: rebase pending against new HEAD and resubmit.
    */
   rebaseAndResubmit(): void {
-    const head = this.handle.currentVersion();
     for (const p of this.pending) {
       p.inFlight = false;
       // Re-author from original against current contents via transform through

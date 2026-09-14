@@ -128,21 +128,21 @@ SlateTheme.DEFAULTS = merge({}, BaseTheme.DEFAULTS, {
     toolbar: {
       handlers: {
         link(value: string) {
+          const { lextrix } = this as unknown as { lextrix: Lextrix };
           if (value) {
-            const range = this.lextrix.getSelection();
+            const range = lextrix.getSelection();
             if (range == null || range.length === 0) return;
-            let preview = this.lextrix.getText(range);
+            let preview = lextrix.getText(range);
             if (
               /^\S+@\S+\.\S+$/.test(preview) &&
               preview.indexOf('mailto:') !== 0
             ) {
               preview = `mailto:${preview}`;
             }
-            // @ts-expect-error
-            const { tooltip } = this.lextrix.theme;
-            tooltip.edit('link', preview);
+            const theme = lextrix.theme as BaseTheme;
+            (theme.tooltip as BaseTooltip | undefined)?.edit('link', preview);
           } else {
-            this.lextrix.format('link', false, Lextrix.sources.USER);
+            lextrix.format('link', false, Lextrix.sources.USER);
           }
         },
       },

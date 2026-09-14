@@ -152,7 +152,7 @@ describe('InMemoryCollaborationAdapter', () => {
 
     const before = handleA.listVersions().length;
     const again = clientA.ingestRemote(env);
-    expect(again.duplicate).toBe(true);
+    expect(again.ok && again.duplicate).toBe(true);
     expect(handleA.listVersions().length).toBe(before);
     expect(coordinator.has(env.changeId)).toBe(true);
     clientA.destroy();

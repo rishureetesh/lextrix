@@ -136,7 +136,6 @@ describe('DocumentAnchor', () => {
     const handle = DocumentHandle.create({
       contents: new ChangeSet().insert('hello world\n'),
     });
-    const v0 = handle.currentVersion();
     const anchor = handle.createAnchor(6, { affinity: 'after' });
     handle.apply(new ChangeSet().retain(6).insert('beautiful '));
     handle.apply(new ChangeSet().retain(0).insert('>>'));

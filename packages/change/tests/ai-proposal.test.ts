@@ -135,15 +135,6 @@ describe('Phase 6A AI-neutral proposals', () => {
     const ai2 = handle.rebaseProposal(ai);
     handle.acceptProposal(ai2);
 
-    const expected = new ChangeSet()
-      .insert('hello\n')
-      .compose(new ChangeSet().retain(5).insert('!'))
-      .compose(
-        new ChangeSet()
-          .retain(5)
-          .insert('!')
-          .transform(new ChangeSet().insert('>>').retain(6), true),
-      );
     // Compare via OT pair from shared base
     const A = new ChangeSet().retain(5).insert('!');
     const B = new ChangeSet().insert('>>').retain(6);

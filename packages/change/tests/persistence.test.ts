@@ -11,6 +11,7 @@ import {
   InMemoryDocumentPersistence,
   PersistenceError,
   validateVersionChain,
+  type DocumentPersistence,
 } from '../src/persistence/index.js';
 
 function buildChain(n: number): {
@@ -235,7 +236,7 @@ describe('Phase 9 durability semantics', () => {
     const store = new InMemoryDocumentPersistence();
     store.appendVersion(handle.currentVersion());
     let failNext = false;
-    const flaky: typeof store = {
+    const flaky: DocumentPersistence = {
       appendVersion(v) {
         if (failNext) {
           failNext = false;

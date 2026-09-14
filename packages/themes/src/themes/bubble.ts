@@ -134,11 +134,12 @@ BubbleTheme.DEFAULTS = merge({}, BaseTheme.DEFAULTS, {
     toolbar: {
       handlers: {
         link(value: string) {
+          const { lextrix } = this as unknown as { lextrix: Lextrix };
           if (!value) {
-            this.lextrix.format('link', false, Lextrix.sources.USER);
+            lextrix.format('link', false, Lextrix.sources.USER);
           } else {
-            // @ts-expect-error
-            this.lextrix.theme.tooltip.edit();
+            const theme = lextrix.theme as BaseTheme;
+            (theme.tooltip as BaseTooltip | undefined)?.edit();
           }
         },
       },
