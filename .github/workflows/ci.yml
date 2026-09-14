@@ -49,6 +49,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: node scripts/ensure-rollup-native.mjs
       - run: npm run test:coverage -w lextrix-serialize
       - run: npm run test -w lextrix-core
 
