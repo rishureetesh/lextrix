@@ -158,7 +158,12 @@ export interface ContentSerializer {
 
 export declare class ChangeSet {
   ops: ChangeOp[];
+  readonly isFrozen: boolean;
   constructor(ops?: ChangeOp[] | { ops: ChangeOp[] });
+  /** Copy suitable for safe sharing before mutation. */
+  clone(): ChangeSet;
+  /** Prevent further builder mutation (insert/delete/retain/push/chop). */
+  freeze(): ChangeSet;
   insert(
     value: string | Record<string, unknown>,
     attributes?: ChangeAttributes | null,
@@ -169,6 +174,7 @@ export declare class ChangeSet {
     attributes?: ChangeAttributes | null,
   ): ChangeSet;
   push(op: ChangeOp): ChangeSet;
+  chop(): ChangeSet;
   compose(other: ChangeSet): ChangeSet;
   concat(other: ChangeSet): ChangeSet;
   diff(other: ChangeSet): ChangeSet;
@@ -178,6 +184,62 @@ export declare class ChangeSet {
   length(): number;
   getText(index?: number, length?: number): string;
 }
+
+export interface EditorCapabilities {
+  katex: boolean;
+  highlightJs: boolean;
+  imageResize: boolean;
+  serializers: SerializeFormat[];
+}
+
+export type LextrixErrorCode =
+  | 'INVALID_CONTAINER'
+  | 'UNKNOWN_THEME'
+  | 'UNKNOWN_MODULE'
+  | 'MISSING_BLOT'
+  | 'INVALID_REGISTRY_PATH'
+  | 'OPTIMIZE_LIMIT'
+  | 'SERIALIZATION'
+  | 'DOM'
+  | 'INTERNAL';
+
+export declare class LextrixError extends Error {
+  readonly code: LextrixErrorCode;
+  constructor(message: string, code?: LextrixErrorCode);
+}
+
+export declare class InvalidContainerError extends LextrixError {}
+export declare class UnknownThemeError extends LextrixError {}
+export declare class MissingBlotError extends LextrixError {}
+export declare class InvalidRegistryPathError extends LextrixError {}
+
+export declare const ExtensionHost: {
+  registerFormat(
+    LextrixClass: { register: (...args: unknown[]) => void },
+    name: string,
+    target: unknown,
+    overwrite?: boolean,
+  ): void;
+  registerModule(
+    LextrixClass: { register: (...args: unknown[]) => void },
+    name: string,
+    target: unknown,
+    overwrite?: boolean,
+  ): void;
+  registerTheme(
+    LextrixClass: { register: (...args: unknown[]) => void },
+    name: string,
+    target: unknown,
+    overwrite?: boolean,
+  ): void;
+  registerAttributor(
+    LextrixClass: { register: (...args: unknown[]) => void },
+    scope: string,
+    name: string,
+    target: unknown,
+    overwrite?: boolean,
+  ): void;
+};
 
 export interface LextrixOptions {
   theme?: string;
@@ -259,7 +321,16 @@ export declare class Lextrix {
   ): void;
 
   destroy(): void;
+  getCapabilities(): EditorCapabilities;
   getExportWarnings(input: ExportInput): SafetyIssue[];
+  /** @deprecated Prefer importContent */
+  import(
+    content: string,
+    format: SerializeFormat,
+    source?: EmitterSource,
+  ): ChangeSet;
+  /** @deprecated Prefer exportContent */
+  export(input: ExportInput): string;
   importContent(
     content: string,
     format: SerializeFormat,
@@ -372,6 +443,9 @@ export declare class Lextrix {
   getModule(name: 'imageResize'): ImageResizeModule | undefined;
   getModule(name: 'history'): HistoryModule | undefined;
   getModule(name: 'toolbar'): unknown;
+  getModule(name: 'clipboard'): unknown;
+  getModule(name: 'keyboard'): unknown;
+  getModule(name: 'uploader'): unknown;
   getModule(name: 'syntax'): unknown;
   getModule(name: string): unknown;
   enable(enabled?: boolean): void;

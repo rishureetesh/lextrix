@@ -28,6 +28,13 @@ export type {
   MdxSerializerOptions,
   HtmlSerializerOptions,
   SafetyIssue,
+  EditorCapabilities,
+  LextrixErrorCode,
+  KeyboardModule,
+  ClipboardModule,
+  HistoryModule as HistoryModuleContract,
+  UploaderModule,
+  ToolbarOptions,
 } from 'lextrix-core';
 export {
   SerializerHost,
@@ -45,6 +52,12 @@ export {
   htmlSerializer,
   markdownSerializer,
   mdxSerializer,
+  ExtensionHost,
+  LextrixError,
+  InvalidContainerError,
+  UnknownThemeError,
+  MissingBlotError,
+  InvalidRegistryPathError,
 } from 'lextrix-core';
 export { lxrPath } from 'lextrix-core/registry-paths.js';
 export { ChangeAttributes, ChangeIterator, ChangeOp, ChangeSet, Dom, Range };

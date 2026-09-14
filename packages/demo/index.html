@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lextrix Playground</title>
+    <title>Lextrix 3.0 Playground</title>
     <link id="theme-css" rel="stylesheet" href="/lextrix.snow.css" />
     <link
       rel="stylesheet"
@@ -21,184 +21,22 @@
       defer
       src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js"
     ></script>
-    <style>
-      :root {
-        color-scheme: light;
-        --border: #e2e8f0;
-        --muted: #64748b;
-        --error-bg: #fef2f2;
-        --error-fg: #b91c1c;
-        --warn-bg: #fffbeb;
-        --warn-fg: #b45309;
-        --panel-bg: #f8fafc;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        font-family: system-ui, -apple-system, sans-serif;
-        margin: 0;
-        background: #fff;
-        color: #0f172a;
-      }
-      .page {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 1.5rem 1rem 3rem;
-      }
-      header {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 1.25rem;
-      }
-      h1 {
-        font-size: 1.5rem;
-        margin: 0;
-      }
-      .controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem 1.25rem;
-        align-items: center;
-        font-size: 0.875rem;
-        color: var(--muted);
-      }
-      label {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-      }
-      select,
-      button,
-      textarea {
-        font: inherit;
-      }
-      select {
-        padding: 0.35rem 0.5rem;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-      }
-      button {
-        padding: 0.4rem 0.75rem;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-        background: #fff;
-        cursor: pointer;
-      }
-      button:hover {
-        background: var(--panel-bg);
-      }
-      button.primary {
-        background: #0f172a;
-        color: #fff;
-        border-color: #0f172a;
-      }
-      #editor-mount .lxr-container {
-        min-height: 320px;
-      }
-      .panels {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-top: 1.25rem;
-      }
-      @media (max-width: 800px) {
-        .panels {
-          grid-template-columns: 1fr;
-        }
-      }
-      .panel {
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        overflow: hidden;
-      }
-      .panel h2 {
-        margin: 0;
-        padding: 0.65rem 0.85rem;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        background: var(--panel-bg);
-        border-bottom: 1px solid var(--border);
-        color: var(--muted);
-      }
-      .panel-body {
-        padding: 0.85rem;
-      }
-      textarea {
-        width: 100%;
-        min-height: 120px;
-        padding: 0.6rem;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        resize: vertical;
-        font-family: ui-monospace, monospace;
-        font-size: 0.8rem;
-      }
-      .row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.65rem;
-        align-items: center;
-      }
-      .tabs {
-        display: flex;
-        gap: 0.25rem;
-        flex-wrap: wrap;
-        margin-bottom: 0.65rem;
-      }
-      .tabs button.active {
-        background: #0f172a;
-        color: #fff;
-        border-color: #0f172a;
-      }
-      #export-output {
-        min-height: 140px;
-        white-space: pre-wrap;
-        word-break: break-word;
-        font-family: ui-monospace, monospace;
-        font-size: 0.8rem;
-        background: var(--panel-bg);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        padding: 0.6rem;
-      }
-      .banner {
-        margin-top: 1rem;
-        padding: 0.65rem 0.85rem;
-        border-radius: 8px;
-        font-size: 0.875rem;
-      }
-      .banner.error {
-        background: var(--error-bg);
-        color: var(--error-fg);
-        border: 1px solid #fecaca;
-      }
-      .banner.warn {
-        background: var(--warn-bg);
-        color: var(--warn-fg);
-        border: 1px solid #fde68a;
-      }
-      .banner.hidden {
-        display: none;
-      }
-      .meta {
-        margin-top: 0.75rem;
-        font-size: 0.8rem;
-        color: var(--muted);
-      }
-    </style>
+    <link rel="stylesheet" href="/playground.css" />
   </head>
   <body>
     <div class="page">
       <header>
-        <h1>Lextrix Playground</h1>
+        <div>
+          <p class="eyebrow">Lextrix 3.0.0</p>
+          <h1>Platform playground</h1>
+          <p class="lede">
+            Rich-text editor as a <strong>projection</strong> of the document
+            engine — Document, Version, Proposal, Collaboration, and
+            infrastructure ports use real package APIs.
+          </p>
+        </div>
         <div class="controls">
-          <label>
+          <label for="theme-select">
             Theme
             <select id="theme-select">
               <option value="snow" selected>Snow</option>
@@ -207,32 +45,36 @@
               <option value="dawn">Dawn</option>
             </select>
           </label>
-          <label>
+          <label for="read-only">
             <input type="checkbox" id="read-only" />
             Read-only
           </label>
-          <span id="doc-meta">Length: —</span>
+          <span id="doc-meta" aria-live="polite">Length: —</span>
         </div>
       </header>
 
-      <div id="editor-mount"></div>
+      <section class="section" aria-labelledby="editor-heading">
+        <h2 id="editor-heading">Editor</h2>
+        <div id="editor-mount"></div>
+      </section>
 
       <div id="error-banner" class="banner error hidden" role="alert"></div>
       <div id="warn-banner" class="banner warn hidden" role="status"></div>
 
       <div class="panels">
-        <section class="panel">
-          <h2>Import</h2>
+        <section class="panel" aria-labelledby="import-heading">
+          <h2 id="import-heading">Import</h2>
           <div class="panel-body">
-            <label>
+            <label for="import-format">
               Format
               <select id="import-format">
                 <option value="html">HTML</option>
-                <option value="markdown">Markdown</option>
+                <option value="markdown" selected>Markdown</option>
                 <option value="mdx">MDX</option>
                 <option value="json">JSON</option>
               </select>
             </label>
+            <label class="sr-only" for="import-input">Import content</label>
             <textarea
               id="import-input"
               placeholder="Paste content to import…"
@@ -247,18 +89,24 @@
           </div>
         </section>
 
-        <section class="panel">
-          <h2>Export</h2>
+        <section class="panel" aria-labelledby="export-heading">
+          <h2 id="export-heading">Export</h2>
           <div class="panel-body">
-            <div class="tabs" id="export-tabs">
-              <button type="button" data-format="html" class="active">
+            <div class="tabs" id="export-tabs" role="tablist" aria-label="Export format">
+              <button type="button" data-format="html" class="active" role="tab" aria-selected="true">
                 HTML
               </button>
-              <button type="button" data-format="markdown">Markdown</button>
-              <button type="button" data-format="mdx">MDX</button>
-              <button type="button" data-format="json">JSON</button>
+              <button type="button" data-format="markdown" role="tab" aria-selected="false">
+                Markdown
+              </button>
+              <button type="button" data-format="mdx" role="tab" aria-selected="false">
+                MDX
+              </button>
+              <button type="button" data-format="json" role="tab" aria-selected="false">
+                JSON
+              </button>
             </div>
-            <pre id="export-output">(edit the document to see exports)</pre>
+            <pre id="export-output" aria-live="polite">(edit the document to see exports)</pre>
             <div class="row">
               <button type="button" id="refresh-export-btn">Refresh export</button>
               <button type="button" id="copy-export-btn">Copy</button>
@@ -267,12 +115,163 @@
         </section>
       </div>
 
-      <p class="meta">
-        Full toolbar: headers, lists, align, color, font, code, table, image,
-        video, formula (KaTeX), syntax (highlight.js), image resize. Uses ESM
-        <code>import Lextrix from 'lextrix'</code> — same path as Next.js/Vite
-        apps.
-      </p>
+      <section class="section" aria-labelledby="doc-heading">
+        <div class="section-head">
+          <h2 id="doc-heading">Document</h2>
+          <button type="button" id="refresh-doc-btn">Refresh</button>
+        </div>
+        <p class="hint">
+          Editor ≠ Document. The mirrored Document/Version chain is exposed via
+          experimental bridge APIs (<code>getExperimentalDocument</code> /
+          <code>Handle</code>).
+        </p>
+        <div id="doc-state" class="panel-body surface" aria-live="polite"></div>
+      </section>
+
+      <section class="section" aria-labelledby="ver-heading">
+        <h2 id="ver-heading">History / Versions</h2>
+        <p class="hint">
+          Restore creates a <strong>new</strong> Version equal to an old
+          snapshot — it does not rewrite history.
+        </p>
+        <ul
+          id="version-list"
+          class="version-list"
+          role="listbox"
+          aria-label="Document versions"
+        ></ul>
+        <div class="row">
+          <button type="button" class="primary" id="restore-version-btn">
+            Restore selected Version
+          </button>
+        </div>
+        <p id="version-action-status" class="status" aria-live="polite"></p>
+        <h3 class="subhead">Diff (selected → HEAD)</h3>
+        <div id="version-diff-host" class="surface">
+          <p class="hint">(select a Version)</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="prim-heading">
+        <h2 id="prim-heading">Document primitives</h2>
+        <button type="button" id="anchor-demo-btn">Create anchor + range</button>
+        <p id="anchor-summary" class="status" aria-live="polite">(none yet)</p>
+        <div id="anchor-dev"></div>
+      </section>
+
+      <section class="section" aria-labelledby="intel-heading">
+        <h2 id="intel-heading">Intelligence / Proposals</h2>
+        <p class="hint">
+          Uses <code>DeterministicDocumentIntelligenceProvider</code> — no API
+          key. AI produces a <strong>ChangeProposal</strong>; acceptance is
+          explicit. OpenAI provider remains optional elsewhere.
+        </p>
+        <label class="block-label" for="intel-instruction">
+          Instruction
+          <input
+            id="intel-instruction"
+            type="text"
+            value="replace:Lextrix 3.0 platform"
+          />
+        </label>
+        <div class="row">
+          <button type="button" class="primary" id="intel-generate-btn">
+            Generate proposal
+          </button>
+          <button type="button" id="intel-accept-btn">Accept + project</button>
+          <button type="button" id="intel-reject-btn">Reject</button>
+          <button type="button" id="intel-stale-btn">
+            Demo stale proposal error
+          </button>
+        </div>
+        <p id="intel-status" class="status" aria-live="polite"></p>
+        <div id="intel-summary" class="surface" aria-live="polite">
+          <p class="hint">(no proposal)</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="collab-heading">
+        <h2 id="collab-heading">Collaboration (authoritative session)</h2>
+        <p class="hint">
+          In-memory <code>DocumentServerSession</code> +
+          <code>InMemoryAuthoritativePersistence</code>. Not a live WebSocket or
+          PostgreSQL deployment.
+        </p>
+        <div class="row">
+          <button type="button" class="primary" id="collab-init-btn">
+            Start / reset session
+          </button>
+        </div>
+        <p id="collab-status" class="status" aria-live="polite"></p>
+        <div id="collab-head" class="surface"></div>
+        <div class="collab-grid">
+          <div>
+            <h3 class="subhead">Client A</h3>
+            <label class="sr-only" for="collab-a-input">Client A insert text</label>
+            <input id="collab-a-input" type="text" value="Hello from A " />
+            <button type="button" id="collab-a-btn">Submit ChangeSet</button>
+          </div>
+          <div>
+            <h3 class="subhead">Client B</h3>
+            <label class="sr-only" for="collab-b-input">Client B insert text</label>
+            <input id="collab-b-input" type="text" value="Hello from B " />
+            <button type="button" id="collab-b-btn">Submit ChangeSet</button>
+          </div>
+        </div>
+        <h3 class="subhead">Control frames (recent)</h3>
+        <div id="collab-log-host" class="surface"></div>
+        <h3 class="subhead">Presence (ephemeral)</h3>
+        <button type="button" id="presence-publish-btn">Publish presence</button>
+        <p id="presence-summary" class="status" aria-live="polite">(none)</p>
+        <div id="presence-dev"></div>
+      </section>
+
+      <section class="section" aria-labelledby="infra-heading">
+        <h2 id="infra-heading">Infrastructure</h2>
+        <p class="hint">
+          Browser-safe CAS append + lifecycle tombstones via in-memory ports.
+          Snapshot hashing and compaction seal/archive are Node-only (see
+          buttons). Production PostgreSQL adapters live in
+          <code>lextrix-server</code>.
+        </p>
+        <div class="row">
+          <button type="button" class="primary" id="infra-init-btn">
+            Init ports
+          </button>
+          <button type="button" id="infra-mutate-btn">Append Version</button>
+          <button type="button" id="infra-snapshot-btn">
+            Snapshot (Node-only note)
+          </button>
+          <button type="button" id="infra-compact-btn">
+            Compaction (Node-only note)
+          </button>
+          <button type="button" id="infra-tombstone-btn">Tombstone</button>
+          <button type="button" id="infra-revive-btn">Revive</button>
+        </div>
+        <p id="infra-status" class="status" aria-live="polite"></p>
+        <div id="infra-summary" class="surface">
+          <p class="hint">(not initialized)</p>
+        </div>
+        <div id="infra-dev"></div>
+      </section>
+
+      <footer class="meta">
+        <p>
+          Lextrix <strong>3.0.0</strong> — document engine + editor projection.
+          Docs:
+          <a href="../../docs/playground.md">playground guide</a> ·
+          <a href="../../docs/architecture/overview.md">architecture</a> ·
+          <a href="../../docs/architecture/FUTURE-ROADMAP.md">roadmap</a> ·
+          <a href="../../docs/architecture/LEXTRIX-3.0.0-RELEASE-READINESS.md"
+            >release readiness</a
+          >.
+        </p>
+        <p>
+          Limitations: this playground uses in-memory reference ports; live
+          PostgreSQL, multi-process fencing, and production WebSocket soak are
+          deployment concerns (see validation report).
+        </p>
+      </footer>
     </div>
     <script type="module" src="/main.js"></script>
   </body>

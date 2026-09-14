@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "kind": "collab-envelope",
+  "changeId": "chg_golden_1",
+  "documentId": "doc_golden",
+  "baseVersionId": "doc_golden:v0",
+  "change": {
+    "ops": [{ "retain": 4 }, { "insert": "!" }]
+  },
+  "meta": {
+    "source": "remote",
+    "origin": "system",
+    "untrustedInput": true
+  },
+  "dependsOn": []
+}

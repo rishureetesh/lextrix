@@ -1,38 +1,29 @@
 # Lextrix
 
-Rich-text editor for the web. MIT licensed.
+**Version 3.0.0** — a programmable **document engine** with a rich-text **editor projection**.
 
-Built by **[Reetesh Kumar](https://iamreetesh.com/me)** · [iamreetesh.com](https://iamreetesh.com) · [Playground](https://iamreetesh.com/lextrix) · [Documentation](https://iamreetesh.com/docs)
+Built by **[Reetesh Kumar](https://iamreetesh.com/me)** · [Playground](https://iamreetesh.com/lextrix) · [Docs](https://iamreetesh.com/docs) · [Repo docs](./docs/README.md)
 
-[Playground](https://iamreetesh.com/lextrix) · [GitHub docs](./docs/README.md) · [Evaluation guide](./docs/getting-started/evaluation.md) · [Quick start](./docs/getting-started/quick-start.md) · [Issues](https://github.com/rishureetesh/lextrix/issues)
-
----
-
-## Evaluate in 5 minutes
-
-1. **[Try the playground](https://iamreetesh.com/lextrix)** — no install
-2. **`npm install lextrix`** — see [Install](#install) below
-3. **Create an editor** — import CSS, mount on a div, pass toolbar options
-4. **Load content** — `setContents()` or `importContent()`
-5. **Export content** — `exportContent('markdown')` or `exportContent('html')`
-
-Install only **`lextrix`**. The other packages listed under [Packages](#packages) are for contributors and internal architecture — you do not need them to use the editor.
-
-**Using React or Next.js?**
-
-```bash
-npm install lextrix @lextrix/react
-```
-
-See the [React guide](./docs/guides/react.md) · [Frameworks](./docs/guides/frameworks.md).
-
-Full walkthrough: [evaluation.md](./docs/getting-started/evaluation.md)
-
-**Runnable examples:** [Vanilla Vite](./examples/vite-vanilla) · [React Vite](./examples/vite-react) (`@lextrix/react`)
+Lextrix is more than a WYSIWYG editor. ChangeSets are the canonical transitions; Documents and Versions are immutable state; the browser editor projects that state. Collaboration, persistence, and intelligence plug in through stable ports — without putting Auth, billing, or LLM vendors inside the core engine.
 
 ---
 
-## Install
+## What you get
+
+| Layer | Role |
+|-------|------|
+| **ChangeSet / OT** | Canonical document transitions (`lextrix-change`) |
+| **Document / Handle / Version** | Immutable state + live session + linear history |
+| **Editor** | DOM projection (`lextrix` package) |
+| **Collaboration** | Authoritative accept / sync (`lextrix-collab`) |
+| **Server** | Reference PostgreSQL + WebSocket host (`lextrix-server`) |
+| **Intelligence** | Proposal producers only (`lextrix-intelligence`) |
+
+**Invariants:** DocumentState ≠ ChangeSet · History ≠ Versioning · AI never directly mutates · Server owns Version IDs · ADR-012 wire `schemaVersion: 1`.
+
+---
+
+## Quick start (editor)
 
 ```bash
 npm install lextrix
@@ -41,136 +32,108 @@ npm install lextrix
 ```javascript
 import Lextrix from 'lextrix';
 import 'lextrix/snow.css';
-```
 
-Optional: [highlight.js](https://highlightjs.org/) for syntax highlighting, [KaTeX](https://katex.org/) for formulas.
-
----
-
-## Quick start
-
-```html
-<div id="editor"></div>
-```
-
-```javascript
 const editor = new Lextrix('#editor', {
   theme: 'snow',
-  placeholder: 'Start writing…',
-  modules: {
-    toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ header: [1, 2, false] }],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image'],
-      ['clean'],
-    ],
-    imageResize: true,
-  },
-});
-
-editor.setContents([
-  { insert: 'Hello Lextrix\n', attributes: { header: 1 } },
-  { insert: 'Edit rich text with themes, modules, and ChangeSets.\n' },
-]);
-
-editor.on('text-change', (changeSet, oldChangeSet, source) => {
-  if (source === 'user') {
-    save(editor.getContents());
-  }
+  modules: { toolbar: [['bold', 'italic'], ['link']] },
 });
 ```
 
-More: [cookbook](./docs/guides/cookbook.md) · [DOM mounting](./docs/guides/dom-mounting.md) · [React](./docs/guides/react.md) · [Frameworks](./docs/guides/frameworks.md)
-
-### Serialization
-
-```javascript
-const markdown = '# Title\n\n**bold** text';
-
-editor.importContent(markdown, 'markdown');
-
-const warnings = editor.getExportWarnings('markdown');
-// Non-empty when export would be lossy or blocked (e.g. native editor tables).
-// Does not throw — use this to warn users before calling exportContent.
-for (const w of warnings) {
-  console.warn(w.message);
-}
-
-const output = editor.exportContent('markdown');
-```
-
-`getExportWarnings` only applies to **`markdown`** and **`mdx`**. It reports lossy formatting (color, align, font) and **blocks** native editor tables. **`exportContent('markdown')` throws `SerializationError`** when a native table is present — use `exportContent('html')` for table content. See [serialization.md](./docs/guides/serialization.md) for the full limitations list.
-
-```javascript
-const html = editor.exportContent('html'); // always available for editor content
-```
+React: `npm install lextrix @lextrix/react` — see [React guide](./docs/guides/react.md).
 
 ---
 
-## What you get
+## Document engine (stable imports)
 
-| Area | Notes |
-|------|-------|
-| Themes | snow, bubble, slate, dawn (CSS included) |
-| Modules | clipboard, keyboard, history, toolbar, table, syntax, image resize |
-| Formats | bold, lists, headers, links, code blocks, tables, images, video, formulas |
-| ChangeSet | JSON ops with compose, diff, transform, invert |
-| Serialization | HTML, Markdown, MDX, JSON via ChangeSet |
+```javascript
+import ChangeSet from 'lextrix-change';
+import { DocumentHandle } from 'lextrix-change/document';
+import { parseChangeSet } from 'lextrix-change/wire';
+```
+
+| Import | Stability |
+|--------|-----------|
+| `lextrix` | Stable editor bundle |
+| `lextrix-change` | Stable ChangeSet OT |
+| `lextrix-change/wire` | Stable ADR-012 |
+| `lextrix-change/document` | Stable runtime Document API |
+| `lextrix-change/persistence` | Stable ports (+ in-memory refs) |
+| `lextrix-change/collaboration` | Stable transport ports |
+| `lextrix-collab` | Stable collab protocol / sessions |
+| `lextrix-change/experimental` | **Experimental** — no semver promise |
+| `lextrix-server` | Reference production adapters (not core) |
+| `lextrix-intelligence` | Application-layer proposals |
+
+Details: [API stability](./docs/architecture/api-stability.md).
+
+---
+
+## Playground
+
+Local platform demo (editor + Document/Version/Proposal/collab/infra panels):
+
+```bash
+npm run demo
+# → http://localhost:5173
+```
+
+Guide: [docs/playground.md](./docs/playground.md). Uses real package APIs. Collaboration/persistence panels are **in-memory reference** demos — not a claim of live PostgreSQL or production WebSocket.
+
+Playwright tests: `npm test -w lextrix-demo` (builds via Vite).
+
+---
+
+## Develop / test / build
+
+```bash
+npm install
+npm run build
+npm test                 # engine + Chromium unit suites
+npm run test:unit -w lextrix
+npm run test:e2e -w lextrix
+npm run typecheck
+```
 
 ---
 
 ## Packages
 
-The **`lextrix`** npm package bundles everything below. You only install `lextrix` unless you are contributing to the monorepo.
-
-| Package | Role |
-|---------|------|
-| `lextrix` | Published bundle (ESM + UMD + CSS) |
-| `lextrix-change` | ChangeSet / OT |
-| `lextrix-dom` | Blots, registry, DOM sync |
-| `lextrix-core` | Editor shell, selection |
-| `lextrix-formats` | Built-in formats |
-| `lextrix-modules` | Clipboard, keyboard, toolbar, … |
-| `lextrix-serialize` | Headless import/export |
-| `lextrix-ui` | Toolbar widgets |
-| `lextrix-themes` | Theme CSS |
-
-Architecture: [overview.md](./docs/architecture/overview.md)
+| Package | Purpose |
+|---------|---------|
+| `lextrix` | Published editor (themes, modules, serialization) |
+| `lextrix-change` | ChangeSet, Document, wire, persistence ports |
+| `lextrix-collab` | Authoritative collaboration protocol |
+| `lextrix-server` | PostgreSQL + WebSocket reference host |
+| `lextrix-intelligence` | Deterministic / OpenAI proposal providers |
+| `lextrix-core` / `dom` / `formats` / `modules` / `themes` / `ui` / `serialize` | Editor internals |
+| `@lextrix/react` | React bindings (independent semver: **0.3.0**, peer `lextrix@^3.0.0`) |
+| `lextrix-demo` | This repo’s playground |
 
 ---
 
-## Extending
+## Architecture & validation
 
-**React / Next.js:** Lextrix is a class mounted with `useEffect` — not a JSX component. See [frameworks.md](./docs/guides/frameworks.md).
-
-Register formats from npm:
-
-```javascript
-import Lextrix, { lxrPath } from 'lextrix';
-
-Lextrix.register({ [lxrPath.format('my-format')]: MyFormatBlot });
-```
-
-Format helpers (`defineInlineTagFormat`, …) require the monorepo. Guides: [formats](./docs/guides/formats.md) · [modules](./docs/guides/modules.md) · [configuration](./docs/guides/configuration.md)
+- [Documentation site](https://iamreetesh.com/docs) · [Repo docs](./docs/README.md)
+- [Architecture overview](./docs/architecture/overview.md)
+- [ADRs](./docs/architecture/adr/README.md)
+- [Final system validation](./docs/architecture/FINAL-SYSTEM-VALIDATION-REPORT.md)
+- [Future roadmap](./docs/architecture/FUTURE-ROADMAP.md) *(discovery — not a build commitment)*
+- [Changelog](./CHANGELOG.md)
+- [Migrate from 2.1](./docs/guides/migration-3.0.md)
 
 ---
 
-## Development
+## Current limitations (honest)
 
-```bash
-git clone https://github.com/rishureetesh/lextrix.git
-cd lextrix
-npm install
-npm run build
-npm run dev          # full playground at http://localhost:5173 (packages/demo)
-npm test
-```
+Release-ready for **implemented scope**, with documented limits:
 
-Contributing: [.github/CONTRIBUTING.md](./.github/CONTRIBUTING.md) · [.github/DEVELOPMENT.md](./.github/DEVELOPMENT.md)
+- Live PostgreSQL / multi-process fencing / WS soak / numeric SLOs may be environment-gated
+- Presence **protocol** exists; presence **UX** is deferred
+- Automated multi-region product, SaaS/billing, CRDT, E2EE are **not** claimed
+- See validation report for the full scorecard
 
 ---
 
 ## License
 
-MIT © [Reetesh Kumar](https://iamreetesh.com/me) · [iamreetesh.com](https://iamreetesh.com). See [LICENSE](./LICENSE). Runtime dependencies: [NOTICE.md](./NOTICE.md).
+MIT

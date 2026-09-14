@@ -53,7 +53,14 @@ const shared = {
       '.js': ['.ts', '.js'],
     },
     alias: {
-      'lextrix-change': resolve(__dirname, '../change/src/index.ts'),
+      // Subpath exports must be listed before the package root alias (file target
+      // would otherwise resolve `lextrix-change/experimental` as `index.ts/experimental`).
+      'lextrix-change/experimental': resolve(
+        __dirname,
+        '../change/src/experimental/index.ts',
+      ),
+      'lextrix-change$': resolve(__dirname, '../change/src/index.ts'),
+      'lextrix-change': resolve(__dirname, '../change/src'),
       'lextrix-dom': resolve(__dirname, '../dom/src/index.ts'),
       'lextrix-core$': resolve(__dirname, '../core/src/index.ts'),
       'lextrix-core': resolve(__dirname, '../core/src'),

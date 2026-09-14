@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "kind": "proposal",
+  "id": "prop_golden_1",
+  "documentId": "doc_golden",
+  "baseVersionId": "doc_golden:v0",
+  "change": {
+    "ops": [{ "retain": 0 }, { "insert": "Hi" }]
+  },
+  "ops": [{ "retain": 0 }, { "insert": "Hi" }],
+  "meta": {
+    "source": "ai",
+    "origin": "system",
+    "provider": "deterministic",
+    "confidence": 0.75,
+    "explanation": "golden vector"
+  },
+  "createdAt": "2026-01-01T00:00:00.000Z"
+}

@@ -6,13 +6,24 @@ import ChangeSet from 'lextrix-change';
 import type { BlockEmbed } from '../blots/block.js';
 import type Block from '../blots/block.js';
 import type Scroll from '../blots/scroll.js';
-import type Clipboard from 'lextrix-modules/modules/clipboard.js';
-import type History from 'lextrix-modules/modules/history.js';
-import type Keyboard from 'lextrix-modules/modules/keyboard.js';
-import type Uploader from 'lextrix-modules/modules/uploader.js';
+import type {
+  ClipboardModule,
+  EditorCapabilities,
+  HistoryModule,
+  KeyboardModule,
+  UploaderModule,
+} from './contracts/modules.js';
 import Editor from './editor.js';
-import Emitter from './emitter.js';
+import Emitter, {
+  releaseDocumentListeners,
+  retainDocumentListeners,
+} from './emitter.js';
 import type { EmitterSource } from './emitter.js';
+import {
+  InvalidContainerError,
+  MissingBlotError,
+  UnknownThemeError,
+} from './errors.js';
 import instances from './instances.js';
 import logger from './logger.js';
 import type { DebugLevel } from './logger.js';
@@ -45,6 +56,20 @@ import {
   lxrPath,
   resolveImportKey,
 } from '../registry-paths.js';
+import {
+  EditorDocumentBridge,
+  type ExternalApplyResult,
+} from './document-bridge/index.js';
+import type {
+  ChangeMeta,
+  ChangeSource,
+  ChangeProposal,
+  Document as ExperimentalDocument,
+  DocumentHandle,
+  DocumentTransaction,
+  AcceptProposalResult,
+  TransactionCommitOptions,
+} from 'lextrix-change/experimental';
 
 const debug = logger('lextrix');
 
@@ -86,6 +111,12 @@ export interface LextrixOptions {
    * `false` disables serialization.
    */
   serializers?: ContentSerializer[] | boolean;
+
+  /**
+   * @experimental Phase 2: mirror settled editor changes into headless DocumentState.
+   * Strategy B (editor-first). Default true. Set false to disable the bridge.
+   */
+  experimentalDocument?: boolean;
 }
 
 /**
@@ -101,6 +132,7 @@ export interface ExpandedLextrixOptions
   bounds?: HTMLElement | null;
   readOnly: boolean;
   serializers: ContentSerializer[] | false;
+  experimentalDocument: boolean;
 }
 
 class Lextrix {
@@ -116,6 +148,7 @@ class Lextrix {
     readOnly: false,
     registry: globalRegistry,
     theme: 'default',
+    experimentalDocument: true,
   } satisfies Partial<LextrixOptions>;
   static events = Emitter.events;
   static sources = Emitter.sources;
@@ -218,20 +251,25 @@ class Lextrix {
   theme: Theme;
   pluginHost: PluginHost;
   serializerHost: SerializerHost;
-  keyboard: Keyboard;
-  clipboard: Clipboard;
-  history: History;
-  uploader: Uploader;
+  keyboard: KeyboardModule;
+  clipboard: ClipboardModule;
+  history: HistoryModule;
+  uploader: UploaderModule;
 
   options: ExpandedLextrixOptions;
   private destroyed = false;
+  /**
+   * @experimental Phase 2 Strategy B bridge (editor → Document).
+   * Null when `experimentalDocument: false`.
+   */
+  private documentBridge: EditorDocumentBridge | null = null;
 
   constructor(container: HTMLElement | string, options: LextrixOptions = {}) {
     this.options = expandConfig(container, options);
     this.container = this.options.container;
     if (this.container == null) {
       debug.error('Invalid Lextrix container', container);
-      return;
+      throw new InvalidContainerError();
     }
     if (this.options.debug) {
       Lextrix.debug(this.options.debug);
@@ -240,20 +278,24 @@ class Lextrix {
     this.container.classList.add('lxr-container');
     this.container.innerHTML = '';
     instances.set(this.container, this);
+    retainDocumentListeners();
     this.root = this.addContainer('lxr-editor');
     this.root.classList.add('lxr-blank');
     this.emitter = new Emitter();
     const scrollBlotName = Dom.ScrollBlot.blotName;
     const ScrollBlot = this.options.registry.query(scrollBlotName);
     if (!ScrollBlot || !('blotName' in ScrollBlot)) {
-      throw new Error(
-        `Cannot initialize Lextrix without "${scrollBlotName}" blot`,
-      );
+      releaseDocumentListeners();
+      instances.delete(this.container);
+      throw new MissingBlotError(scrollBlotName);
     }
     this.scroll = new ScrollBlot(this.options.registry, this.root, {
       emitter: this.emitter,
     }) as Scroll;
     this.editor = new Editor(this.scroll);
+    if (this.options.experimentalDocument) {
+      this.documentBridge = new EditorDocumentBridge(this.editor.changeSet);
+    }
     this.selection = new Selection(this.scroll, this.emitter);
     this.composition = new Composition(this.scroll, this.emitter);
     this.pluginHost = new PluginHost();
@@ -568,29 +610,245 @@ class Lextrix {
   }
 
   /**
-   * Tear down this editor instance: remove auto-created toolbar, theme listeners,
-   * and editor DOM inside the mount container. Safe to call multiple times.
+   * @experimental Phase 2 — headless DocumentState mirrored from the editor (Strategy B).
+   * Returns null when `experimentalDocument: false`.
+   */
+  getExperimentalDocument(): ExperimentalDocument | null {
+    return this.documentBridge?.getDocument() ?? null;
+  }
+
+  /**
+   * @experimental Phase 3 — current mirrored Document Version (linear history head).
+   */
+  getExperimentalVersion() {
+    return this.documentBridge?.currentVersion() ?? null;
+  }
+
+  /**
+   * @experimental Phase 3 — retained linear versions for the mirrored Document.
+   */
+  getExperimentalVersions() {
+    return this.documentBridge?.listVersions() ?? [];
+  }
+
+  /**
+   * @experimental Begin a transaction against the mirrored DocumentState.
+   * Commit produces a ChangeSet; use {@link experimentalCommit} to apply via the editor.
+   */
+  experimentalTransaction(): DocumentTransaction {
+    if (!this.documentBridge) {
+      throw new Error(
+        'experimentalTransaction requires experimentalDocument: true',
+      );
+    }
+    return this.documentBridge.getHandle().transaction();
+  }
+
+  /**
+   * @experimental Build a ChangeSet via transaction against the mirrored Document,
+   * then apply through the existing editor path (`updateContents`).
+   * Document is updated by the Strategy B reconcile hook using the settled change.
+   */
+  experimentalCommit(
+    build: (tx: DocumentTransaction) => void,
+    options: TransactionCommitOptions = {},
+  ): ChangeSet {
+    if (!this.documentBridge) {
+      throw new Error('experimentalCommit requires experimentalDocument: true');
+    }
+    const handle = this.documentBridge.getHandle();
+    const tx = handle.transaction();
+    try {
+      build(tx);
+      const { change, meta, empty } = tx.commit(options);
+      if (empty) {
+        return change;
+      }
+      return this.updateContents(
+        change,
+        mapChangeSourceToEmitter(meta.source),
+      );
+    } catch (err) {
+      if (tx.getStatus() === 'open') {
+        tx.abort();
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * @experimental Hybrid Strategy B+ (ADR-008): Document.apply first, then
+   * project into the editor via updateContents. Bridge reconcile is skipped
+   * while projecting. History is transformed (not recorded as user undo).
+   * Projection failure does not roll back Document; full resync is attempted.
+   */
+  applyExternalChange(
+    change: ChangeSet | ChangeOp[],
+    options: { meta?: Partial<ChangeMeta> } = {},
+  ): ExternalApplyResult {
+    if (!this.documentBridge) {
+      throw new Error(
+        'applyExternalChange requires experimentalDocument: true',
+      );
+    }
+    const delta = new ChangeSet(change);
+    const bridge = this.documentBridge;
+    const history = this.history as HistoryModule & {
+      ignoreChange?: boolean;
+      transform?: (d: ChangeSet) => void;
+    };
+    const prevIgnore = history.ignoreChange ?? false;
+
+    return bridge.applyExternalChange(delta, {
+      meta: options.meta,
+      getEditorContents: () => this.getContents(),
+      project: (applied) => {
+        history.ignoreChange = true;
+        try {
+          this.updateContents(applied, Emitter.sources.SILENT);
+        } finally {
+          history.ignoreChange = prevIgnore;
+        }
+        history.transform?.(applied);
+      },
+      resync: (documentContents) => {
+        history.ignoreChange = true;
+        try {
+          this.setContents(documentContents, Emitter.sources.SILENT);
+        } finally {
+          history.ignoreChange = prevIgnore;
+        }
+      },
+    });
+  }
+
+  /**
+   * @experimental Access the mirrored DocumentHandle for review / proposals.
+   * Prefer review helpers from `lextrix-intelligence`; mutate only via
+   * acceptProposal / applyExternalChange / acceptProposalAndProject.
+   */
+  getExperimentalHandle(): DocumentHandle | null {
+    return this.documentBridge?.getHandle() ?? null;
+  }
+
+  /**
+   * @experimental Project a ChangeSet that already applied to Document
+   * (e.g. after DocumentHandle.acceptProposal). Does not re-apply.
+   */
+  projectAppliedChange(
+    change: ChangeSet | ChangeOp[],
+  ): ExternalApplyResult {
+    if (!this.documentBridge) {
+      throw new Error(
+        'projectAppliedChange requires experimentalDocument: true',
+      );
+    }
+    const delta = new ChangeSet(change);
+    const bridge = this.documentBridge;
+    const history = this.history as HistoryModule & {
+      ignoreChange?: boolean;
+      transform?: (d: ChangeSet) => void;
+    };
+    const prevIgnore = history.ignoreChange ?? false;
+
+    return bridge.projectAppliedChange(delta, {
+      getEditorContents: () => this.getContents(),
+      project: (applied) => {
+        history.ignoreChange = true;
+        try {
+          this.updateContents(applied, Emitter.sources.SILENT);
+        } finally {
+          history.ignoreChange = prevIgnore;
+        }
+        history.transform?.(applied);
+      },
+      resync: (documentContents) => {
+        history.ignoreChange = true;
+        try {
+          this.setContents(documentContents, Emitter.sources.SILENT);
+        } finally {
+          history.ignoreChange = prevIgnore;
+        }
+      },
+    });
+  }
+
+  /**
+   * @experimental Accept a ChangeProposal on the mirrored Document, then
+   * project into the editor (Hybrid B+). Does not auto-rebase.
+   * Application should create a ProposalReview / acknowledge policy first
+   * via `lextrix-intelligence` — this method is the Document→Editor path only.
+   */
+  acceptProposalAndProject(
+    proposal: ChangeProposal,
+  ): AcceptProposalResult & { projection: ExternalApplyResult } {
+    if (!this.documentBridge) {
+      throw new Error(
+        'acceptProposalAndProject requires experimentalDocument: true',
+      );
+    }
+    const handle = this.documentBridge.getHandle();
+    const accepted = handle.acceptProposal(proposal);
+    if (accepted.empty) {
+      return {
+        ...accepted,
+        projection: {
+          status: 'empty',
+          version: accepted.version,
+          applied: proposal.change,
+          desynchronized: false,
+        },
+      };
+    }
+    const projection = this.projectAppliedChange(proposal.change);
+    return { ...accepted, projection };
+  }
+
+  /** @experimental Projection nesting depth (0 when idle). */
+  getProjectionDepth(): number {
+    return this.documentBridge?.getProjectionDepth() ?? 0;
+  }
+
+  /** @experimental True while Document→Editor projection is active. */
+  isProjecting(): boolean {
+    return this.documentBridge?.isProjecting() ?? false;
+  }
+
+  /**
+   * Tear down this editor instance: destroy all plugins, theme listeners,
+   * document routing, and editor DOM inside the mount container.
+   * Safe to call multiple times.
    */
   destroy() {
     if (this.destroyed) return;
     this.destroyed = true;
 
-    const toolbar = this.getModule('toolbar') as { destroy?: () => void } | null;
-    toolbar?.destroy?.();
-
-    const imageResize = this.getModule('imageResize') as {
-      destroy?: () => void;
-    } | null;
-    imageResize?.destroy?.();
+    this.pluginHost.destroyAll(this);
 
     const theme = this.theme as { destroy?: () => void };
     theme?.destroy?.();
 
-    this.pluginHost.unbindAll(this);
     this.emitter.clearDOMListeners();
     this.emitter.removeAllListeners();
     instances.delete(this.container);
+    releaseDocumentListeners();
     this.container.replaceChildren();
+  }
+
+  /**
+   * Probe optional runtimes and installed modules (consistent degradation policy).
+   */
+  getCapabilities(): EditorCapabilities {
+    const win = typeof window !== 'undefined' ? window : undefined;
+    return {
+      katex: Boolean(win && (win as Window & { katex?: unknown }).katex),
+      highlightJs: Boolean(win && (win as Window & { hljs?: unknown }).hljs),
+      imageResize: this.pluginHost.has('imageResize'),
+      serializers:
+        this.options.serializers === false
+          ? []
+          : this.serializerHost.listFormats(),
+    };
   }
 
   /**
@@ -628,13 +886,18 @@ class Lextrix {
   }
 
   /**
+   * @deprecated Prefer {@link exportContent}. Kept for compatibility.
    * Export document content to a registered serialization format.
+   *
+   * HTML export is editor-bound (uses clipboard/DOM). For headless
+   * ChangeSet→string conversion use `serializerHost.stringify()`.
    */
   export(input: ExportInput): string {
     return this.serializerHost.export(input);
   }
 
   /**
+   * @deprecated Prefer {@link importContent}. Kept for compatibility.
    * Import document content from a registered serialization format.
    * Replaces the current document contents.
    */
@@ -649,7 +912,7 @@ class Lextrix {
   }
 
   /**
-   * Alias for {@link import} — avoids confusion with `Lextrix.import()` module loader.
+   * Preferred content import API (avoids confusion with static `Lextrix.import()`).
    */
   importContent(
     content: string,
@@ -660,7 +923,8 @@ class Lextrix {
   }
 
   /**
-   * Alias for {@link export} — symmetric with {@link importContent}.
+   * Preferred content export API.
+   * HTML is editor-bound; markdown/mdx/json can also be done headlessly via stringify.
    */
   exportContent(input: ExportInput): string {
     return this.export(input);
@@ -946,7 +1210,7 @@ function expandConfig(
 ): ExpandedLextrixOptions {
   const container = resolveSelector(containerOrSelector);
   if (!container) {
-    throw new Error('Invalid Lextrix container');
+    throw new InvalidContainerError();
   }
 
   const themeName = options.theme;
@@ -958,7 +1222,7 @@ function expandConfig(
         lxrPath.theme(themeName) as `lxr/themes/${string}`,
       ) as ThemeConstructor);
   if (!theme) {
-    throw new Error(`Invalid theme ${options.theme}. Did you register it?`);
+    throw new UnknownThemeError(String(options.theme));
   }
 
   const { modules: lextrixModuleDefaults, ...lextrixDefaults } = Lextrix.DEFAULTS;
@@ -1027,6 +1291,7 @@ function expandConfig(
     ),
     bounds: resolveSelector(config.bounds),
     serializers: resolveSerializersOption(options.serializers),
+    experimentalDocument: config.experimentalDocument !== false,
   };
 }
 
@@ -1069,6 +1334,11 @@ function modify(
     this.setSelection(range, Emitter.sources.SILENT);
   }
   if (change.length() > 0) {
+    // Strategy B: one-way Editor → Document reconcile (settled change only).
+    this.documentBridge?.reconcileEditorChange(change, {
+      emitterSource: source,
+      liveContents: this.editor.changeSet,
+    });
     const args = [Emitter.events.TEXT_CHANGE, change, oldChangeSet, source];
     this.emitter.emit(Emitter.events.EDITOR_CHANGE, ...args);
     if (source !== Emitter.sources.SILENT) {
@@ -1076,6 +1346,14 @@ function modify(
     }
   }
   return change;
+}
+
+function mapChangeSourceToEmitter(source: ChangeSource): EmitterSource {
+  if (source === 'user') return Emitter.sources.USER;
+  if (source === 'silent' || source === 'projection') {
+    return Emitter.sources.SILENT;
+  }
+  return Emitter.sources.API;
 }
 
 type NormalizedIndexLength = [

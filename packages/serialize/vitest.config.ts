@@ -4,6 +4,10 @@ import { resolve } from 'node:path';
 export default defineConfig({
   resolve: {
     alias: {
+      'lextrix-change/experimental': resolve(
+        __dirname,
+        '../change/src/experimental/index.ts',
+      ),
       'lextrix-change': resolve(__dirname, '../change/src/index.ts'),
       'lextrix-serialize': resolve(__dirname, 'src/index.ts'),
       'lextrix-dom': resolve(__dirname, '../dom/src/index.ts'),

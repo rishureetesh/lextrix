@@ -1,4 +1,4 @@
-﻿/** Lextrix modules — editor behavior modules. */
+/** Lextrix modules — editor behavior modules. */
 import ChangeSet from 'lextrix-change';
 import Lextrix from 'lextrix-core';
 import Module from 'lextrix-core/core/module.js';
@@ -136,7 +136,7 @@ class Table extends Module {
   }
 
   listenBalanceCells() {
-    this.lextrix.on(
+    this.onEditor(
       Lextrix.events.SCROLL_OPTIMIZE,
       (mutations: MutationRecord[]) => {
         mutations.some((mutation) => {

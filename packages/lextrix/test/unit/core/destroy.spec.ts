@@ -60,4 +60,26 @@ describe('Lextrix.destroy()', () => {
     second.destroy();
     mount.remove();
   });
+
+  test('clears plugin host and reports capabilities', () => {
+    const mount = document.createElement('div');
+    document.body.appendChild(mount);
+
+    const editor = new Lextrix(mount, {
+      theme: 'snow',
+      modules: {
+        toolbar: [['bold']],
+        imageResize: true,
+      },
+    });
+
+    const caps = editor.getCapabilities();
+    expect(caps.imageResize).toBe(true);
+    expect(caps.serializers.length).toBeGreaterThan(0);
+
+    editor.destroy();
+    expect(editor.pluginHost.entries()).toEqual([]);
+
+    mount.remove();
+  });
 });

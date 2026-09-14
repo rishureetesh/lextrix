@@ -1,4 +1,4 @@
-﻿/** Lextrix modules — editor behavior modules. */
+/** Lextrix modules — editor behavior modules. */
 import ChangeSet from 'lextrix-change';
 import { ClassAttributor, Scope } from 'lextrix-dom';
 import type { Blot, ScrollBlot } from 'lextrix-dom';
@@ -254,7 +254,7 @@ class Syntax extends Module<SyntaxOptions> {
   }
 
   initListener() {
-    this.lextrix.on(Lextrix.events.SCROLL_BLOT_MOUNT, (blot: Blot) => {
+    this.onEditor(Lextrix.events.SCROLL_BLOT_MOUNT, (blot: Blot) => {
       if (!(blot instanceof SyntaxCodeBlockContainer)) return;
       const select = this.lextrix.root.ownerDocument.createElement('select');
       // @ts-expect-error Fix me later
@@ -264,11 +264,14 @@ class Syntax extends Module<SyntaxOptions> {
         option.setAttribute('value', key);
         select.appendChild(option);
       });
-      select.addEventListener('change', () => {
+      const onLanguageChange = () => {
+        if (this.isDisposed) return;
         blot.format(SyntaxCodeBlock.blotName, select.value);
         this.lextrix.root.focus(); // Prevent scrolling
         this.highlight(blot, true);
-      });
+      };
+      select.addEventListener('change', onLanguageChange);
+      this.track(() => select.removeEventListener('change', onLanguageChange));
       if (blot.uiNode == null) {
         blot.attachUI(select);
         if (blot.children.head) {
@@ -280,14 +283,18 @@ class Syntax extends Module<SyntaxOptions> {
 
   initTimer() {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    this.lextrix.on(Lextrix.events.SCROLL_OPTIMIZE, () => {
+    this.onEditor(Lextrix.events.SCROLL_OPTIMIZE, () => {
       if (timer) {
         clearTimeout(timer);
       }
       timer = setTimeout(() => {
+        if (this.isDisposed) return;
         this.highlight();
         timer = null;
       }, this.options.interval);
+    });
+    this.track(() => {
+      if (timer) clearTimeout(timer);
     });
   }
 

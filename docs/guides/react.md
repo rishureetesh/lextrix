@@ -54,6 +54,7 @@ export function BlogEditor() {
 | `onChange` | `(content, source) => void` after user edits |
 | `onSelectionChange` | Lextrix selection event |
 | `onReady` | `(editor) => void` once after create |
+| `readOnly` | Disables editing (`readOnly` + `disable()`); toggles without remount |
 | `className` / `style` | Wrapper element |
 
 ### Ref handle
@@ -67,7 +68,24 @@ const ref = useRef<LextrixEditorHandle>(null);
 <LextrixEditor ref={ref} onReady={(e) => e.focus()} />;
 
 ref.current?.exportContent('markdown');
+ref.current?.getExportWarnings('markdown'); // before save — see Serialization guide
 ref.current?.getEditor()?.getModule('history')?.undo();
+```
+
+### Export warnings before save
+
+```tsx
+const ref = useRef<LextrixEditorHandle>(null);
+
+function handleSave() {
+  const warnings = ref.current?.getExportWarnings('markdown') ?? [];
+  if (warnings.some((w) => w.safety === 'unsupported')) {
+    alert(warnings.map((w) => w.message).join('\n'));
+    return;
+  }
+  const md = ref.current?.exportContent('markdown') ?? '';
+  // persist md
+}
 ```
 
 ## Remounting when options change

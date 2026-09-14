@@ -7,6 +7,10 @@ export default defineConfig({
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
+      'lextrix-change/experimental': resolve(
+        root,
+        '../change/src/experimental/index.ts',
+      ),
       'lextrix-change': resolve(root, '../change/src/index.ts'),
       'lextrix-dom': resolve(root, '../dom/src/index.ts'),
       'lextrix-core$': resolve(root, '../core/src/index.ts'),

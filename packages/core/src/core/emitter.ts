@@ -4,18 +4,66 @@ import instances from './instances.js';
 import logger from './logger.js';
 
 const debug = logger('lextrix:events');
-const EVENTS = ['selectionchange', 'mousedown', 'mouseup', 'click'];
+const EVENTS = ['selectionchange', 'mousedown', 'mouseup', 'click'] as const;
 
-EVENTS.forEach((eventName) => {
-  document.addEventListener(eventName, (...args) => {
-    Array.from(document.querySelectorAll('.lxr-container')).forEach((node) => {
-      const lextrix = instances.get(node);
-      if (lextrix && lextrix.emitter) {
-        lextrix.emitter.handleDOM(...args);
-      }
-    });
+type DocumentHandler = (...args: unknown[]) => void;
+
+const documentHandlers = new Map<string, DocumentHandler>();
+let documentListenerRefCount = 0;
+
+function routeDocumentEvent(eventName: string, ...args: unknown[]) {
+  Array.from(document.querySelectorAll('.lxr-container')).forEach((node) => {
+    const lextrix = instances.get(node);
+    if (lextrix && lextrix.emitter) {
+      const [event, ...rest] = args;
+      lextrix.emitter.handleDOM(event as Event, ...rest);
+    }
   });
-});
+}
+
+/** Install shared document listeners once (lazy; safe for SSR until first editor). */
+export function retainDocumentListeners(): void {
+  if (typeof document === 'undefined') return;
+  documentListenerRefCount += 1;
+  if (documentListenerRefCount > 1) return;
+
+  for (const eventName of EVENTS) {
+    const handler: DocumentHandler = (...args) =>
+      routeDocumentEvent(eventName, ...args);
+    documentHandlers.set(eventName, handler);
+    document.addEventListener(eventName, handler as EventListener);
+  }
+}
+
+/** Drop shared document listeners when the last editor is destroyed. */
+export function releaseDocumentListeners(): void {
+  if (typeof document === 'undefined') return;
+  if (documentListenerRefCount === 0) return;
+  documentListenerRefCount -= 1;
+  if (documentListenerRefCount > 0) return;
+
+  for (const eventName of EVENTS) {
+    const handler = documentHandlers.get(eventName);
+    if (handler) {
+      document.removeEventListener(eventName, handler as EventListener);
+    }
+  }
+  documentHandlers.clear();
+}
+
+/** Test helper — reset refcount without requiring a live document. */
+export function resetDocumentListenerStateForTests(): void {
+  if (typeof document !== 'undefined') {
+    for (const eventName of EVENTS) {
+      const handler = documentHandlers.get(eventName);
+      if (handler) {
+        document.removeEventListener(eventName, handler as EventListener);
+      }
+    }
+  }
+  documentHandlers.clear();
+  documentListenerRefCount = 0;
+}
 
 class Emitter extends EventEmitter<string> {
   static events = {

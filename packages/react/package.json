@@ -1,6 +1,6 @@
 {
   "name": "@lextrix/react",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Official React bindings for the Lextrix rich-text editor",
   "type": "module",
   "license": "MIT",
@@ -40,7 +40,7 @@
   ],
   "sideEffects": false,
   "peerDependencies": {
-    "lextrix": "^2.0.5",
+    "lextrix": "^3.0.0",
     "react": ">=18",
     "react-dom": ">=18"
   },
@@ -54,7 +54,7 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "jsdom": "^26.1.0",
-    "lextrix": "2.0.5",
+    "lextrix": "3.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "typescript": "^5.9.3",

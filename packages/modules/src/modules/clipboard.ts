@@ -29,11 +29,17 @@ class Clipboard extends Module<ClipboardOptions> {
 
   constructor(lextrix: Lextrix, options: Partial<ClipboardOptions>) {
     super(lextrix, options);
-    this.lextrix.root.addEventListener('copy', (e) =>
-      this.onCaptureCopy(e, false),
+    this.listenDom(this.lextrix.root, 'copy', (e) =>
+      this.onCaptureCopy(e as ClipboardEvent, false),
     );
-    this.lextrix.root.addEventListener('cut', (e) => this.onCaptureCopy(e, true));
-    this.lextrix.root.addEventListener('paste', this.onCapturePaste.bind(this));
+    this.listenDom(this.lextrix.root, 'cut', (e) =>
+      this.onCaptureCopy(e as ClipboardEvent, true),
+    );
+    this.listenDom(
+      this.lextrix.root,
+      'paste',
+      this.onCapturePaste.bind(this) as EventListener,
+    );
     this.matchers = options.matchers ?? [];
   }
 

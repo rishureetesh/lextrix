@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "version",
+  "id": "doc_golden:v0",
+  "documentId": "doc_golden",
+  "sequence": 0,
+  "revision": 0,
+  "parentId": null,
+  "contents": {
+    "ops": [{ "insert": "root\n" }]
+  },
+  "changeFromParent": null,
+  "ops": [{ "insert": "root\n" }],
+  "meta": null
+}

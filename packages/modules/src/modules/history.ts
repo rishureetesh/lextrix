@@ -36,7 +36,7 @@ class History extends Module<HistoryOptions> {
 
   constructor(lextrix: Lextrix, options: Partial<HistoryOptions>) {
     super(lextrix, options);
-    this.lextrix.on(
+    this.onEditor(
       Lextrix.events.EDITOR_CHANGE,
       (eventName, value, oldValue, source) => {
         if (eventName === Lextrix.events.SELECTION_CHANGE) {
@@ -72,13 +72,14 @@ class History extends Module<HistoryOptions> {
       );
     }
 
-    this.lextrix.root.addEventListener('beforeinput', (event) => {
-      if (event.inputType === 'historyUndo') {
+    this.listenDom(this.lextrix.root, 'beforeinput', (event) => {
+      const inputEvent = event as InputEvent;
+      if (inputEvent.inputType === 'historyUndo') {
         this.undo();
-        event.preventDefault();
-      } else if (event.inputType === 'historyRedo') {
+        inputEvent.preventDefault();
+      } else if (inputEvent.inputType === 'historyRedo') {
         this.redo();
-        event.preventDefault();
+        inputEvent.preventDefault();
       }
     });
   }

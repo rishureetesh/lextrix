@@ -172,7 +172,7 @@ class Keyboard extends Module<KeyboardOptions> {
   }
 
   listen() {
-    this.lextrix.root.addEventListener('keydown', (evt) => {
+    this.listenDom(this.lextrix.root, 'keydown', ((evt: KeyboardEvent) => {
       if (evt.defaultPrevented || evt.isComposing) return;
 
       // evt.isComposing is false when pressing Enter/Backspace when composing in Safari
@@ -263,7 +263,7 @@ class Keyboard extends Module<KeyboardOptions> {
       if (prevented) {
         evt.preventDefault();
       }
-    });
+    }) as EventListener);
   }
 
   handleBackspace(range: Range, context: Context) {

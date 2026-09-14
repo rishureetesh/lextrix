@@ -1,4 +1,4 @@
-﻿/** Lextrix modules — editor behavior modules. */
+/** Lextrix modules — editor behavior modules. */
 import { ParentBlot } from 'lextrix-dom';
 import Module from 'lextrix-core/core/module.js';
 import Lextrix from 'lextrix-core';
@@ -44,7 +44,11 @@ class UINode extends Module {
       key: ['ArrowLeft', 'ArrowRight'],
       offset: 0,
       shiftKey: null,
-      handler(range, { line, event }) {
+      handler(
+        this: { lextrix: Lextrix },
+        range: { index: number; length: number },
+        { line, event }: { line: unknown; event: KeyboardEvent },
+      ) {
         if (!(line instanceof ParentBlot) || !line.uiNode) {
           return true;
         }
@@ -68,8 +72,9 @@ class UINode extends Module {
   }
 
   private handleNavigationShortcuts() {
-    this.lextrix.root.addEventListener('keydown', (event) => {
-      if (!event.defaultPrevented && canMoveCaretBeforeUINode(event)) {
+    this.listenDom(this.lextrix.root, 'keydown', (event) => {
+      const keyboardEvent = event as KeyboardEvent;
+      if (!keyboardEvent.defaultPrevented && canMoveCaretBeforeUINode(keyboardEvent)) {
         this.ensureListeningToSelectionChange();
       }
     });
@@ -95,9 +100,7 @@ class UINode extends Module {
       }
     };
 
-    document.addEventListener('selectionchange', listener, {
-      once: true,
-    });
+    this.listenDom(document, 'selectionchange', listener, { once: true });
   }
 
   private handleSelectionChange() {

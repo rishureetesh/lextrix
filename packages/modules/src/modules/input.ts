@@ -11,18 +11,18 @@ class Input extends Module {
   constructor(lextrix: Lextrix, options: Record<string, never>) {
     super(lextrix, options);
 
-    lextrix.root.addEventListener('beforeinput', (event) => {
-      this.handleBeforeInput(event);
+    this.listenDom(lextrix.root, 'beforeinput', (event) => {
+      this.handleBeforeInput(event as InputEvent);
     });
 
-    lextrix.root.addEventListener('input', () => {
+    this.listenDom(lextrix.root, 'input', () => {
       this.handleInput();
     });
 
     // Gboard with English input on Android triggers `compositionstart` sometimes even
     // users are not going to type anything.
     if (!/Android/i.test(navigator.userAgent)) {
-      lextrix.on(Lextrix.events.COMPOSITION_BEFORE_START, () => {
+      this.onEditor(Lextrix.events.COMPOSITION_BEFORE_START, () => {
         this.handleCompositionStart();
       });
     }

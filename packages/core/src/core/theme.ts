@@ -1,15 +1,17 @@
 ﻿/** Lextrix core — document editor shell. */
 import type Lextrix from '../core/lextrix.js';
 import { lxrPath } from '../registry-paths.js';
-import type Clipboard from 'lextrix-modules/modules/clipboard.js';
-import type History from 'lextrix-modules/modules/history.js';
-import type Keyboard from 'lextrix-modules/modules/keyboard.js';
-import type { ToolbarProps } from 'lextrix-modules/modules/toolbar.js';
-import type Uploader from 'lextrix-modules/modules/uploader.js';
+import type {
+  ClipboardModule,
+  HistoryModule,
+  KeyboardModule,
+  ToolbarOptions,
+  UploaderModule,
+} from './contracts/modules.js';
 
 export interface ThemeOptions {
   modules: Record<string, unknown> & {
-    toolbar?: null | ToolbarProps;
+    toolbar?: null | ToolbarOptions;
   };
 }
 
@@ -27,7 +29,10 @@ class Theme {
     protected options: ThemeOptions,
   ) {}
 
-  /** Legacy module map — reads from the canonical PluginHost. */
+  /**
+   * Legacy module map — reads from the canonical PluginHost.
+   * @deprecated Prefer `lextrix.getModule(name)` / `lextrix.pluginHost`.
+   */
   get modules(): Record<string, unknown> {
     return this.lextrix.pluginHost.asModuleRecord();
   }
@@ -40,13 +45,13 @@ class Theme {
     });
   }
 
-  addModule(name: 'clipboard'): Clipboard;
-  addModule(name: 'keyboard'): Keyboard;
-  addModule(name: 'uploader'): Uploader;
-  addModule(name: 'history'): History;
+  addModule(name: 'clipboard'): ClipboardModule;
+  addModule(name: 'keyboard'): KeyboardModule;
+  addModule(name: 'uploader'): UploaderModule;
+  addModule(name: 'history'): HistoryModule;
   addModule(name: string): unknown;
   addModule(name: string) {
-    // @ts-expect-error
+    // @ts-expect-error dynamic import from registry
     const ModuleClass = this.lextrix.constructor.import(lxrPath.module(name));
     const instance = new ModuleClass(
       this.lextrix,

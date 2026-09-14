@@ -10,6 +10,8 @@ A linear path for trying Lextrix for the first time. No setup beyond a bundler o
 
 Open the [live playground](https://iamreetesh.com/lextrix) in your browser. No install required — edit content, switch themes, and try import/export panels.
 
+For the **Lextrix 3.0 platform playground** (Document / Version / Proposal / Collaboration demos against real APIs), see [docs/playground.md](../playground.md) and run `npm run demo` from the monorepo.
+
 ---
 
 ## 2. Install Lextrix
@@ -88,6 +90,12 @@ editor.importContent('<p>Hello <strong>world</strong></p>', 'html');
 const markdown = editor.exportContent('markdown');
 const html = editor.exportContent('html');
 const json = editor.getContents(); // ChangeSet
+```
+
+**Optional runtimes** — probe before showing formula or syntax UI:
+
+```javascript
+const { katex, highlightJs, imageResize } = editor.getCapabilities();
 ```
 
 **Before Markdown or MDX export**, check for unsupported or lossy content:

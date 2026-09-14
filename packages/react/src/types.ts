@@ -1,7 +1,9 @@
 import type {
   EmitterSource,
+  ExportInput,
   LextrixOptions,
   Range,
+  SafetyIssue,
   SerializeFormat,
 } from 'lextrix';
 import type Lextrix from 'lextrix';
@@ -36,6 +38,8 @@ export interface LextrixEditorProps {
   ) => void;
   /** Called once after the editor instance is created. */
   onReady?: (editor: Lextrix) => void;
+  /** When true, editing is disabled (`readOnly` + `disable()`). */
+  readOnly?: boolean;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -51,6 +55,8 @@ export interface LextrixEditorHandle {
     format?: LextrixContentFormat,
     source?: EmitterSource,
   ): void;
+  /** Lossy/unsupported export issues — call before Markdown/MDX save. */
+  getExportWarnings(input: ExportInput): SafetyIssue[];
 }
 
 export type { Lextrix, LextrixOptions, Range, SerializeFormat };

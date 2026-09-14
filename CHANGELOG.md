@@ -1,5 +1,112 @@
 # Changelog
 
+## 3.0.0 (2026-09-14)
+
+Major platform release: document engine (Phases 0–12) shipped with the Lextrix editor as a projection. Wire `schemaVersion` remains **1**.
+
+### Core
+
+- ChangeSet OT engine as canonical transitions (`lextrix-change`)
+- Dual ChangeOp / internal DocumentOperation bridge retained (not public IR)
+
+### Document Runtime
+
+- Stable `lextrix-change/document`: Document, DocumentHandle, transactions, subscribe
+- Experimental barrel retained for graduation / advanced surfaces
+
+### Versioning
+
+- Linear immutable Versions, Anchors, Ranges, restore-as-new-Version
+
+### Collaboration
+
+- OT rebase / proposals
+- `lextrix-collab`: authoritative `DocumentServerSession`, client session, ownership, presence protocol, home-region foundations
+
+### Persistence
+
+- Persistence + CAS ports; in-memory and PostgreSQL adapters
+- `changeId` idempotency; `owner_epoch` fencing
+
+### Server
+
+- `lextrix-server`: WebSocket host, AuthN/AuthZ hooks, observability hooks, PG migrations
+
+### Wire
+
+- ADR-012 kinds unchanged (`schemaVersion: 1`)
+- Additive collab control frames / sync snapshot fields
+
+### Intelligence
+
+- `lextrix-intelligence`: deterministic + optional OpenAI providers
+- Proposals only — never a privileged Document mutation path
+
+### Snapshots / Compaction
+
+- Checkpoint snapshots keyed to Version ids; seal → archive → purge
+
+### Presence
+
+- Ephemeral presence protocol (not Version history; UX deferred)
+
+### Editor
+
+- Existing themes/modules/serialization preserved
+- Experimental Document bridge APIs for projection / proposals
+
+### Testing / Infrastructure
+
+- Engine suites + Chromium unit (582) + e2e (43)
+- Playground upgraded to demonstrate platform APIs (`lextrix-demo`)
+- Final validation + browser validation + future roadmap docs
+
+### Compatibility
+
+- Prefer `importContent` / `exportContent`
+- `@lextrix/react@0.3.0` peers `lextrix@^3.0.0`
+
+### Limitations (not claimed)
+
+- Live PG / multi-process fencing / WS soak / SLOs may be environment-gated
+- Presence UX, automated multi-region product, SaaS/billing, CRDT, E2EE deferred
+
+## @lextrix/react 0.3.0 (2026-09-14)
+
+### Changed
+
+- Peer dependency: `lextrix@^3.0.0`
+
+## 2.1.0 (2026-09-14)
+
+
+### Changed
+
+- **Plugin lifecycle** — `PluginHost.destroyAll()` tears down every module; `Module.listenDom` / `Module.onEditor` / `track()` for consistent cleanup (syntax, table, toolbar, imageResize drag, uiNode)
+- **Dependency inversion** — `lextrix-core` depends on module contracts, not concrete `lextrix-modules` types
+- **Lazy document listeners** — shared `document` routing installs on first editor construct and releases on last destroy (no import-time side effects)
+- Prefer `importContent` / `exportContent`; instance `import` / `export` marked deprecated
+
+### Added
+
+- `LextrixError` taxonomy (`InvalidContainerError`, `UnknownThemeError`, `MissingBlotError`, `InvalidRegistryPathError`)
+- `ExtensionHost` helpers for format/module/theme/attributor registration
+- `editor.getCapabilities()` for optional runtimes (`katex`, `highlightJs`, `imageResize`, serializers)
+- `ChangeSet.clone()` / `ChangeSet.freeze()` for safer document sharing
+- Docs: [migration guide](./docs/guides/migration-2.1.md), updated architecture principles
+
+## @lextrix/react 0.2.0 (2026-09-14)
+
+### Added
+
+- `readOnly` prop — toggles editing without remount
+- Ref handle `getExportWarnings()` — block unsupported Markdown/MDX saves from React
+
+### Changed
+
+- Controlled JSON updates use `setContents` when value parses as ChangeSet ops
+- Peer dependency: `lextrix@^2.1.0`
+
 ## 2.0.5 (2026-07-12)
 
 ### Fixed

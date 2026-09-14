@@ -1,4 +1,4 @@
-﻿/** Lextrix modules — editor behavior modules. */
+/** Lextrix modules — editor behavior modules. */
 import ChangeSet from 'lextrix-change';
 import { EmbedBlot, Scope } from 'lextrix-dom';
 import Lextrix from 'lextrix-core';
@@ -69,11 +69,13 @@ class Toolbar extends Module<ToolbarProps> {
         this.attach(input);
       },
     );
-    this.lextrix.on(Lextrix.events.EDITOR_CHANGE, () => {
-      const [range] = this.lextrix.selection.getRange(); // lextrix.getSelection triggers update
-      this.update(range);
-    });
+    this.onEditor(Lextrix.events.EDITOR_CHANGE, this.onEditorChange);
   }
+
+  private onEditorChange = () => {
+    const [range] = this.lextrix.selection.getRange(); // lextrix.getSelection triggers update
+    this.update(range);
+  };
 
   destroy() {
     if (this.autoCreated && this.container?.isConnected) {
@@ -81,6 +83,7 @@ class Toolbar extends Module<ToolbarProps> {
     }
     this.container = null;
     this.controls = [];
+    super.destroy();
   }
 
   addHandler(format: string, handler: Handler) {
@@ -104,7 +107,8 @@ class Toolbar extends Module<ToolbarProps> {
       return;
     }
     const eventName = input.tagName === 'SELECT' ? 'change' : 'click';
-    input.addEventListener(eventName, (e) => {
+    const onControlActivate = (e: Event) => {
+      if (this.isDisposed) return;
       let value;
       if (input.tagName === 'SELECT') {
         // @ts-expect-error
@@ -148,7 +152,8 @@ class Toolbar extends Module<ToolbarProps> {
         this.lextrix.format(format, value, Lextrix.sources.USER);
       }
       this.update(range);
-    });
+    };
+    this.listenDom(input, eventName, onControlActivate);
     this.controls.push([format, input]);
   }
 

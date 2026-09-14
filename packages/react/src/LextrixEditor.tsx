@@ -1,6 +1,6 @@
 'use client';
 
-import Lextrix from 'lextrix';
+import Lextrix, { ChangeSet } from 'lextrix';
 import type { SelectionChangeHandler, TextChangeHandler } from 'lextrix';
 import {
   forwardRef,
@@ -18,6 +18,30 @@ function resolveFormat(format?: LextrixContentFormat): LextrixContentFormat {
   return format ?? 'html';
 }
 
+function applyControlledValue(
+  editor: Lextrix,
+  value: string,
+  format: LextrixContentFormat,
+): void {
+  if (format === 'json') {
+    try {
+      const parsed = JSON.parse(value) as { ops?: unknown[] } | unknown[];
+      const ops = Array.isArray(parsed)
+        ? parsed
+        : Array.isArray((parsed as { ops?: unknown[] }).ops)
+          ? (parsed as { ops: unknown[] }).ops
+          : null;
+      if (ops) {
+        editor.setContents(new ChangeSet(ops as never));
+        return;
+      }
+    } catch {
+      // Fall through to importContent for invalid JSON payloads.
+    }
+  }
+  editor.importContent(value, format);
+}
+
 /**
  * React wrapper around {@link Lextrix}. Mounts an inner element, calls `destroy()` on unmount,
  * and supports controlled / uncontrolled content via `format` (html, markdown, mdx, json).
@@ -30,6 +54,7 @@ export const LextrixEditor = forwardRef<LextrixEditorHandle, LextrixEditorProps>
     const {
       theme = 'snow',
       options,
+      readOnly,
       value,
       defaultValue,
       format: formatProp,
@@ -63,12 +88,16 @@ export const LextrixEditor = forwardRef<LextrixEditorHandle, LextrixEditorProps>
       const editor = new Lextrix(mount, {
         ...options,
         theme,
+        ...(readOnly !== undefined ? { readOnly } : {}),
       });
+      if (readOnly) {
+        editor.disable();
+      }
       editorRef.current = editor;
 
       const initial = value ?? defaultValue;
       if (initial != null && initial !== '') {
-        editor.importContent(initial, format);
+        applyControlledValue(editor, initial, format);
         lastEmittedRef.current = initial;
       }
 
@@ -118,9 +147,19 @@ export const LextrixEditor = forwardRef<LextrixEditorHandle, LextrixEditorProps>
       const editor = editorRef.current;
       if (!editor || !isControlled || value === undefined) return;
       if (value === lastEmittedRef.current) return;
-      editor.importContent(value, format);
+      applyControlledValue(editor, value, format);
       lastEmittedRef.current = value;
     }, [value, format, isControlled]);
+
+    useEffect(() => {
+      const editor = editorRef.current;
+      if (!editor || readOnly === undefined) return;
+      if (readOnly) {
+        editor.disable();
+      } else {
+        editor.enable();
+      }
+    }, [readOnly]);
 
     useImperativeHandle(
       ref,
@@ -136,13 +175,13 @@ export const LextrixEditor = forwardRef<LextrixEditorHandle, LextrixEditorProps>
           editor.importContent(content, importFormat, source);
           lastEmittedRef.current = content;
         },
+        getExportWarnings: (input) =>
+          editorRef.current?.getExportWarnings(input) ?? [],
       }),
       [format],
     );
 
-    return (
-      <div ref={wrapperRef} className={className} style={style} />
-    );
+    return <div ref={wrapperRef} className={className} style={style} />;
   },
 );
 

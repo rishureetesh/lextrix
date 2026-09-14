@@ -1,11 +1,17 @@
 import Lextrix from 'lextrix';
+import {
+  bindDocumentPanel,
+  refreshDocumentPanel,
+} from './src/platform-panels.js';
+import { bindCollabDemo, initCollabDemo } from './src/collab-demo.js';
+import { bindInfraDemo } from './src/infra-demo.js';
+import { clearError, showError } from './src/ui-helpers.js';
 
 const themeSelect = document.getElementById('theme-select');
 const themeCss = document.getElementById('theme-css');
 const editorMount = document.getElementById('editor-mount');
 const readOnlyToggle = document.getElementById('read-only');
 const docMeta = document.getElementById('doc-meta');
-const errorBanner = document.getElementById('error-banner');
 const warnBanner = document.getElementById('warn-banner');
 const importFormat = document.getElementById('import-format');
 const importInput = document.getElementById('import-input');
@@ -21,35 +27,20 @@ let editor = null;
 let exportFormat = 'html';
 
 const SAMPLE = {
-  html: `<h1>Lextrix playground</h1>
-<p>Try <strong>bold</strong>, <em>italic</em>, <u>underline</u>, and <a href="https://iamreetesh.com/lextrix">links</a>.</p>
-<blockquote>A quote block.</blockquote>
-<pre><code class="language-javascript">const editor = new Lextrix('#editor');</code></pre>
-<ul><li>Bullet one</li><li>Bullet two</li></ul>`,
-  markdown: `# Lextrix playground
+  html: `<h1>Lextrix 3.0 playground</h1>
+<p>Try <strong>bold</strong>, <em>italic</em>, and <a href="https://iamreetesh.com/lextrix">links</a>.</p>
+<pre><code class="language-javascript">const editor = new Lextrix('#editor');</code></pre>`,
+  markdown: `# Lextrix 3.0 playground
 
-**Bold** and *italic* text.
-
-> Blockquote
-
-\`\`\`javascript
-console.log('syntax highlighting');
-\`\`\`
-
-- Item one
-- Item two`,
+**Bold** and *italic*. Document engine panels below use real APIs.`,
   mdx: `# MDX sample
 
-<Alert type="info">Experimental MDX component</Alert>
-
-Regular **markdown** still works.`,
+<Alert type="info">Experimental MDX</Alert>`,
   json: JSON.stringify(
     {
       ops: [
-        { insert: 'Lextrix JSON\n', attributes: { header: 1 } },
-        { insert: 'Import via ' },
-        { insert: 'ChangeSet', attributes: { bold: true } },
-        { insert: '\n' },
+        { insert: 'Lextrix 3.0\n', attributes: { header: 1 } },
+        { insert: 'ChangeSet JSON import\n' },
       ],
     },
     null,
@@ -82,8 +73,7 @@ function fullToolbar(theme) {
     ],
     handlers: {
       table() {
-        const mod = this.lextrix.getModule('table');
-        if (mod?.insertTable) mod.insertTable(3, 3);
+        this.lextrix.getModule('table')?.insertTable?.(3, 3);
       },
     },
   };
@@ -91,12 +81,14 @@ function fullToolbar(theme) {
 
 function defaultContents() {
   return [
-    { insert: 'Lextrix playground\n', attributes: { header: 1 } },
+    { insert: 'Lextrix 3.0 playground\n', attributes: { header: 1 } },
     {
-      insert: 'Every module enabled: syntax, table, formula, image resize, full toolbar.\n',
+      insert:
+        'Rich-text editor + Document / Version / Proposal / Collaboration demos.\n',
     },
     {
-      insert: 'Switch theme or read-only — toolbar stays inside mount; call destroy() on teardown.\n',
+      insert:
+        'Editor is a projection. Use the panels below to inspect the document engine.\n',
       attributes: { list: 'bullet' },
     },
     { insert: '\n' },
@@ -105,12 +97,10 @@ function defaultContents() {
 
 function setError(message) {
   if (!message) {
-    errorBanner.classList.add('hidden');
-    errorBanner.textContent = '';
+    clearError();
     return;
   }
-  errorBanner.textContent = message;
-  errorBanner.classList.remove('hidden');
+  showError(message);
 }
 
 function setWarnings(messages) {
@@ -125,14 +115,16 @@ function setWarnings(messages) {
 
 function updateMeta() {
   if (!editor) return;
-  docMeta.textContent = `Length: ${editor.getLength()} chars`;
+  const v = editor.getExperimentalVersion?.();
+  docMeta.textContent = v
+    ? `Length: ${editor.getLength()} · Version ${v.id} · seq ${v.sequence}`
+    : `Length: ${editor.getLength()} chars`;
+  refreshDocumentPanel(editor);
 }
 
 function loadThemeCss(theme) {
   const href = `/lextrix.${theme}.css`;
-  if (themeCss.getAttribute('href') === href) {
-    return Promise.resolve();
-  }
+  if (themeCss.getAttribute('href') === href) return Promise.resolve();
   return new Promise((resolve) => {
     themeCss.onload = () => resolve();
     themeCss.onerror = () => resolve();
@@ -143,13 +135,13 @@ function loadThemeCss(theme) {
 function createEditor(theme, contents) {
   editor?.destroy?.();
   editorMount.replaceChildren();
-
   const mount = document.createElement('div');
   editorMount.appendChild(mount);
 
   const instance = new Lextrix(mount, {
     theme,
     placeholder: 'Write something…',
+    experimentalDocument: true,
     modules: {
       toolbar: fullToolbar(theme),
       syntax: {
@@ -173,19 +165,16 @@ function createEditor(theme, contents) {
     updateMeta();
     refreshExport();
   });
-
   updateMeta();
   return instance;
 }
 
 function refreshExport() {
   if (!editor) return;
-
   let warnings = [];
   try {
     warnings = editor.getExportWarnings?.(exportFormat) ?? [];
     setWarnings(warnings.map((w) => w.message).filter(Boolean));
-
     if (exportFormat === 'html') {
       exportOutput.textContent = editor.getSemanticHTML();
     } else if (exportFormat === 'json') {
@@ -195,12 +184,6 @@ function refreshExport() {
     }
   } catch (err) {
     exportOutput.textContent = `(export failed: ${err.message})`;
-    if (exportFormat === 'markdown' || exportFormat === 'mdx') {
-      setWarnings([
-        ...warnings.map((w) => w.message).filter(Boolean),
-        err.message,
-      ]);
-    }
   }
 }
 
@@ -213,11 +196,8 @@ function handleImport() {
     return;
   }
   try {
-    if (format === 'json') {
-      editor.setContents(JSON.parse(raw));
-    } else {
-      editor.importContent(raw, format);
-    }
+    if (format === 'json') editor.setContents(JSON.parse(raw));
+    else editor.importContent(raw, format);
     setError(null);
     refreshExport();
     updateMeta();
@@ -228,19 +208,8 @@ function handleImport() {
 
 function loadSample() {
   setError(null);
-  const format = importFormat.value;
-  importInput.value = SAMPLE[format] ?? '';
+  importInput.value = SAMPLE[importFormat.value] ?? '';
   handleImport();
-}
-
-function insertTable() {
-  setError(null);
-  try {
-    editor.getModule('table')?.insertTable(3, 3);
-    refreshExport();
-  } catch (err) {
-    setError(`Table insert failed: ${err.message}`);
-  }
 }
 
 async function switchTheme(theme) {
@@ -253,29 +222,37 @@ async function switchTheme(theme) {
 editor = createEditor(themeSelect.value);
 refreshExport();
 
-themeSelect.addEventListener('change', () => {
-  switchTheme(themeSelect.value);
-});
+bindDocumentPanel(() => editor);
+bindCollabDemo();
+bindInfraDemo();
+initCollabDemo().catch(() => {});
 
+themeSelect.addEventListener('change', () => switchTheme(themeSelect.value));
 readOnlyToggle.addEventListener('change', () => {
   editor.enable(!readOnlyToggle.checked);
 });
-
 importBtn.addEventListener('click', handleImport);
 resetBtn.addEventListener('click', loadSample);
-insertTableBtn.addEventListener('click', insertTable);
+insertTableBtn.addEventListener('click', () => {
+  try {
+    editor.getModule('table')?.insertTable(3, 3);
+    refreshExport();
+  } catch (err) {
+    setError(err.message);
+  }
+});
 refreshExportBtn.addEventListener('click', refreshExport);
-
 exportTabs.addEventListener('click', (event) => {
   const btn = event.target.closest('button[data-format]');
   if (!btn) return;
   exportFormat = btn.dataset.format;
   for (const tab of exportTabs.querySelectorAll('button')) {
-    tab.classList.toggle('active', tab === btn);
+    const active = tab === btn;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', active ? 'true' : 'false');
   }
   refreshExport();
 });
-
 copyExportBtn.addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(exportOutput.textContent);
@@ -289,3 +266,9 @@ copyExportBtn.addEventListener('click', async () => {
 });
 
 importInput.value = SAMPLE.markdown;
+
+// Expose for playground tests
+window.__lextrixPlayground = {
+  getEditor: () => editor,
+  refreshDocumentPanel: () => refreshDocumentPanel(editor),
+};

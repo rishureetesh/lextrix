@@ -18,6 +18,9 @@
     "noUnusedLocals": true,
     "paths": {
       "lextrix-change": ["./packages/change/src/index.ts"],
+      "lextrix-change/experimental": ["./packages/change/src/experimental/index.ts"],
+      "lextrix-intelligence": ["./packages/intelligence/src/index.ts"],
+      "lextrix-intelligence/openai": ["./packages/intelligence/src/openai/index.ts"],
       "lextrix-serialize": ["./packages/serialize/src/index.ts"],
       "lextrix-serialize/*": ["./packages/serialize/src/*"],
       "lextrix-dom": ["./packages/dom/src/index.ts"],

@@ -1,67 +1,64 @@
 # Architecture
 
-Lextrix is a monorepo. Document changes flow through ChangeSet; the DOM layer keeps the browser in sync.
+Lextrix **3.0** is a document engine with a rich-text editor as one projection.
 
 ```text
-User Input → Selection → Commands → Change Engine → Document Model → DOM Sync → Browser
+ChangeSet  →  Document / Handle / Version
+                 ↓
+         Editor (DOM projection)
+                 ↓
+    Collab session / Persistence ports / Intelligence proposals
 ```
+
+## Conceptual model
+
+| Concept | Role |
+|---------|------|
+| **ChangeSet** | Canonical transition |
+| **Document** | Immutable document state |
+| **Handle** | Live mutation / session owner |
+| **Version** | Immutable history identity |
+| **Proposal** | Requested ChangeSet vs a base Version |
+| **History** | Editor undo/redo (≠ Versioning) |
+| **Editor** | Projection of Document state |
+| **Intelligence** | Proposal producer only |
 
 ## Packages
 
 | Package | Role |
 |---------|------|
-| `lextrix-change` | ChangeSet, compose, diff, transform, invert |
-| `lextrix-dom` | Blots, registry, DOM sync, mutation reconciliation |
-| `lextrix-core` | Editor shell, selection, PluginHost, public API |
-| `lextrix-formats` | Built-in inline, block, and embed formats |
-| `lextrix-modules` | Clipboard, keyboard, history, toolbar, table, … |
-| `lextrix-serialize` | Markdown, MDX, JSON ↔ ChangeSet (no core dependency) |
-| `lextrix-ui` | Toolbar widgets |
-| `lextrix-themes` | Snow, bubble, slate, dawn |
-| `lextrix` | Published npm bundle (UMD + CSS) |
+| `lextrix-change` | ChangeSet OT, Document runtime, wire, persistence/collab **ports** |
+| `lextrix-collab` | Authoritative collaboration protocol / sessions |
+| `lextrix-server` | Reference PostgreSQL + WebSocket host (not core) |
+| `lextrix-intelligence` | Deterministic / OpenAI proposal providers |
+| `lextrix-dom` | Blots, registry, DOM sync |
+| `lextrix-core` | Editor shell, selection, PluginHost, Document bridge |
+| `lextrix-formats` / `modules` / `serialize` / `ui` / `themes` | Editor surface |
+| `lextrix` | Published editor bundle |
+| `@lextrix/react` | React bindings (independent semver) |
+| `lextrix-demo` | Platform playground |
 
-## Document model
+**DAG:** `lextrix-change` ↛ pg/ws/auth · `lextrix-collab` → change only · `lextrix-server` → change+collab+pg+ws
 
-```text
-Scroll
- ├── Block
- │     ├── Inline → Text
- │     └── Embed
- └── ...
-```
+## Design principles
 
-## Change engine
+1. **ChangeSet is the mutation spine** — public wire stays Quill-compatible JSON ops (`schemaVersion: 1`).
+2. **DocumentState ≠ ChangeSet**; **History ≠ Versioning**.
+3. **AI never privileged-mutates** Document/Editor — proposals only.
+4. **Server owns Version identity**; clients submit ChangeSets.
+5. **CAS / changeId / owner_epoch** are correctness invariants for authoritative stores.
+6. **Snapshots are checkpoints**, not a second HEAD; compaction is fail-closed.
+7. **Presence is ephemeral** and cannot block accept.
+8. **Editor is a projection** (Hybrid Strategy B+).
+9. Prefer `importContent` / `exportContent`; PluginHost owns module lifecycle.
+10. Auth, tenancy, billing stay **application-owned**.
 
-Public API: `ChangeSet` with `insert`, `delete`, `retain` ops. Internal pipeline uses `DocumentOperation` and `OperationStream` for compose/diff/transform/invert.
+## Where to start
 
-See [ChangeSet guide](../guides/change-set.md).
-
-## Formatting and registry
-
-`FormatDefinitionCatalog` holds metadata; `FormatRegistry` resolves formats at runtime. Extensions register via `Lextrix.register()` and `lxr/*` paths.
-
-See [Formats guide](../guides/formats.md).
-
-## Selection
-
-`NativeSelectionBridge` reads/writes browser selection. `DocumentIndexMapper` maps between document and DOM positions.
-
-## DOM sync
-
-`MutationCoordinator` observes browser mutations and reconciles the internal document tree.
-
-## Plugins
-
-`PluginHost` owns module instances. Themes load modules from editor options.
-
-See [Modules guide](../guides/modules.md).
-
-## Where to start (contributors)
-
-1. `packages/change` — ChangeSet and OT
-2. `packages/core` — editor orchestration
-3. `packages/formats` — format definitions
-4. `packages/dom` — blots and DOM sync
-5. `packages/core/src/core/plugins` — module lifecycle
+1. [API stability](./api-stability.md)
+2. [ADRs](./adr/README.md)
+3. [Final validation](./FINAL-SYSTEM-VALIDATION-REPORT.md)
+4. [Future roadmap](./FUTURE-ROADMAP.md) *(discovery only)*
+5. [Playground](../../packages/demo/README.md) — `npm run demo`
 
 Monorepo setup: [.github/DEVELOPMENT.md](../../.github/DEVELOPMENT.md).

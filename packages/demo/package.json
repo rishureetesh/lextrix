@@ -1,18 +1,24 @@
 {
   "name": "lextrix-demo",
-  "version": "2.0.5",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --force",
     "build": "vite build",
     "preview": "vite preview",
-    "predev": "npm run build -w lextrix --if-present"
+    "predev": "npm run build -w lextrix --if-present",
+    "test": "playwright test --config playwright.config.js",
+    "test:unit": "playwright test --config playwright.config.js"
   },
   "dependencies": {
-    "lextrix": "2.0.5"
+    "lextrix": "3.0.0",
+    "lextrix-change": "3.0.0",
+    "lextrix-collab": "3.0.0",
+    "lextrix-intelligence": "3.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "vite": "^6.4.2"
   }
 }

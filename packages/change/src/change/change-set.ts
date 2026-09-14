@@ -32,6 +32,8 @@ class ChangeSet {
   }
 
   ops: ChangeOp[];
+  private frozen = false;
+
   constructor(ops?: ChangeOp[] | { ops: ChangeOp[] }) {
     if (Array.isArray(ops)) {
       this.ops = ops;
@@ -39,6 +41,43 @@ class ChangeSet {
       this.ops = ops.ops;
     } else {
       this.ops = [];
+    }
+  }
+
+  /** Deep-enough clone of ops for safe sharing (attributes shallow-copied). */
+  clone(): ChangeSet {
+    return new ChangeSet(
+      this.ops.map((op) => {
+        const next: ChangeOp = { ...op };
+        if (op.attributes) {
+          next.attributes = { ...op.attributes };
+        }
+        return next;
+      }),
+    );
+  }
+
+  /**
+   * Freeze this ChangeSet against further builder mutation (push/chop/insert/…).
+   * OT methods (compose/diff/transform) still return new instances.
+   * Builder methods remain mutable by design for Quill-compatible chaining;
+   * freeze documents once they leave the builder.
+   */
+  freeze(): this {
+    this.frozen = true;
+    Object.freeze(this.ops);
+    return this;
+  }
+
+  get isFrozen(): boolean {
+    return this.frozen;
+  }
+
+  private assertMutable(): void {
+    if (this.frozen) {
+      throw new Error(
+        'Cannot mutate a frozen ChangeSet. Use clone() before editing.',
+      );
     }
   }
 
@@ -87,6 +126,7 @@ class ChangeSet {
   }
 
   push(newChangeOp: ChangeOp): this {
+    this.assertMutable();
     const buffer = OperationBuffer.fromLegacyOps(this.ops);
     buffer.appendLegacy(newChangeOp);
     this.ops = buffer.toLegacyOps();
@@ -94,6 +134,7 @@ class ChangeSet {
   }
 
   chop(): this {
+    this.assertMutable();
     const buffer = OperationBuffer.fromLegacyOps(this.ops);
     buffer.chopTrailingRetain();
     this.ops = buffer.toLegacyOps();

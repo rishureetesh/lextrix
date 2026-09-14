@@ -1,20 +1,26 @@
 {
   "name": "lextrix-change",
-  "version": "2.0.5",
+  "version": "3.0.0",
   "description": "Lextrix change-set / operational transform layer",
   "type": "module",
   "license": "MIT",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./wire": "./src/wire/index.ts",
+    "./document": "./src/document/index.ts",
+    "./persistence": "./src/persistence/index.ts",
+    "./collaboration": "./src/collaboration/index.ts",
+    "./experimental": "./src/experimental/index.ts"
   },
   "dependencies": {
     "fast-diff": "^1.3.0",
     "lodash-es": "^4.18.1"
   },
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "bench:change": "npx tsx scripts/bench-change.ts"
   },
   "devDependencies": {
     "vitest": "^3.2.4"

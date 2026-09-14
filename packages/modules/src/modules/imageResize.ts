@@ -22,25 +22,25 @@ class ImageResize extends Module<ImageResizeOptions> {
   private imageLoadCleanup: (() => void) | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private repositionRaf: number | null = null;
-  private destroyed = false;
+  private dragCleanup: (() => void) | null = null;
 
   constructor(lextrix: Lextrix, options: Partial<ImageResizeOptions>) {
     super(lextrix, options);
-    this.lextrix.on(Lextrix.events.SELECTION_CHANGE, this.onSelectionChange);
-    this.lextrix.on(Lextrix.events.SCROLL_OPTIMIZE, this.onScrollOptimize);
-    this.lextrix.on(Lextrix.events.TEXT_CHANGE, this.onTextChange);
-    this.lextrix.root.addEventListener('scroll', this.onRootScroll, {
+    this.onEditor(Lextrix.events.SELECTION_CHANGE, this.onSelectionChange);
+    this.onEditor(Lextrix.events.SCROLL_OPTIMIZE, this.onScrollOptimize);
+    this.onEditor(Lextrix.events.TEXT_CHANGE, this.onTextChange);
+    this.listenDom(this.lextrix.root, 'scroll', this.onRootScroll, {
       passive: true,
     });
-    document.addEventListener('scroll', this.onLayoutChange, {
+    this.listenDom(document, 'scroll', this.onLayoutChange, {
       passive: true,
       capture: true,
     });
-    window.addEventListener('resize', this.onLayoutChange, { passive: true });
+    this.listenDom(window, 'resize', this.onLayoutChange, { passive: true });
   }
 
   onSelectionChange = (range: Range | null) => {
-    if (this.destroyed) return;
+    if (this.isDisposed) return;
     if (
       range == null ||
       range.length !== 1 ||
@@ -61,22 +61,22 @@ class ImageResize extends Module<ImageResizeOptions> {
   };
 
   private onScrollOptimize = () => {
-    if (this.destroyed) return;
+    if (this.isDisposed) return;
     this.scheduleReposition();
   };
 
   private onTextChange = () => {
-    if (this.destroyed) return;
+    if (this.isDisposed) return;
     this.scheduleReposition();
   };
 
   private onRootScroll = () => {
-    if (this.destroyed) return;
+    if (this.isDisposed) return;
     this.scheduleReposition();
   };
 
   private onLayoutChange = () => {
-    if (this.destroyed) return;
+    if (this.isDisposed) return;
     this.scheduleReposition();
   };
 
@@ -98,6 +98,7 @@ class ImageResize extends Module<ImageResizeOptions> {
   hide() {
     this.clearImageLoadListener();
     this.clearResizeObserver();
+    this.clearDragListeners();
     this.cancelScheduledReposition();
     this.activeBlot = null;
     this.activeIndex = null;
@@ -105,17 +106,11 @@ class ImageResize extends Module<ImageResizeOptions> {
   }
 
   destroy() {
-    this.destroyed = true;
     this.hide();
-    this.lextrix.off(Lextrix.events.SELECTION_CHANGE, this.onSelectionChange);
-    this.lextrix.off(Lextrix.events.SCROLL_OPTIMIZE, this.onScrollOptimize);
-    this.lextrix.off(Lextrix.events.TEXT_CHANGE, this.onTextChange);
-    this.lextrix.root.removeEventListener('scroll', this.onRootScroll);
-    document.removeEventListener('scroll', this.onLayoutChange, true);
-    window.removeEventListener('resize', this.onLayoutChange);
     this.overlay?.remove();
     this.overlay = null;
     this.handle = null;
+    super.destroy();
   }
 
   watchImageLoad(blot: Blot) {
@@ -124,7 +119,7 @@ class ImageResize extends Module<ImageResizeOptions> {
       return;
     }
     const onLoad = () => {
-      if (this.destroyed) return;
+      if (this.isDisposed) return;
       this.scheduleReposition();
     };
     img.addEventListener('load', onLoad, { once: true });
@@ -142,7 +137,7 @@ class ImageResize extends Module<ImageResizeOptions> {
       return;
     }
     this.resizeObserver = new ResizeObserver(() => {
-      if (this.destroyed) return;
+      if (this.isDisposed) return;
       this.scheduleReposition();
     });
     this.resizeObserver.observe(img);
@@ -159,6 +154,11 @@ class ImageResize extends Module<ImageResizeOptions> {
     this.resizeObserver = null;
   }
 
+  clearDragListeners() {
+    this.dragCleanup?.();
+    this.dragCleanup = null;
+  }
+
   cancelScheduledReposition() {
     if (this.repositionRaf != null) {
       cancelAnimationFrame(this.repositionRaf);
@@ -168,7 +168,7 @@ class ImageResize extends Module<ImageResizeOptions> {
 
   scheduleReposition() {
     if (
-      this.destroyed ||
+      this.isDisposed ||
       this.overlay == null ||
       this.activeIndex == null ||
       this.activeBlot == null
@@ -199,53 +199,58 @@ class ImageResize extends Module<ImageResizeOptions> {
   }
 
   bindHandle(handle: HTMLDivElement) {
-    let startX = 0;
-    let startWidth = 0;
-    let aspect = 1;
+    this.listenDom(handle, 'mousedown', (event) => {
+      const mouseEvent = event as MouseEvent;
+      mouseEvent.preventDefault();
+      mouseEvent.stopPropagation();
+      if (this.activeBlot == null || this.isDisposed) return;
 
-    const onMove = (event: MouseEvent) => {
-      if (this.activeBlot == null || this.activeIndex == null) return;
-      const img = this.activeBlot.domNode as HTMLImageElement;
-      const delta = event.clientX - startX;
-      const maxWidth = this.getMaxWidth();
-      const minWidth = this.options.minWidth ?? ImageResize.DEFAULTS.minWidth;
-      const nextWidth = Math.round(
-        Math.max(minWidth, Math.min(maxWidth, startWidth + delta)),
-      );
-      img.style.width = `${nextWidth}px`;
-      img.style.height = `${Math.round(nextWidth / aspect)}px`;
-      this.reposition();
-    };
-
-    const onUp = () => {
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
-      if (this.activeBlot == null || this.activeIndex == null) return;
-      const img = this.activeBlot.domNode as HTMLImageElement;
-      const width = Math.round(img.getBoundingClientRect().width);
-      const height = Math.round(img.getBoundingClientRect().height);
-      img.style.width = '';
-      img.style.height = '';
-      const imageBlot = this.activeBlot as Blot & {
-        format(name: string, value: string): void;
-      };
-      imageBlot.format('width', String(width));
-      imageBlot.format('height', String(height));
-      this.lextrix.update(Emitter.sources.USER);
-      this.scheduleReposition();
-    };
-
-    handle.addEventListener('mousedown', (event: MouseEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (this.activeBlot == null) return;
       const img = this.activeBlot.domNode as HTMLImageElement;
       const rect = img.getBoundingClientRect();
-      startX = event.clientX;
-      startWidth = rect.width;
-      aspect = rect.width / Math.max(rect.height, 1);
+      let startX = mouseEvent.clientX;
+      let startWidth = rect.width;
+      const aspect = rect.width / Math.max(rect.height, 1);
+
+      const onMove = (moveEvent: MouseEvent) => {
+        if (this.activeBlot == null || this.activeIndex == null || this.isDisposed) {
+          return;
+        }
+        const delta = moveEvent.clientX - startX;
+        const maxWidth = this.getMaxWidth();
+        const minWidth = this.options.minWidth ?? ImageResize.DEFAULTS.minWidth;
+        const nextWidth = Math.round(
+          Math.max(minWidth, Math.min(maxWidth, startWidth + delta)),
+        );
+        img.style.width = `${nextWidth}px`;
+        img.style.height = `${Math.round(nextWidth / aspect)}px`;
+        this.reposition();
+      };
+
+      const onUp = () => {
+        this.clearDragListeners();
+        if (this.activeBlot == null || this.activeIndex == null || this.isDisposed) {
+          return;
+        }
+        const width = Math.round(img.getBoundingClientRect().width);
+        const height = Math.round(img.getBoundingClientRect().height);
+        img.style.width = '';
+        img.style.height = '';
+        const imageBlot = this.activeBlot as Blot & {
+          format(name: string, value: string): void;
+        };
+        imageBlot.format('width', String(width));
+        imageBlot.format('height', String(height));
+        this.lextrix.update(Emitter.sources.USER);
+        this.scheduleReposition();
+      };
+
+      this.clearDragListeners();
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup', onUp);
+      this.dragCleanup = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      };
     });
   }
 
@@ -258,7 +263,7 @@ class ImageResize extends Module<ImageResizeOptions> {
 
   reposition = () => {
     if (
-      this.destroyed ||
+      this.isDisposed ||
       this.overlay == null ||
       this.activeIndex == null ||
       this.activeBlot == null

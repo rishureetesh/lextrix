@@ -15,9 +15,18 @@ packages/react/dist/
 examples/*/dist/
 
 # Test artifacts
-packages/serialize/coverage/
+coverage/
+**/coverage/
 test-results/
 playwright-report/
 packages/lextrix/test-results/
 packages/lextrix/playwright-report/
+packages/demo/test-results/
+packages/demo/playwright-report/
 *.tgz
+
+# Local validation / diagnostic logs (not fixtures)
+packages/lextrix/browser-*-results*.txt
+packages/lextrix/browser-unit-verbose.txt
+packages/lextrix/e2e-webpack-diag.txt
+packages/lextrix/test/unit/audit/

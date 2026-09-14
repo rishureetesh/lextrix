@@ -181,9 +181,9 @@ Use the published package from **npm** or a **CDN**. After `npm install lextrix`
 **From jsDelivr CDN** (pin the version you use):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lextrix@2.0.5/lextrix.snow.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lextrix@3.0.0/lextrix.snow.css" />
 <div id="editor"></div>
-<script src="https://cdn.jsdelivr.net/npm/lextrix@2.0.5/lextrix.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lextrix@3.0.0/lextrix.js"></script>
 <script>
   const editor = new Lextrix('#editor', { theme: 'snow' });
 </script>

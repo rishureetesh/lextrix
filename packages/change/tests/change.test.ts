@@ -17,4 +17,18 @@ describe('lextrix-change', () => {
     expect(aPrime.ops).toEqual([{ retain: 4 }, { insert: 'b' }]);
     expect(bPrime.ops).toEqual([{ retain: 3 }, { insert: 'a' }]);
   });
+
+  it('clones ops so mutations do not leak', () => {
+    const original = new ChangeSet().insert('Hi', { bold: true });
+    const copy = original.clone();
+    copy.insert('!');
+    expect(original.ops).toEqual([{ insert: 'Hi', attributes: { bold: true } }]);
+    expect(copy.ops[copy.ops.length - 1]).toEqual({ insert: '!' });
+  });
+
+  it('freeze blocks builder mutation', () => {
+    const doc = new ChangeSet().insert('Hi').freeze();
+    expect(doc.isFrozen).toBe(true);
+    expect(() => doc.insert('!')).toThrow(/frozen ChangeSet/);
+  });
 });

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "kind": "version",
+  "id": "doc_golden:v1",
+  "documentId": "doc_golden",
+  "sequence": 1,
+  "revision": 1,
+  "parentId": "doc_golden:v0",
+  "contents": {
+    "ops": [{ "insert": "root!\n" }]
+  },
+  "changeFromParent": {
+    "ops": [{ "retain": 4 }, { "insert": "!" }]
+  },
+  "ops": [{ "insert": "root!\n" }],
+  "meta": {
+    "source": "user",
+    "origin": "system"
+  }
+}

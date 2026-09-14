@@ -15,13 +15,17 @@ class Uploader extends Module<UploaderOptions> {
 
   constructor(lextrix: Lextrix, options: Partial<UploaderOptions>) {
     super(lextrix, options);
-    lextrix.root.addEventListener('drop', (e) => {
-      e.preventDefault();
+    this.listenDom(lextrix.root, 'drop', (e) => {
+      const event = e as DragEvent;
+      event.preventDefault();
       let native: ReturnType<typeof document.createRange> | null = null;
       if (document.caretRangeFromPoint) {
-        native = document.caretRangeFromPoint(e.clientX, e.clientY);
+        native = document.caretRangeFromPoint(event.clientX, event.clientY);
       } else if (document.caretPositionFromPoint) {
-        const position = document.caretPositionFromPoint(e.clientX, e.clientY);
+        const position = document.caretPositionFromPoint(
+          event.clientX,
+          event.clientY,
+        );
         if (position) {
           native = document.createRange();
           native.setStart(position.offsetNode, position.offset);
@@ -32,8 +36,8 @@ class Uploader extends Module<UploaderOptions> {
       const normalized = native && lextrix.selection.normalizeNative(native);
       if (normalized) {
         const range = lextrix.selection.normalizedToRange(normalized);
-        if (e.dataTransfer?.files) {
-          this.upload(range, e.dataTransfer.files);
+        if (event.dataTransfer?.files) {
+          this.upload(range, event.dataTransfer.files);
         }
       }
     });

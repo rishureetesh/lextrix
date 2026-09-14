@@ -1,4 +1,6 @@
 /** Lextrix core — document editor shell. */
+import { InvalidRegistryPathError } from './core/errors.js';
+
 export const lxrPath = {
   blot: (name: string) => `lxr/blots/${name}`,
   format: (name: string) => `lxr/formats/${name}`,
@@ -41,13 +43,13 @@ export function resolveImportKey(name: string): string {
   }
   for (const { prefix, map } of BARE_PATH_PREFIXES) {
     if (name.startsWith(prefix)) {
-      throw new Error(
+      throw new InvalidRegistryPathError(
         `Legacy import path "${name}" is not supported. Use "${map(name.slice(prefix.length))}" instead.`,
       );
     }
   }
   if (name === 'delta' || name === 'parchment') {
-    throw new Error(
+    throw new InvalidRegistryPathError(
       `Legacy import key "${name}" is not supported. Use "${name === 'delta' ? 'change' : 'dom'}" instead.`,
     );
   }

@@ -38,6 +38,17 @@ This shape is compatible with common operational-transform JSON conventions. Lex
 
 Algorithms run on native operations in `OperationStreamOT`. Coalescing uses `pushNativeOp` in `operation-coalesce.ts`.
 
+## Mutability
+
+Builder methods (`insert`, `delete`, `retain`, `push`, `chop`) mutate and return `this` for Quill-compatible chaining. When sharing a document ChangeSet across systems, prefer:
+
+```javascript
+const snapshot = editor.getContents().clone().freeze();
+// snapshot.insert('x') throws — clone() first if you need to edit
+```
+
+`compose` / `diff` / `transform` / `invert` always return **new** ChangeSets.
+
 ## Common patterns
 
 **Read document:**

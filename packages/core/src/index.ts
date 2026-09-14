@@ -21,6 +21,33 @@ export type {
 } from './core/lextrix.js';
 export type { ThemeOptions } from './core/theme.js';
 export type {
+  ClipboardModule,
+  EditorCapabilities,
+  HistoryModule,
+  KeyboardModule,
+  ToolbarConfig,
+  ToolbarOptions,
+  UploaderModule,
+} from './core/contracts/modules.js';
+export {
+  LextrixError,
+  InvalidContainerError,
+  UnknownThemeError,
+  MissingBlotError,
+  InvalidRegistryPathError,
+} from './core/errors.js';
+export type { LextrixErrorCode } from './core/errors.js';
+export { ExtensionHost } from './core/extension-host.js';
+export type {
+  LextrixPlugin,
+  PluginConstructor,
+} from './core/plugins/plugin-host.js';
+export {
+  retainDocumentListeners,
+  releaseDocumentListeners,
+  resetDocumentListenerStateForTests,
+} from './core/emitter.js';
+export type {
   ContentSerializer,
   ExportInput,
   ExportOptions,

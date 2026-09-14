@@ -10,6 +10,9 @@ type MockEditor = {
   off: ReturnType<typeof vi.fn>;
   importContent: ReturnType<typeof vi.fn>;
   exportContent: ReturnType<typeof vi.fn>;
+  getExportWarnings: ReturnType<typeof vi.fn>;
+  enable: ReturnType<typeof vi.fn>;
+  disable: ReturnType<typeof vi.fn>;
   focus: ReturnType<typeof vi.fn>;
   blur: ReturnType<typeof vi.fn>;
   mount: HTMLElement;
@@ -25,6 +28,9 @@ const { instances, MockLextrix } = vi.hoisted(() => {
     off = vi.fn();
     importContent = vi.fn();
     exportContent = vi.fn(() => 'exported');
+    getExportWarnings = vi.fn(() => []);
+    enable = vi.fn();
+    disable = vi.fn();
     focus = vi.fn();
     blur = vi.fn();
     mount: HTMLElement;
@@ -243,5 +249,25 @@ describe('LextrixEditor', () => {
     await waitFor(() => expect(instances).toHaveLength(1));
     ref.current?.exportContent();
     expect(latestEditor().exportContent).toHaveBeenCalledWith('html');
+  });
+
+  it('passes readOnly prop and toggles enable/disable', async () => {
+    const { rerender } = render(<LextrixEditor readOnly />);
+    await waitFor(() => expect(instances).toHaveLength(1));
+    const editor = instances[0];
+    expect(editor.options).toMatchObject({ readOnly: true });
+    expect(editor.disable).toHaveBeenCalled();
+    rerender(<LextrixEditor readOnly={false} />);
+    await waitFor(() => expect(editor.enable).toHaveBeenCalled());
+  });
+
+  it('exposes getExportWarnings on ref handle', async () => {
+    const ref = createRef<LextrixEditorHandle>();
+    render(<LextrixEditor ref={ref} />);
+    await waitFor(() => expect(instances).toHaveLength(1));
+    const warnings = [{ feature: 'table', safety: 'unsupported' as const, message: 'x' }];
+    latestEditor().getExportWarnings.mockReturnValue(warnings);
+    expect(ref.current?.getExportWarnings('markdown')).toEqual(warnings);
+    expect(latestEditor().getExportWarnings).toHaveBeenCalledWith('markdown');
   });
 });
